@@ -56,6 +56,7 @@ func Cmd() *cobra.Command {
 			ctx := context.Background()
 
 			var nodeKeys [][]string
+			mutex := sync.Mutex{}
 			err = client.ForEachMaster(ctx, func(_ctx context.Context, _client *redis.Client) error {
 				var keys []string
 				ks, err := _client.Keys(_ctx, "*").Result()
@@ -63,6 +64,8 @@ func Cmd() *cobra.Command {
 					return errors.WithStack(err)
 				}
 				keys = append(keys, ks...)
+				mutex.Lock()
+				defer mutex.Unlock()
 				nodeKeys = append(nodeKeys, keys)
 				return nil
 			})
@@ -81,7 +84,7 @@ func Cmd() *cobra.Command {
 					for _, key := range _keys {
 						result, _err := client.Dump(ctx, key).Bytes()
 						if _err != nil {
-							util.Log.Errorf("key[%s],%+v", key, _err)
+							util.Log.Errorf("key dump[%s],%+v", key, _err)
 							continue
 						}
 						ch <- key + " " + hex.EncodeToString(result) + "\n"
