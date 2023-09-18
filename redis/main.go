@@ -1,10 +1,10 @@
 package redis
 
 import (
+	"bcd-util/redis/cluster"
+	"bcd-util/redis/prop"
+	"bcd-util/redis/single"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/cluster"
-	"gmmc-tool/redis/prop"
-	"gmmc-tool/redis/single"
 )
 
 func Cmd() *cobra.Command {

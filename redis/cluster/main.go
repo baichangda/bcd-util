@@ -1,11 +1,11 @@
 package cluster
 
 import (
+	"bcd-util/redis/cluster/dump"
+	"bcd-util/redis/cluster/flush"
+	"bcd-util/redis/cluster/restore"
+	"bcd-util/redis/prop"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/cluster/dump"
-	"gmmc-tool/redis/cluster/flush"
-	"gmmc-tool/redis/cluster/restore"
-	"gmmc-tool/redis/prop"
 )
 
 func Cmd() *cobra.Command {

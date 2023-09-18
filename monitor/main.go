@@ -1,8 +1,8 @@
 package monitor
 
 import (
+	"bcd-util/monitor/client"
 	"github.com/spf13/cobra"
-	"gmmc-tool/monitor/client"
 )
 
 func Cmd() *cobra.Command {

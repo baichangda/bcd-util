@@ -1,14 +1,14 @@
 package restore
 
 import (
+	"bcd-util/redis/prop"
+	"bcd-util/util"
 	"bufio"
 	"compress/gzip"
 	"context"
 	"encoding/hex"
-	"github.com/go-redis/redis/v8"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/prop"
-	"gmmc-tool/util"
 	"io"
 	"os"
 	"strings"

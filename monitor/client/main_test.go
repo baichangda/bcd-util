@@ -1,9 +1,9 @@
 package client
 
 import (
+	"bcd-util/util"
 	"encoding/json"
 	"github.com/robfig/cron/v3"
-	"gmmc-tool/util"
 	"testing"
 )
 

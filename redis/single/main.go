@@ -1,8 +1,8 @@
 package single
 
 import (
+	"bcd-util/redis/prop"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/prop"
 )
 
 func Cmd() *cobra.Command {

@@ -1,15 +1,15 @@
 package dump
 
 import (
+	"bcd-util/redis/prop"
+	"bcd-util/util"
 	"bufio"
 	"compress/gzip"
 	"context"
 	"encoding/hex"
-	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/prop"
-	"gmmc-tool/util"
 	"os"
 	"strings"
 	"sync"
@@ -46,7 +46,6 @@ func Cmd() *cobra.Command {
 			defer gzWriter.Close()
 
 			writer := bufio.NewWriter(gzWriter)
-
 			client := redis.NewClusterClient(&redis.ClusterOptions{
 				Addrs:        prop.Addrs,
 				Password:     prop.Password,

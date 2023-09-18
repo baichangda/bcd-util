@@ -1,13 +1,13 @@
 package flush
 
 import (
+	"bcd-util/redis/prop"
+	"bcd-util/util"
 	"bufio"
 	"context"
-	"github.com/go-redis/redis/v8"
 	"github.com/pkg/errors"
+	"github.com/redis/go-redis/v9"
 	"github.com/spf13/cobra"
-	"gmmc-tool/redis/prop"
-	"gmmc-tool/util"
 	"os"
 	"time"
 )

@@ -1,7 +1,9 @@
 package client
 
 import (
+	"bcd-util/util"
 	"database/sql"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/pkg/errors"
 	"github.com/robfig/cron/v3"
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -9,31 +11,66 @@ import (
 	"github.com/shirou/gopsutil/v3/mem"
 	"github.com/shirou/gopsutil/v3/net"
 	"github.com/spf13/cobra"
-	"gmmc-tool/util"
+	"strconv"
 	"time"
 )
 
 var mysqlUrl string
-var period uint
+var period int
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "client",
-		Short: "client",
+		Use: "client",
+		Short: `
+定时采集操作系统硬件信息并存入到mysql中
+定时任务时间从每分钟0s开始、以传入的参数p为间隔执行
+每次执行时候会取当前时间、往前取最近一个应该执行定时任务的时间、这样可以有效解决各个服务器时间误差不大时候统一采集时间、计算方法为 采集时间=当前时间秒-(当前时间秒%p)
+`,
 		Run: func(cmd *cobra.Command, args []string) {
-			_, err := sql.Open("mysql", mysqlUrl)
+			open, err := sql.Open("mysql", mysqlUrl)
 			if err != nil {
 				util.Log.Errorf("%+v", err)
 				return
 			}
-			c := cron.New()
-			_, err = c.AddFunc("0/10 * * * * *", func() {
-				_, err := cpu.Percent(1000, false)
+			_, err = open.Exec(createTableSql)
+			if err != nil {
+				util.Log.Errorf("%+v", err)
+				return
+			}
+
+			c := cron.New(cron.WithSeconds())
+			_, err = c.AddFunc("0/"+strconv.Itoa(period)+" * * * * *", func() {
+				collectTime := time.Now()
+				//往前取最近一个整点时间
+				collectTime.Add(time.Duration(collectTime.Second()-(collectTime.Second()%period)) * time.Second)
+				systemData, err := Collect()
 				if err != nil {
 					util.Log.Errorf("%+v", err)
+					c.Stop()
+					return
+				}
+				prepare, err := open.Prepare(`
+insert into t_monitor_system_data(physical_processor_num,logical_processor_num,cpu_use_percent,memory_use_percent,memory_max,memory_use,disk_max,disk_use,
+                           disk_use_percent,disk_read_speed,disk_write_speed,net_recv_speed,net_sent_speed)
+values(?,?,?,?,?,?,?,?,?,?,?,?,?)
+`)
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+					c.Stop()
+					return
+				}
+				defer prepare.Close()
+
+				_, err = prepare.Exec(systemData.PhysicalProcessorNum, systemData.LogicalProcessorNum, systemData.CpuUsePercent,
+					systemData.MemoryUsePercent, systemData.MemoryMax, systemData.MemoryUse, systemData.DiskMax, systemData.DiskUse,
+					systemData.DiskUsePercent, systemData.DiskReadSpeed, systemData.DiskWriteSpeed, systemData.NetRecvSpeed, systemData.NetSentSpeed)
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+					c.Stop()
 					return
 				}
 
+				util.Log.Infof("collect system data collectTime[%s]", collectTime.Format("20060102150405"))
 			})
 			if err != nil {
 				util.Log.Errorf("%+v", err)
@@ -42,9 +79,8 @@ func Cmd() *cobra.Command {
 			c.Run()
 		},
 	}
-	cmd.Flags().UintVarP(&period, "period", "p", 10, "定时任务执行间隔、从每分钟0秒开始、以间隔执行、必须要被60整除")
-	cmd.Flags().StringVarP(&mysqlUrl, "mysqlUrl", "u", "root:incar@2023@tcp(10.0.11.50:39005)/rvm2?multiStatements=true&charset=utf8", "mysql url连接")
-	_ = cmd.MarkFlagRequired("mysqlUrl")
+	cmd.Flags().IntVarP(&period, "period", "p", 10, "定时任务执行间隔、从每分钟0秒开始、以间隔执行、如果不能被60整除、则每分钟0秒会执行一次")
+	cmd.Flags().StringVarP(&mysqlUrl, "mysqlUrl", "u", "root:incar@2023@tcp(10.0.11.50:39005)/rvm3?multiStatements=true&charset=utf8", "mysql url连接")
 
 	return &cmd
 }
@@ -76,7 +112,29 @@ type SystemData struct {
 	NetRecvSpeed float64 `json:"netRecvSpeed"`
 	//网络流出速度(KB/s)
 	NetSentSpeed float64 `json:"netSentSpeed"`
+	//采集实际
+	CollectTime time.Time `json:"collectTime"`
 }
+
+const createTableSql = `
+create table if not exists t_monitor_system_data(
+    id bigint primary key not null auto_increment comment '主键',
+    physical_processor_num int not null comment 'cpu物理核心',
+    logical_processor_num int not null comment 'cpu逻辑核心',
+    cpu_use_percent float not null comment 'cpu使用百分比',
+    memory_use_percent float not null comment '内存使用百分比',
+    memory_max float not null comment '最大内存(GB)',
+    memory_use float not null comment '已使用内存(GB)',
+    disk_max float not null comment '磁盘最大容量(GB)',
+    disk_use float not null comment '磁盘使用容量(GB)',
+    disk_use_percent float not null comment '磁盘使用百分比',
+    disk_read_speed float not null comment '磁盘读取速度(KB/s)',
+    disk_write_speed float not null comment '磁盘写入速度(KB/s)',
+    net_recv_speed float not null comment '网络流入速度(KB/s)',
+    net_sent_speed float not null comment '网络流出速度(KB/s)',
+    collect_time timestamp not null comment '采集时间'
+)
+`
 
 const gb float64 = 1024 * 1024 * 1024
 
