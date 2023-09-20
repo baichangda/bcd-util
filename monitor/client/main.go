@@ -1,6 +1,7 @@
 package client
 
 import (
+	"bcd-util/support_mysql"
 	"bcd-util/util"
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
@@ -49,21 +50,13 @@ func Cmd() *cobra.Command {
 					c.Stop()
 					return
 				}
-				prepare, err := open.Prepare(`
-insert into t_monitor_system_data(physical_processor_num,logical_processor_num,cpu_use_percent,memory_use_percent,memory_max,memory_use,disk_max,disk_use,
-                           disk_use_percent,disk_read_speed,disk_write_speed,net_recv_speed,net_sent_speed)
-values(?,?,?,?,?,?,?,?,?,?,?,?,?)
-`)
-				if err != nil {
-					util.Log.Errorf("%+v", err)
-					c.Stop()
-					return
-				}
-				defer prepare.Close()
 
-				_, err = prepare.Exec(systemData.PhysicalProcessorNum, systemData.LogicalProcessorNum, systemData.CpuUsePercent,
-					systemData.MemoryUsePercent, systemData.MemoryMax, systemData.MemoryUse, systemData.DiskMax, systemData.DiskUse,
-					systemData.DiskUsePercent, systemData.DiskReadSpeed, systemData.DiskWriteSpeed, systemData.NetRecvSpeed, systemData.NetSentSpeed)
+				err = support_mysql.Insert(open,
+					"insert into t_monitor_system_data(physical_processor_num,logical_processor_num,cpu_use_percent,memory_use_percent,memory_max,memory_use,disk_max,disk_use,disk_use_percent,disk_read_speed,disk_write_speed,net_recv_speed,net_sent_speed)", []any{
+						systemData.PhysicalProcessorNum, systemData.LogicalProcessorNum, systemData.CpuUsePercent,
+						systemData.MemoryUsePercent, systemData.MemoryMax, systemData.MemoryUse, systemData.DiskMax, systemData.DiskUse,
+						systemData.DiskUsePercent, systemData.DiskReadSpeed, systemData.DiskWriteSpeed, systemData.NetRecvSpeed, systemData.NetSentSpeed,
+					})
 				if err != nil {
 					util.Log.Errorf("%+v", err)
 					c.Stop()
