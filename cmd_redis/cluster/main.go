@@ -1,10 +1,10 @@
 package cluster
 
 import (
-	"bcd-util/redis/cluster/dump"
-	"bcd-util/redis/cluster/flush"
-	"bcd-util/redis/cluster/restore"
-	"bcd-util/redis/prop"
+	"bcd-util/cmd_redis/cluster/dump"
+	"bcd-util/cmd_redis/cluster/flush"
+	"bcd-util/cmd_redis/cluster/restore"
+	"bcd-util/cmd_redis/prop"
 	"github.com/spf13/cobra"
 )
 

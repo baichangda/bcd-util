@@ -1,7 +1,7 @@
 package single
 
 import (
-	"bcd-util/redis/prop"
+	"bcd-util/cmd_redis/prop"
 	"github.com/spf13/cobra"
 )
 

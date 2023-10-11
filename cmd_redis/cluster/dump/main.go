@@ -1,7 +1,7 @@
 package dump
 
 import (
-	"bcd-util/redis/prop"
+	"bcd-util/cmd_redis/prop"
 	"bcd-util/util"
 	"bufio"
 	"compress/gzip"

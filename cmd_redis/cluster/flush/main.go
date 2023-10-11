@@ -1,7 +1,7 @@
 package flush
 
 import (
-	"bcd-util/redis/prop"
+	"bcd-util/cmd_redis/prop"
 	"bcd-util/util"
 	"bufio"
 	"context"
@@ -24,7 +24,7 @@ func Cmd() *cobra.Command {
 				WriteTimeout: 10 * time.Second,
 			})
 
-			util.Log.Infof("will flush redis[%s],enter [yes] to be continue...", prop.Addrs)
+			util.Log.Infof("will flush cmd_redis[%s],enter [yes] to be continue...", prop.Addrs)
 
 			scanner := bufio.NewScanner(os.Stdin)
 			if scanner.Scan() {

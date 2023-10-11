@@ -1,14 +1,19 @@
 package main
 
 import (
-	"bcd-util/monitor"
+	"bcd-util/cmd_monitor"
+	"bcd-util/cmd_pressTest"
+	"bcd-util/cmd_redis"
+	"bcd-util/cmd_simlator"
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{}
 
 func main() {
-	//rootCmd.AddCommand(redis.Cmd())
-	rootCmd.AddCommand(monitor.Cmd())
+	rootCmd.AddCommand(cmd_redis.Cmd())
+	rootCmd.AddCommand(cmd_monitor.Cmd())
+	rootCmd.AddCommand(cmd_pressTest.Cmd())
+	rootCmd.AddCommand(cmd_simlator.Cmd())
 	rootCmd.Execute()
 }
