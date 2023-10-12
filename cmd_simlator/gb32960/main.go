@@ -266,6 +266,45 @@ func start() {
 
 	engine.Static("/resource", "cmd_simlator/gb32960/resource")
 
+	engine.GET("/parse", func(ctx *gin.Context) {
+		res := make(map[string]any)
+		hexStr := ctx.Query("hex")
+		ctx.Header("content-type", "application/json;charset=utf-8")
+		decodeString, err := hex.DecodeString(hexStr)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			res["msg"] = "解析失败、数据不是16进制"
+			res["succeed"] = false
+			ctx.JSON(200, res)
+			return
+		}
+		buf := parse.ToByteBuf(decodeString)
+
+		var packet *gb32960.Packet
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					util.Log.Errorf("%+v", err)
+					res["msg"] = "解析失败、报文不符合32960协议格式"
+					res["succeed"] = false
+					ctx.JSON(200, res)
+				}
+			}()
+			packet = gb32960.To_Packet(buf, nil)
+		}()
+
+		if packet != nil {
+			packetJson, err := json.Marshal(packet)
+			if err != nil {
+				util.Log.Errorf("%+v", err)
+				return
+			}
+			res["data"] = string(packetJson)
+			res["succeed"] = true
+			ctx.JSON(200, res)
+		}
+	})
+
 	engine.GET("/ws", func(ctx *gin.Context) {
 		//升级websocket
 		wsConn, _, _, err := ws.UpgradeHTTP(ctx.Request, ctx.Writer)
