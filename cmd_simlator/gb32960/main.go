@@ -17,9 +17,11 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"strconv"
 	"time"
 )
 
+var port int
 var period int
 
 func Cmd() *cobra.Command {
@@ -30,6 +32,7 @@ func Cmd() *cobra.Command {
 			start()
 		},
 	}
+	cmd.Flags().IntVarP(&port, "port", "o", 13579, "ws服务监听端口")
 	cmd.Flags().IntVarP(&period, "period", "p", 10, "报文上报间隔(秒)")
 	return &cmd
 }
@@ -288,7 +291,7 @@ func start() {
 			util.Log.Infof("-----exit ws-----")
 		}()
 	})
-	err := engine.Run(":13579")
+	err := engine.Run(":" + strconv.Itoa(port))
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 	}

@@ -20,14 +20,15 @@
         display: inline-block;
     }
 
-    .dataTable td {
+    .dataDiv > table > tbody > tr > td {
         border: solid 1px;
     }
 </style>
 <body>
 <div style="width: 100%;height:850px">
     <div class="dataDiv" style="width: 280px">
-        <table class="dataTable">
+        <table>
+            <tbody>
             <tr>
                 <td style="text-align: right;width: 50px">vin</td>
                 <td>
@@ -53,11 +54,12 @@
                     </button>
                 </td>
             </tr>
-
+            </tbody>
         </table>
     </div>
     <div class="dataDiv" style="width: 900px;">
-        <table class="dataTable" style="width: 100%">
+        <table style="width: 100%">
+            <tbody>
             <tr>
                 <td style="text-align: center;height: 30px">
                     <button onclick="updateRun()" id="update_run_btn" style="color: red" disabled>更新运行信息
@@ -69,6 +71,7 @@
                     <div id="jsoneditor" style="width: 100%; height: 100%;overflow:scroll"></div>
                 </td>
             </tr>
+            </tbody>
         </table>
     </div>
     <div class="dataDiv" style="width: 350px">
@@ -123,7 +126,7 @@
 
         ws.onclose = function () {
             isConnectWs = false
-            isConnectGw=false
+            isConnectGw = false
             $("#ws_connect_btn").css("color", "red")
             $("#ws_connect_btn").prop("disabled", false)
             $("#gw_connect_btn").css("color", "red")
@@ -185,7 +188,7 @@
 
     function connectGw() {
         if (!isConnectWs) {
-            appendToOutput("请先连接ws服务器",1)
+            appendToOutput("请先连接ws服务器", 1)
             return
         }
         ws.send(JSON.stringify(
@@ -199,7 +202,7 @@
 
     function updateRun() {
         if (!isConnectGw) {
-            appendToOutput("请先连接tcp网关",1)
+            appendToOutput("请先连接tcp网关", 1)
             return
         }
         ws.send(JSON.stringify(
