@@ -14,7 +14,6 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -156,7 +155,7 @@ func (e *WsClient) init(vin string, conn net.Conn, onMsg func(msg *InMsg)) error
 	e.packet = temp
 
 	//更新客户端运行数据
-	marshal, err := json.MarshalIndent(e.packet.F_data.(*gb32960.VehicleRunData).F_vehicleCommonData, "", "   ")
+	marshal, err := json.MarshalIndent(e.packet.F_data, "", "   ")
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -258,14 +257,14 @@ func start() {
 		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
 	})
 
-	sub, err2 := fs.Sub(FS, "resource")
-	if err2 != nil {
-		util.Log.Errorf("%+v", err2)
-		return
-	}
-	engine.StaticFS("/resource", http.FS(sub))
+	//sub, err2 := fs.Sub(FS, "resource")
+	//if err2 != nil {
+	//	util.Log.Errorf("%+v", err2)
+	//	return
+	//}
+	//engine.StaticFS("/resource", http.FS(sub))
 
-	//engine.Static("/resource", "cmd_simlator/gb32960/resource")
+	engine.Static("/resource", "cmd_simlator/gb32960/resource")
 
 	engine.GET("/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
@@ -390,8 +389,8 @@ func (e *WsClient) HandleConnectTcp(data string) {
 }
 
 func (e *WsClient) HandleUpdateRunData(data string) error {
-	vehicleCommonData := gb32960.VehicleCommonData{}
-	err := json.Unmarshal([]byte(data), &vehicleCommonData)
+	vehicleRunData := gb32960.VehicleRunData{}
+	err := json.Unmarshal([]byte(data), &vehicleRunData)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 		e.send(&OutMsg{
@@ -403,7 +402,7 @@ func (e *WsClient) HandleUpdateRunData(data string) error {
 			return err
 		}
 	}
-	e.packet.F_data.(*gb32960.VehicleRunData).F_vehicleCommonData = &vehicleCommonData
+	e.packet.F_data = &vehicleRunData
 	e.send(&OutMsg{
 		Flag:    2,
 		Data:    "",
