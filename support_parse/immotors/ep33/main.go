@@ -2,6 +2,8 @@ package ep33
 
 import (
 	"bcd-util/support_parse/parse"
+	"bcd-util/util"
+	"encoding/hex"
 	"reflect"
 	"unsafe"
 )
@@ -1294,32 +1296,12 @@ type Evt_D00B_BMSCellVol struct {
 	F_BMSCellVolV uint8   `json:"BMSCellVolV"`
 }
 
-func To_Evt_D00B_BMSCellVol(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00B_BMSCellVol {
-	_instance := Evt_D00B_BMSCellVol{}
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	F_BMSCellVol_v := _bitBuf.Read(13, true, true)
-	_instance.F_BMSCellVol = float32(F_BMSCellVol_v) * 0.001
-
-	F_BMSCellVolV_v := _bitBuf.Read(1, true, true)
-	_bitBuf.Finish()
-	_instance.F_BMSCellVolV = uint8(F_BMSCellVolV_v)
-
-	return &_instance
-}
-
-func (__instance *Evt_D00B_BMSCellVol) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(parse.Round(_instance.F_BMSCellVol/0.001)), 13, true, true)
-	_bitBuf.Write(int64(_instance.F_BMSCellVolV), 1, true, true)
-	_bitBuf.Finish()
-}
-
 type Evt_D00B struct {
-	F_evtId            uint16                 `json:"evtId"`
-	F_evtLen           uint16                 `json:"evtLen"`
-	F_BMSCellVolSumNum uint8                  `json:"BMSCellVolSumNum"`
-	F_BMSCellVols      []*Evt_D00B_BMSCellVol `json:"BMSCellVols"`
+	F_evtId            uint16             `json:"evtId"`
+	F_evtLen           uint16             `json:"evtLen"`
+	F_BMSCellVolSumNum uint8              `json:"BMSCellVolSumNum"`
+	F_BMSCellVol       []float32          `json:"BMSCellVol"`
+	F_BMSCellVolV      parse.JsonUint8Arr `json:"BMSCellVolV"`
 }
 
 func To_Evt_D00B(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00B {
@@ -1334,11 +1316,15 @@ func To_Evt_D00B(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	_instance.F_BMSCellVolSumNum = F_BMSCellVolSumNum_v
 
 	F_BMSCellVols_len := (int)(F_BMSCellVolSumNum_v)
-	F_BMSCellVols_arr := make([]*Evt_D00B_BMSCellVol, F_BMSCellVols_len, F_BMSCellVols_len)
+	F_BMSCellVol := make([]float32, F_BMSCellVols_len, F_BMSCellVols_len)
+	F_BMSCellVolV := make([]uint8, F_BMSCellVols_len, F_BMSCellVols_len)
 	for i := 0; i < F_BMSCellVols_len; i++ {
-		F_BMSCellVols_arr[i] = To_Evt_D00B_BMSCellVol(_byteBuf, nil)
+		temp := _byteBuf.Read_uint16()
+		F_BMSCellVol[i] = float32(temp>>3) * 0.001
+		F_BMSCellVolV[i] = uint8((temp >> 2) & 0x01)
 	}
-	_instance.F_BMSCellVols = F_BMSCellVols_arr
+	_instance.F_BMSCellVol = F_BMSCellVol
+	_instance.F_BMSCellVolV = F_BMSCellVolV
 	return &_instance
 }
 
@@ -1347,43 +1333,19 @@ func (__instance *Evt_D00B) Write(_byteBuf *parse.ByteBuf, _parentParseContext *
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	_byteBuf.Write_uint8(_instance.F_BMSCellVolSumNum)
-	F_BMSCellVols_arr := _instance.F_BMSCellVols
-	for i := 0; i < len(F_BMSCellVols_arr); i++ {
-		F_BMSCellVols_arr[i].Write(_byteBuf, nil)
+	for i := 0; i < int(_instance.F_BMSCellVolSumNum); i++ {
+		n1 := uint16(_instance.F_BMSCellVol[i] * 1000)
+		n2 := uint16(_instance.F_BMSCellVolV[i])
+		_byteBuf.Write_uint16((n1 << 3) | (n2 << 2))
 	}
 }
 
-type Evt_D00C_BMSCellTem struct {
-	F_BMSCellTem  float32 `json:"BMSCellTem"`
-	F_BMSCellTemV uint8   `json:"BMSCellTemV"`
-}
-
-func To_Evt_D00C_BMSCellTem(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00C_BMSCellTem {
-	_instance := Evt_D00C_BMSCellTem{}
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	F_BMSCellTem_v := _bitBuf.Read(8, true, true)
-	_instance.F_BMSCellTem = float32(F_BMSCellTem_v) - 40
-
-	F_BMSCellTemV_v := _bitBuf.Read(1, true, true)
-	_bitBuf.Finish()
-	_instance.F_BMSCellTemV = uint8(F_BMSCellTemV_v)
-
-	return &_instance
-}
-
-func (__instance *Evt_D00C_BMSCellTem) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(parse.Round((_instance.F_BMSCellTem + 40))), 8, true, true)
-	_bitBuf.Write(int64(_instance.F_BMSCellTemV), 1, true, true)
-	_bitBuf.Finish()
-}
-
 type Evt_D00C struct {
-	F_evtId            uint16                 `json:"evtId"`
-	F_evtLen           uint16                 `json:"evtLen"`
-	F_BMSCellTemSumNum uint8                  `json:"BMSCellTemSumNum"`
-	F_BMSCellTems      []*Evt_D00C_BMSCellTem `json:"BMSCellTems"`
+	F_evtId            uint16             `json:"evtId"`
+	F_evtLen           uint16             `json:"evtLen"`
+	F_BMSCellTemSumNum uint8              `json:"BMSCellTemSumNum"`
+	F_BMSCellTem       []int16            `json:"BMSCellTem"`
+	F_BMSCellTemV      parse.JsonUint8Arr `json:"BMSCellTemV"`
 }
 
 func To_Evt_D00C(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00C {
@@ -1398,11 +1360,15 @@ func To_Evt_D00C(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	_instance.F_BMSCellTemSumNum = F_BMSCellTemSumNum_v
 
 	F_BMSCellTems_len := (int)(F_BMSCellTemSumNum_v)
-	F_BMSCellTems_arr := make([]*Evt_D00C_BMSCellTem, F_BMSCellTems_len, F_BMSCellTems_len)
+	F_BMSCellTem := make([]int16, F_BMSCellTems_len, F_BMSCellTems_len)
+	F_BMSCellTemV := make([]uint8, F_BMSCellTems_len, F_BMSCellTems_len)
 	for i := 0; i < F_BMSCellTems_len; i++ {
-		F_BMSCellTems_arr[i] = To_Evt_D00C_BMSCellTem(_byteBuf, nil)
+		temp := _byteBuf.Read_int16()
+		F_BMSCellTem[i] = (temp >> 8) - 40
+		F_BMSCellTemV[i] = uint8((temp >> 7) & 1)
 	}
-	_instance.F_BMSCellTems = F_BMSCellTems_arr
+	_instance.F_BMSCellTem = F_BMSCellTem
+	_instance.F_BMSCellTemV = F_BMSCellTemV
 	return &_instance
 }
 
@@ -1411,43 +1377,19 @@ func (__instance *Evt_D00C) Write(_byteBuf *parse.ByteBuf, _parentParseContext *
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	_byteBuf.Write_uint8(_instance.F_BMSCellTemSumNum)
-	F_BMSCellTems_arr := _instance.F_BMSCellTems
-	for i := 0; i < len(F_BMSCellTems_arr); i++ {
-		F_BMSCellTems_arr[i].Write(_byteBuf, nil)
+	for i := 0; i < int(_instance.F_BMSCellTemSumNum); i++ {
+		n1 := _instance.F_BMSCellTem[i] + 40
+		n2 := _instance.F_BMSCellTemV[i]
+		_byteBuf.Write_int16((n1 << 8) | int16(n2<<7))
 	}
 }
 
-type Evt_D00D_BMSBusbarTem struct {
-	F_BMSBusbarTem  float32 `json:"BMSBusbarTem"`
-	F_BMSBusbarTemV uint8   `json:"BMSBusbarTemV"`
-}
-
-func To_Evt_D00D_BMSBusbarTem(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00D_BMSBusbarTem {
-	_instance := Evt_D00D_BMSBusbarTem{}
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	F_BMSBusbarTem_v := _bitBuf.Read(8, true, true)
-	_instance.F_BMSBusbarTem = float32(F_BMSBusbarTem_v) - 40
-
-	F_BMSBusbarTemV_v := _bitBuf.Read(1, true, true)
-	_bitBuf.Finish()
-	_instance.F_BMSBusbarTemV = uint8(F_BMSBusbarTemV_v)
-
-	return &_instance
-}
-
-func (__instance *Evt_D00D_BMSBusbarTem) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(parse.Round((_instance.F_BMSBusbarTem + 40))), 8, true, true)
-	_bitBuf.Write(int64(_instance.F_BMSBusbarTemV), 1, true, true)
-	_bitBuf.Finish()
-}
-
 type Evt_D00D struct {
-	F_evtId              uint16                   `json:"evtId"`
-	F_evtLen             uint16                   `json:"evtLen"`
-	F_BMSBusbarTemSumNum uint8                    `json:"BMSBusbarTemSumNum"`
-	F_BMSBusbarTems      []*Evt_D00D_BMSBusbarTem `json:"BMSBusbarTems"`
+	F_evtId              uint16             `json:"evtId"`
+	F_evtLen             uint16             `json:"evtLen"`
+	F_BMSBusbarTemSumNum uint8              `json:"BMSBusbarTemSumNum"`
+	F_BMSBusbarTem       []int16            `json:"BMSBusbarTem"`
+	F_BMSBusbarTemV      parse.JsonUint8Arr `json:"BMSBusbarTemV"`
 }
 
 func To_Evt_D00D(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00D {
@@ -1462,11 +1404,15 @@ func To_Evt_D00D(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	_instance.F_BMSBusbarTemSumNum = F_BMSBusbarTemSumNum_v
 
 	F_BMSBusbarTems_len := (int)(F_BMSBusbarTemSumNum_v)
-	F_BMSBusbarTems_arr := make([]*Evt_D00D_BMSBusbarTem, F_BMSBusbarTems_len, F_BMSBusbarTems_len)
+	F_BMSBusbarTem := make([]int16, F_BMSBusbarTems_len, F_BMSBusbarTems_len)
+	F_BMSBusbarTemV := make([]uint8, F_BMSBusbarTems_len, F_BMSBusbarTems_len)
 	for i := 0; i < F_BMSBusbarTems_len; i++ {
-		F_BMSBusbarTems_arr[i] = To_Evt_D00D_BMSBusbarTem(_byteBuf, nil)
+		temp := _byteBuf.Read_int16()
+		F_BMSBusbarTem[i] = (temp >> 8) - 40
+		F_BMSBusbarTemV[i] = uint8((temp >> 7) & 1)
 	}
-	_instance.F_BMSBusbarTems = F_BMSBusbarTems_arr
+	_instance.F_BMSBusbarTem = F_BMSBusbarTem
+	_instance.F_BMSBusbarTemV = F_BMSBusbarTemV
 	return &_instance
 }
 
@@ -1475,9 +1421,10 @@ func (__instance *Evt_D00D) Write(_byteBuf *parse.ByteBuf, _parentParseContext *
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	_byteBuf.Write_uint8(_instance.F_BMSBusbarTemSumNum)
-	F_BMSBusbarTems_arr := _instance.F_BMSBusbarTems
-	for i := 0; i < len(F_BMSBusbarTems_arr); i++ {
-		F_BMSBusbarTems_arr[i].Write(_byteBuf, nil)
+	for i := 0; i < int(_instance.F_BMSBusbarTemSumNum); i++ {
+		n1 := _instance.F_BMSBusbarTem[i] + 40
+		n2 := _instance.F_BMSBusbarTemV[i]
+		_byteBuf.Write_int16((n1 << 8) | int16(n2<<7))
 	}
 }
 
@@ -1712,4 +1659,85 @@ func (__instance *Packet) Write(_byteBuf *parse.ByteBuf, _parentParseContext *pa
 	_instance := *__instance
 	_parseContext := parse.ToParseContext(__instance, _parentParseContext)
 	Write_F_evts(_byteBuf, _instance.F_evts, _parseContext)
+}
+
+func To_F_evts(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) any {
+	evts := make([]any, 0)
+	for _byteBuf.Readable() {
+		evtId := _byteBuf.Get_uint16()
+		var evt any
+		switch evtId {
+		case 0x0001:
+			evt = To_Evt_0001(_byteBuf, _parentParseContext)
+		case 0x0004:
+			evt = To_Evt_0004(_byteBuf, _parentParseContext)
+		case 0x0005:
+			evt = To_Evt_0005(_byteBuf, _parentParseContext)
+		case 0x0006:
+			evt = To_Evt_0006(_byteBuf, _parentParseContext)
+		case 0x0007:
+			evt = To_Evt_0007(_byteBuf, _parentParseContext)
+		case 0x0008:
+			evt = To_Evt_0008(_byteBuf, _parentParseContext)
+		case 0x0009:
+			evt = To_Evt_0009(_byteBuf, _parentParseContext)
+		case 0x000A:
+			evt = To_Evt_000A(_byteBuf, _parentParseContext)
+		case 0x0801:
+			evt = To_Evt_0801(_byteBuf, _parentParseContext)
+		case 0x0802:
+			evt = To_Evt_0802(_byteBuf, _parentParseContext)
+		case 0x0803:
+			evt = To_Evt_0803(_byteBuf, _parentParseContext)
+		case 0xD006:
+			evt = To_Evt_D006(_byteBuf, _parentParseContext)
+		case 0xD008:
+			evt = To_Evt_D008(_byteBuf, _parentParseContext)
+		case 0xD009:
+			evt = To_Evt_D009(_byteBuf, _parentParseContext)
+		case 0xD00A:
+			evt = To_Evt_D00A(_byteBuf, _parentParseContext)
+		case 0xD00B:
+			evt = To_Evt_D00B(_byteBuf, _parentParseContext)
+		case 0xD00C:
+			evt = To_Evt_D00C(_byteBuf, _parentParseContext)
+		case 0xD00D:
+			evt = To_Evt_D00D(_byteBuf, _parentParseContext)
+		case 0xD00E:
+			evt = To_Evt_D00E(_byteBuf, _parentParseContext)
+		case 0xD00F:
+			evt = To_Evt_D00F(_byteBuf, _parentParseContext)
+		case 0xD01D:
+			evt = To_Evt_D01D(_byteBuf, _parentParseContext)
+		case 0xFFFF:
+			evt = To_Evt_FFFF(_byteBuf, _parentParseContext)
+		default:
+			if evtId >= 0x0001 && evtId <= 0x07FF ||
+				(evtId >= 0x0800 && evtId <= 0x0FFF) ||
+				(evtId >= 0x1000 && evtId <= 0x2FFF) ||
+				(evtId >= 0x3000 && evtId <= 0x4FFF) ||
+				(evtId >= 0x5000 && evtId <= 0x5FFF) ||
+				(evtId >= 0x6000 && evtId <= 0x6FFF) ||
+				(evtId >= 0x7000 && evtId <= 0x8FFF) ||
+				(evtId >= 0x9000 && evtId <= 0xAFFF) {
+				evt = To_Evt_2_6_unknown(_byteBuf, _parentParseContext)
+			} else if evtId >= 0xD000 && evtId <= 0xDFFF {
+				evt = To_Evt_4_x_unknown(_byteBuf, _parentParseContext)
+			} else {
+				evtIdHex := hex.EncodeToString([]byte{uint8(evtId >> 8), uint8(evtId)})
+				util.Log.Warnf("evtId[%s] not support", evtIdHex)
+				return nil
+			}
+
+		}
+		evts = append(evts, evt)
+	}
+	return evts
+}
+
+func Write_F_evts(_byteBuf *parse.ByteBuf, __instance any, _parentParseContext *parse.ParseContext) {
+	evts := __instance.([]any)
+	for _, e := range evts {
+		e.(parse.Writeable).Write(_byteBuf, _parentParseContext)
+	}
 }

@@ -2,10 +2,11 @@ package gb32960
 
 import (
 	"bcd-util/support_parse/parse"
+	"bcd-util/util"
 	"time"
 )
 
-var _Location0 = time.FixedZone("_Location0", 28800)
+var _location_china = time.FixedZone("_location_china", 28800)
 
 type MotorData struct {
 	F_no                    uint8   `json:"no"`
@@ -134,7 +135,7 @@ type PlatformLoginData struct {
 func To_PlatformLoginData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *PlatformLoginData {
 	_instance := PlatformLoginData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
+	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
 	F_sn_v := _byteBuf.Read_uint16()
 	_instance.F_sn = F_sn_v
 
@@ -192,7 +193,7 @@ type PlatformLogoutData struct {
 func To_PlatformLogoutData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *PlatformLogoutData {
 	_instance := PlatformLogoutData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
+	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
 	F_sn_v := _byteBuf.Read_uint16()
 	_instance.F_sn = F_sn_v
 
@@ -651,7 +652,7 @@ type VehicleLoginData struct {
 func To_VehicleLoginData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *VehicleLoginData {
 	_instance := VehicleLoginData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
+	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
 	F_sn_v := _byteBuf.Read_uint16()
 	_instance.F_sn = F_sn_v
 
@@ -713,7 +714,7 @@ type VehicleLogoutData struct {
 func To_VehicleLogoutData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *VehicleLogoutData {
 	_instance := VehicleLogoutData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
+	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
 	F_sn_v := _byteBuf.Read_uint16()
 	_instance.F_sn = F_sn_v
 
@@ -782,28 +783,6 @@ func (__instance *VehiclePositionData) Write(_byteBuf *parse.ByteBuf, _parentPar
 	_byteBuf.Write_uint32(uint32(parse.Round(_instance.F_lat * 1000000)))
 }
 
-type VehicleRunData struct {
-	F_collectTime       time.Time          `json:"collectTime"`
-	F_vehicleCommonData *VehicleCommonData `json:"vehicleCommonData"`
-}
-
-func To_VehicleRunData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *VehicleRunData {
-	_instance := VehicleRunData{}
-	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
-	_parseContext := parse.ToParseContext(&_instance, _parentParseContext)
-	_instance.F_vehicleCommonData = To_F_vehicleCommonData(_byteBuf, _parseContext)
-	return &_instance
-}
-
-func (__instance *VehicleRunData) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	F_collectTime_v := _instance.F_collectTime
-	_byteBuf.Write_slice_uint8([]byte{byte(F_collectTime_v.Year() - 2000), byte(F_collectTime_v.Month()), byte(F_collectTime_v.Day()), byte(F_collectTime_v.Hour()), byte(F_collectTime_v.Minute()), byte(F_collectTime_v.Second())})
-	_parseContext := parse.ToParseContext(__instance, _parentParseContext)
-	Write_F_vehicleCommonData(_byteBuf, _instance.F_vehicleCommonData, _parseContext)
-}
-
 type VehicleStorageTemperatureData struct {
 	F_num     uint8                     `json:"num"`
 	F_content []*StorageTemperatureData `json:"content"`
@@ -860,24 +839,132 @@ func (__instance *VehicleStorageVoltageData) Write(_byteBuf *parse.ByteBuf, _par
 	}
 }
 
-type VehicleSupplementData struct {
-	F_collectTime       time.Time `json:"collectTime"`
-	F_vehicleCommonData any       `json:"vehicleCommonData"`
+type VehicleRunData struct {
+	F_collectTime                   time.Time                      `json:"collectTime"`
+	F_vehicleBaseData               *VehicleBaseData               `json:"vehicleBaseData"`
+	F_vehicleMotorData              *VehicleMotorData              `json:"vehicleMotorData"`
+	F_vehicleFuelBatteryData        *VehicleFuelBatteryData        `json:"vehicleFuelBatteryData"`
+	F_vehicleEngineData             *VehicleEngineData             `json:"vehicleEngineData"`
+	F_vehiclePositionData           *VehiclePositionData           `json:"vehiclePositionData"`
+	F_vehicleLimitValueData         *VehicleLimitValueData         `json:"vehicleLimitValueData"`
+	F_vehicleAlarmData              *VehicleAlarmData              `json:"vehicleAlarmData"`
+	F_vehicleStorageVoltageData     *VehicleStorageVoltageData     `json:"vehicleStorageVoltageData"`
+	F_vehicleStorageTemperatureData *VehicleStorageTemperatureData `json:"vehicleStorageTemperatureData"`
 }
 
-func To_VehicleSupplementData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *VehicleSupplementData {
-	_instance := VehicleSupplementData{}
+func To_VehicleRunData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *VehicleRunData {
+	_instance := VehicleRunData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
-	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _Location0)
-	_parseContext := parse.ToParseContext(&_instance, _parentParseContext)
-	_instance.F_vehicleCommonData = To_F_vehicleCommonData(_byteBuf, _parseContext)
+	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
+	packet := _parentParseContext.Instance.(*Packet)
+	contentLength := int(packet.F_contentLength) - 6
+	beginLeave := _byteBuf.ReadableBytes()
+	for _byteBuf.Readable() {
+		curLeave := _byteBuf.ReadableBytes()
+		if beginLeave-curLeave >= contentLength {
+			break
+		}
+		flag := _byteBuf.Read_uint8()
+		switch flag {
+		case 1:
+			_instance.F_vehicleBaseData = To_VehicleBaseData(_byteBuf, _parentParseContext)
+		case 2:
+			_instance.F_vehicleMotorData = To_VehicleMotorData(_byteBuf, _parentParseContext)
+		case 3:
+			_instance.F_vehicleFuelBatteryData = To_VehicleFuelBatteryData(_byteBuf, _parentParseContext)
+		case 4:
+			_instance.F_vehicleEngineData = To_VehicleEngineData(_byteBuf, _parentParseContext)
+		case 5:
+			_instance.F_vehiclePositionData = To_VehiclePositionData(_byteBuf, _parentParseContext)
+		case 6:
+			_instance.F_vehicleLimitValueData = To_VehicleLimitValueData(_byteBuf, _parentParseContext)
+		case 7:
+			_instance.F_vehicleAlarmData = To_VehicleAlarmData(_byteBuf, _parentParseContext)
+		case 8:
+			_instance.F_vehicleStorageVoltageData = To_VehicleStorageVoltageData(_byteBuf, _parentParseContext)
+		case 9:
+			_instance.F_vehicleStorageTemperatureData = To_VehicleStorageTemperatureData(_byteBuf, _parentParseContext)
+		default:
+			util.Log.Warnf("Parse VehicleCommonData Interrupted,Unknown Flag[%d]", flag)
+			return &_instance
+		}
+	}
 	return &_instance
 }
 
-func (__instance *VehicleSupplementData) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	F_collectTime_v := _instance.F_collectTime
+func (__instance *VehicleRunData) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+	F_collectTime_v := __instance.F_collectTime
 	_byteBuf.Write_slice_uint8([]byte{byte(F_collectTime_v.Year() - 2000), byte(F_collectTime_v.Month()), byte(F_collectTime_v.Day()), byte(F_collectTime_v.Hour()), byte(F_collectTime_v.Minute()), byte(F_collectTime_v.Second())})
-	_parseContext := parse.ToParseContext(__instance, _parentParseContext)
-	Write_F_vehicleCommonData(_byteBuf, _instance.F_vehicleCommonData, _parseContext)
+	if __instance.F_vehicleBaseData != nil {
+		_byteBuf.Write_uint8(1)
+		__instance.F_vehicleBaseData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleMotorData != nil {
+		_byteBuf.Write_uint8(2)
+		__instance.F_vehicleMotorData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleFuelBatteryData != nil {
+		_byteBuf.Write_uint8(3)
+		__instance.F_vehicleFuelBatteryData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleEngineData != nil {
+		_byteBuf.Write_uint8(4)
+		__instance.F_vehicleEngineData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehiclePositionData != nil {
+		_byteBuf.Write_uint8(5)
+		__instance.F_vehiclePositionData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleLimitValueData != nil {
+		_byteBuf.Write_uint8(6)
+		__instance.F_vehicleLimitValueData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleAlarmData != nil {
+		_byteBuf.Write_uint8(7)
+		__instance.F_vehicleAlarmData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleStorageVoltageData != nil {
+		_byteBuf.Write_uint8(8)
+		__instance.F_vehicleStorageVoltageData.Write(_byteBuf, _parentParseContext)
+	}
+	if __instance.F_vehicleStorageTemperatureData != nil {
+		_byteBuf.Write_uint8(9)
+		__instance.F_vehicleStorageTemperatureData.Write(_byteBuf, _parentParseContext)
+	}
+}
+
+func To_F_data(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) any {
+	packet := _parentParseContext.Instance.(*Packet)
+	if packet.F_replyFlag == 0xfe {
+		switch packet.F_flag {
+		case 1:
+			return To_VehicleLoginData(_byteBuf, _parentParseContext)
+		case 2, 3:
+			return To_VehicleRunData(_byteBuf, _parentParseContext)
+		case 4:
+			return To_VehicleLogoutData(_byteBuf, _parentParseContext)
+		case 5:
+			return To_PlatformLoginData(_byteBuf, _parentParseContext)
+		case 6:
+			return To_PlatformLogoutData(_byteBuf, _parentParseContext)
+		default:
+			util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
+			return nil
+		}
+	} else {
+		return ResponseData{content: _byteBuf.Read_slice_uint8(int(packet.F_contentLength))}
+	}
+}
+
+func Write_F_data(_byteBuf *parse.ByteBuf, __instance any, _parentParseContext *parse.ParseContext) {
+	packet := _parentParseContext.Instance.(*Packet)
+	if packet.F_replyFlag == 0xfe {
+		__instance.(parse.Writeable).Write(_byteBuf, _parentParseContext)
+	} else {
+		_byteBuf.Write_slice_uint8(__instance.(ResponseData).content)
+	}
+}
+
+type ResponseData struct {
+	content []byte
 }

@@ -101,3 +101,8 @@ func TestPerformance_deParse(t *testing.T) {
 		//util.Log.Infof("%d", byteBuf.WriterIndex())
 	})
 }
+
+func Test123(t *testing.T) {
+	var n int8 = -100
+	t.Log(int16(n))
+}
