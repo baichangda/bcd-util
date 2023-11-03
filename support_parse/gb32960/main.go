@@ -885,7 +885,7 @@ func To_VehicleRunData(_byteBuf *parse.ByteBuf, _parentParseContext *parse.Parse
 		case 9:
 			_instance.F_vehicleStorageTemperatureData = To_VehicleStorageTemperatureData(_byteBuf, _parentParseContext)
 		default:
-			util.Log.Warnf("Parse VehicleCommonData Interrupted,Unknown Flag[%d]", flag)
+			util.Log.Warnf("Parse VehicleRunData Interrupted,Unknown Flag[%d]", flag)
 			return &_instance
 		}
 	}
