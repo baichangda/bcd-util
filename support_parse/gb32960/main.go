@@ -81,17 +81,7 @@ func To_Packet(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext)
 	F_replyFlag_v := _byteBuf.Read_uint8()
 	_instance.F_replyFlag = F_replyFlag_v
 
-	F_vin_len := 17
-	F_vin_v := _byteBuf.Read_slice_uint8(F_vin_len)
-	F_vin_count := 0
-	for i := F_vin_len - 1; i >= 0; i-- {
-		if F_vin_v[i] == 0 {
-			F_vin_count++
-		} else {
-			break
-		}
-	}
-	_instance.F_vin = string(F_vin_v[:(F_vin_len - F_vin_count)])
+	_instance.F_vin = _byteBuf.Read_string_utf8(17)
 
 	F_encodeWay_v := _byteBuf.Read_uint8()
 	_instance.F_encodeWay = F_encodeWay_v
