@@ -7,11 +7,13 @@ import (
 	"os"
 )
 
+const EnableLogFile = true
+
 var Log = initLog()
 
 func initLog() *zap.SugaredLogger {
 	// 获取日志写入位置
-	writeSyncer := getLogWriter()
+	writeSyncer := getLogWriter(EnableLogFile)
 	// 获取日志编码格式
 	encoder := getEncoder()
 
@@ -48,18 +50,22 @@ func getEncoder() zapcore.Encoder {
 }
 
 // 负责日志写入的位置
-func getLogWriter() zapcore.WriteSyncer {
-	lumberJackLogger := &lumberjack.Logger{
-		Filename:   "./logs/data.log", // 文件位置
-		MaxSize:    1024,              // 进行切割之前,日志文件的最大大小(MB为单位)
-		MaxAge:     30,                // 保留旧文件的最大天数
-		MaxBackups: 10,                // 保留旧文件的最大个数
-		Compress:   true,              // 是否压缩/归档旧文件
+func getLogWriter(logFile bool) zapcore.WriteSyncer {
+	if logFile {
+		lumberJackLogger := &lumberjack.Logger{
+			Filename:   "./logs/data.log", // 文件位置
+			MaxSize:    1024,              // 进行切割之前,日志文件的最大大小(MB为单位)
+			MaxAge:     30,                // 保留旧文件的最大天数
+			MaxBackups: 10,                // 保留旧文件的最大个数
+			Compress:   true,              // 是否压缩/归档旧文件
+		}
+		// AddSync 将 io.Writer 转换为 WriteSyncer。
+		// 它试图变得智能：如果 io.Writer 的具体类型实现了 WriteSyncer，我们将使用现有的 Sync 方法。
+		// 如果没有，我们将添加一个无操作同步。
+		fileWriter := zapcore.AddSync(lumberJackLogger)
+		consoleWriter := zapcore.AddSync(os.Stdout)
+		return zapcore.NewMultiWriteSyncer(consoleWriter, fileWriter)
+	} else {
+		return zapcore.AddSync(os.Stdout)
 	}
-	// AddSync 将 io.Writer 转换为 WriteSyncer。
-	// 它试图变得智能：如果 io.Writer 的具体类型实现了 WriteSyncer，我们将使用现有的 Sync 方法。
-	// 如果没有，我们将添加一个无操作同步。
-	fileWriter := zapcore.AddSync(lumberJackLogger)
-	consoleWriter := zapcore.AddSync(os.Stdout)
-	return zapcore.NewMultiWriteSyncer(consoleWriter, fileWriter)
 }

@@ -1,0 +1,176 @@
+<html>
+<script src="/resource/jquery-3.7.0.min.js"></script>
+
+<body>
+<table style="width: 100%;height: 100%">
+    <tr>
+        <td id="imgTd" style="width:60%;border: solid 1px">
+            <table style="width: 100%;height: 100%">
+                <tr style="height: 30px">
+                    <td style="border-bottom: solid 1px">
+                        <label>识别语言:</label>
+                        <select id="languageSelect" style="width: 100px">
+                            <option value="CHN_ENG">中英文</option>
+                            <option value="ENG">英语</option>
+                            <option value="RUS">俄语</option>
+                            <option value="JAP">日语</option>
+                            <option value="KOR">韩语</option>
+                            <option value="FRE">法语</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="text-align: center;vertical-align: center">
+                        <img id="imgEle" style="max-width: 100%;max-height: 100%" src=""/>
+                    </td>
+                </tr>
+            </table>
+
+        </td>
+        <td style="border: solid 1px">
+            <table style="width: 100%;height: 100%">
+                <tr style="height: 70%">
+                    <td>
+                        <textarea id="resTextarea" style="width: 100%;height: 100%"></textarea>
+                    </td>
+                </tr>
+                <tr style="height: 20px">
+                    <td>
+                        <button onclick="clearOutput()">清除日志
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <textarea readonly id="output" style="width: 100%;height: 100%"></textarea>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+</body>
+<script type="text/javascript">
+
+    $(function () {
+        $("#imgTd").on({
+            paste: async function () {
+                console.log("paste")
+                let clipboard = navigator.clipboard;
+                let clipboardItems = await clipboard.read();
+                let item = clipboardItems[0]
+                let type = item.types[0];
+                if (type.indexOf("image") !== -1) {
+                    let blob = await item.getType(type);
+                    let base64 = btoa(
+                        new Uint8Array(await blob.arrayBuffer())
+                            .reduce((data, byte) => data + String.fromCharCode(byte), '')
+                    );
+                    $("#imgEle").prop("src", "data:" + type + ";base64, " + base64)
+                    let language = $("#languageSelect").val();
+                    let languageText = $("#languageSelect option:selected").text()
+                    appendToOutput("开始识别内容、语言[" + languageText + "]")
+                    $.ajax({
+                        method: "post",
+                        url: "/ocr",
+                        data: language + "," + base64,
+                        success: function (res) {
+                            if (res.charAt(0) === '0') {
+                                appendToOutput("识别成功")
+                                $("#resTextarea").val(res.substring(1))
+                            } else {
+                                appendToOutput("识别失败、错误信息为:\n" + res.substring(1))
+                            }
+                        }
+                    })
+                } else {
+                    appendToOutput("粘贴内容类型[" + type + "]不是图片")
+                }
+            }
+        })
+    });
+
+    let outputCount = 0
+    const maxOutputCount = 20
+
+    function clearOutput() {
+        $("#output").val("")
+        outputCount = 0
+    }
+
+    function appendToOutput(msg) {
+        let output = $("#output");
+        if (outputCount >= maxOutputCount) {
+            output.val("")
+            outputCount = 0;
+        }
+        outputCount++
+        let val = output.val();
+        let date = new Date();
+        let pre = getNowDateStr(date)
+        const curMsg = pre + "\n" + msg + "\n"
+        if (val === "") {
+            output.val(curMsg)
+        } else {
+            output.val(curMsg + "\n" + val)
+        }
+    }
+
+
+    function getNowDateStr(date) {
+        const fullYear = date.getFullYear();
+        const month = date.getMonth() + 1;
+        let monthStr
+        if (month < 10) {
+            monthStr = "0" + month
+        } else {
+            monthStr = month
+        }
+
+        const day = date.getDate();
+        let dayStr
+        if (day < 10) {
+            dayStr = "0" + day
+        } else {
+            dayStr = day
+        }
+
+        const hour = date.getHours();
+        let hourStr
+        if (hour < 10) {
+            hourStr = "0" + hour
+        } else {
+            hourStr = hour
+        }
+
+        const minute = date.getMinutes();
+        let minuteStr
+        if (minute < 10) {
+            minuteStr = "0" + minute
+        } else {
+            minuteStr = minute
+        }
+
+        const second = date.getSeconds();
+        let secondStr
+        if (second < 10) {
+            secondStr = "0" + second
+        } else {
+            secondStr = second
+        }
+
+        const ms = date.getMilliseconds();
+        let msStr
+        if (ms < 10) {
+            msStr = "00" + ms;
+        } else if (ms < 100) {
+            msStr = "0" + ms;
+        } else {
+            msStr = ms;
+        }
+        return fullYear + "-" + monthStr + "-" + dayStr + " " + hourStr + ":" + minuteStr + ":" + secondStr + "." + msStr
+
+    }
+</script>
+</html>
