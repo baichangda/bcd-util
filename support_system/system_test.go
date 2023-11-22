@@ -1,4 +1,4 @@
-package client
+package support_system
 
 import (
 	"bcd-util/util"
