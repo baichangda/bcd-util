@@ -81,5 +81,5 @@ func Cmd() *cobra.Command {
 
 func Main() {
 	cobra.MousetrapHelpText = ""
-	Cmd().Execute()
+	_ = Cmd().Execute()
 }
