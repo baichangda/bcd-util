@@ -17,9 +17,6 @@ func main() {
 	rootCmd.AddCommand(cmd_pressTest.Cmd())
 	rootCmd.AddCommand(cmd_simlator.Cmd())
 	rootCmd.AddCommand(cmd_ocr.Cmd())
-	err := rootCmd.Execute()
-	if err != nil {
-		panic(err)
-	}
+	_ = rootCmd.Execute()
 	//cmd_ocr.Main()
 }
