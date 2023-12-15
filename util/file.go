@@ -7,19 +7,24 @@ import (
 	"os"
 )
 
-func ReadSplitAll(file string, split byte) ([][]byte, error) {
+func ReadSplitAll_file(file string, split byte) ([][]byte, error) {
 	open, err := os.Open(file)
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
 	defer open.Close()
-	reader := bufio.NewReader(open)
+	return ReadSplitAll_reader(open, split)
+}
 
+func ReadSplitAll_reader(reader io.Reader, split byte) ([][]byte, error) {
+	bufReader, ok := reader.(*bufio.Reader)
+	if !ok {
+		bufReader = bufio.NewReader(reader)
+	}
 	var res [][]byte
-
 	for {
 		last := false
-		bytes, err := reader.ReadBytes(split)
+		bytes, err := bufReader.ReadBytes(split)
 		if err == nil {
 			bytes = bytes[:len(bytes)-1]
 		} else {
@@ -38,16 +43,23 @@ func ReadSplitAll(file string, split byte) ([][]byte, error) {
 	return res, nil
 }
 
-func ReadSplitOneByOne(file string, split byte, fn func(data []byte) (bool, error)) error {
+func ReadSplitOneByOne_file(file string, split byte, fn func(data []byte) (bool, error)) error {
 	open, err := os.Open(file)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 	defer open.Close()
-	reader := bufio.NewReader(open)
+	return ReadSplitOneByOne_reader(open, split, fn)
+}
+
+func ReadSplitOneByOne_reader(reader io.Reader, split byte, fn func(data []byte) (bool, error)) error {
+	bufReader, ok := reader.(*bufio.Reader)
+	if !ok {
+		bufReader = bufio.NewReader(reader)
+	}
 	for {
 		last := false
-		bytes, err := reader.ReadBytes(split)
+		bytes, err := bufReader.ReadBytes(split)
 		if err == nil {
 			bytes = bytes[:len(bytes)-1]
 		} else {
@@ -69,6 +81,5 @@ func ReadSplitOneByOne(file string, split byte, fn func(data []byte) (bool, erro
 			break
 		}
 	}
-
 	return nil
 }

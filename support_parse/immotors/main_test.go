@@ -25,7 +25,7 @@ func BenchmarkToPacket(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		byteBuf.ResetReaderIndex()
 		byteBuf.ResetWriterIndex()
-		_ = To_Packet(byteBuf, nil)
+		_ = To_Packet(byteBuf)
 	}
 }
 
@@ -37,14 +37,14 @@ func BenchmarkPacket_Write(b *testing.B) {
 		b.Fatalf("%+v", err)
 	}
 	byteBuf := parse.ToByteBuf(decodeString)
-	packet := To_Packet(byteBuf, nil)
+	packet := To_Packet(byteBuf)
 	res := parse.ToByteBuf_capacity(1024)
 	res.MarkReaderIndex()
 	res.MarkWriterIndex()
 	for i := 0; i < b.N; i++ {
 		res.ResetReaderIndex()
 		res.ResetWriterIndex()
-		packet.Write(res, nil)
+		packet.Write(res)
 	}
 }
 
@@ -57,12 +57,12 @@ func TestPacket_Write(t *testing.T) {
 		t.Fatalf("%+v", err)
 	}
 	byteBuf := parse.ToByteBuf(decodeString)
-	packet := To_Packet(byteBuf, nil)
+	packet := To_Packet(byteBuf)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
 	res := parse.ToByteBuf_empty()
-	packet.Write(res, nil)
+	packet.Write(res)
 
 	res_bytes := res.ToBytes()
 	res_hex := strings.ToUpper(hex.EncodeToString(res_bytes))
@@ -82,7 +82,7 @@ func TestPacket_Write(t *testing.T) {
 }
 
 func TestPacket_Write_base64(t *testing.T) {
-	base64Str := "H4sIAAAAAAAAA+2YXWgcVRTHz+xutpPNJhlblVn86LVg2bbQTGeT7G5Ndme28aEScZugplClSgpiHpqHPhh8cBJTXGVRURFRLD4UIha/oMXKbszWxFZrpSMBKQplEUtqH6TVrMSYdL3zdecj7kfTjRLI3NyZO/fcM7PM+Z3/uQQogAN9Z9vBDfhwN4NnQwoPXFCHz9SLx8AL7hnlb93VZDFXTAFNnQNqXADf2EhfP17TqKwDkL0Qq4sMi1sQ90wb9T4UF0BiKeiA4cWF4nUJ8oAoGKQa/p67BSgau2w8dXBy5nU4knjPc0J5Ncj1sB6gQR1Dcx6fvPjZcgN80z/EDtFDCHcGN5Z0hM9Kp/WxZlXG7FAQN2VOOSOb1fBmbTNI90L6E7V7ZcacZXQf7Yp0b1b/deY9Ik9nyFi1yH4I+OPw701uxEZBHQrgvMpNEGC5tu7k/bvadoXCoRAndom9HM+1ca1huRn8H0p9MAwSBGAAZBZupTe8nNqTFt9OSl9de/rqJwAIf8sAMN+1TF0sbANyyHeBH2Cv+tnpg9txaKgD6pjS7LQLoFjEVzdQ7fh+2gtfgOPwPEFBbvOzPsH1xwux9fvSsV/ij4uznSnd+pMLhNOFj4WT3740sedOKX7py4cSv30Q1q0XXDAxMjsu3v4pZAbqk5m9vwqJc/Np3fqZC0Rv/5PCG6/w4xcG62Mn9+cnN+0+plun8XvveGeTuD1Qn3nMk8r6Fl9NnDi8WbfmKZjwjv4gJrZu2xlJ57JnpblJ5srlaYB7FdSzPb75zI8d92Te3d2jeVDFLPvmI52fH+qCTO7oz9BU59Hm1RQJV0iN0SpSY7B8ajAkNabWvSY5U8NTk9RAttRgdV8zHayQI+LFWtII6XNmaliTirX5VJcaeLyCqXFNQjBSKjV+P2pJjdMXC1vRslPDwUukDC/dxamqpLQCL80AlzVeTs1UywtDeKFJvJRIAJE4VrWZETN5MeWRscTRGCFH7I21BmdBvZu82Jk1eQla3m6uRtaVFl6EFeDl+VK8zL5FeHmw5UyssEWoFS/RCvoi6bzA8ktvk50XoZrSy6hk0CTSRgRoGwk3xgtj4QXZGqP62fUluKT0sqQxFXhBN8tLvLrSW5KXP9MWXs5jXvYvjxdpCS87y+pLdVs1rC9juaW8bPxL46WR8DI5punL8bnK+lI9L8ySemREm7F42nkxt2pBi74wRF/MdzIWElji+//zoujLaCle5iQLL/LdhWC+VrzcV1ZfjhN9uZGt/SKAVV/wz/u6tL64K/LijBNLahRt4cG5f7FXIae+GJVHa7TKC0t4MXYpjKNbdyoGL8iiOna6mRXl5TmJhcOleJk/5OClZvrSUaEepdd4WYW8LDxFeGlsOX+khrx0VlmPpDVeVhEv1/etFC+xCrwY+pJb42X18DIASZMXDm675Ec6LdTN8hIvW4+y5P8v/x0vPni4u/eBR3tauWg42YtP4dZIdy8fEneExSjfziV4LhyJRtq5KB8KRziO4/nIjgjfChWONRBrAKKryw5iwPi6ywdRmTvz0fdX/gFfv1hWNBcAAA=="
+	base64Str := "H4sIAAAAAAAAA+2aXWwUVRTHz4rAAgURje4aRUSImvixXVpooy2tSuJHjURAQHiopmr0iQeMzZakm+gDfjfRh2K1johxSCS5idEMSMxgYjIxmNyElzG+THyaKOpoxDQBrHfOOffudN1pd1cCPmwnszN75947dzbz/93/ObeQAXh69x3jMA/U35W74PKrjm04M/w3zF+76Zn+za/BAoD5AItgYTQ4vW96L2QzJyHzhwuLD8+HJ1STpWpXfcgF0HtDfltuzf1DOzszNmxcBeVcBlbDC+fPA5QhgFUZ2ANnz569CYpZ1Waw/9HBa8Vtk5M3vvx5fGuQi2AFwJKMG3+5IlCdzv9WlS7JHDg5AqWoFKjNx6Nfckuy5JUctQXq3FMlU6pEqqOPVzxV6uIn1YprBHglUN9kKVT9hOo8whYBtgxw87AHqVr62E63d7B2oFqF3K+LtQTWkyVLfVp8ZxvrU3tbfQo8uqVxLJniWtRzXFvg5uCZy3e3sY2l2gg8pxpxuY3PIXGzsV+patnY2lL7ON6Pfh/du1Par8rH1PUy9mfhuHULgdeoD0udCTyL+xB8LrCnMdWLhd/H8VkD2Qb5tj7ohXjfyMc+6MGjXArtOboQb/eos151qZe3uKwHt16zq0bLIJ8rdA5s3vRw+31d7e2FQv/9XZsLxUJHob1dXgFtR0Z3wCvqfcrD8yBzcHX25tHtb684+Fl/+ZupRW37AF5S70weln931893d+YHgf/K8gZoUy/qZfGXKHtiYRYyQ/F5NkMVsurK9LQ6zoOtS8oApxbAV1D1t9TNQP/KO3f2337Px8cXPz7QUxx94Osvnj1aXe//8XcKYK06zDu2851dx04O/3T0xLm36Epm+vjEj+t6vj+1Fr78qHsbLNs6SOWIggMpCMgiAvZO72MElGsj4JHcmq2EgN4/DQLOTf9dGwFPfaIQYNWBACUbjYAQJeqgiGLRkNB8BQkSRmAQ4Jl6Lko/5PYugmRKbYHaKyAIsY6H5z7DwjN9uQYBkSnxUd6S5eooYXiIJ4GSrUaAh5jwGFYVTDkGVwJhEuDd4/ZarDY+CaFI4B1drCPxWoyAMZamhfIU3G98tLjOGOLEUiJ2WfgBC1wgvCxGhYW1bRyzjyXCoIogQqNKImBjswjobQ4Br6YhYNmeBAJ+UQiwtB5aCKgbAe/O4gJ2KwQMMwL6aiOgO3eoAQQ8eYs4PHlwJgIuTyDgsqEkAkKDAB9fcXrJQxK+QoCP8glYQi7LUeLrK3n+rh8BrrmLy73Ercg/uCxbaRAgWT4eA0oiMkiyLqOAnICHsJJYj6QvDFLmRoCLSJHsgsgnxL2Po3QFI8DGcXh4haTtYWm872d0kktxGAG28SJxj9UI0B4lDQEX0wX8PpqD19IQsHwogYBfR1ouAOpEwFNUjgiYmCMQGK64gE9rIODBRhFQnwtQsplCCdNcHrBdJnuOJr9OBEhEQJBAAM3rPgcCNPtXAgEXN4eNPSEkxBJpEOAzBlyUKkk7vn/IAq8HAXqGdxgiur5GgGfmYsHI0AggJIybmjTDUyDg8j2FcQE2uwCBz2Mjtipmf24ElBNu4wIgoEkXkIqAFTsSCIgUAspaDy0E1I2A9+ZwAXtnR0B/4wg42BgCaN72jISSLsA3dp8Eoudyh+HgGwSEHFpQeBEaRDBQTEtpXIAOBCJ0AdqIuwghB8XiYlgScG7AYwTYLG8KBFwTCEie2XUg4BgX4OMohInEyfo7BhgCn4N2Mvs+mn+qTTO8h304iftrBJQTLqA6ECBXYGENgb9JJaCQDAHbIEP9lpcoF/B6GgKuHkgg4PRIKxCAJhDwfp2BQAoCenKHhv6FgNR0YC0E1AwEEAGREa1v0l0OCy1Gg8/pQH+GC/CMCwhwfm8UAdIk/iiFGGEugIw24YUkTzOqZBOfDASqEMCw0j3rQKA+BGjfIdmrODxb66SfYHlL/g2kQYD2CfuNqCvjcxkELo7B5l/Wxxo0Mgq7rBQEXMxcQBwIvJGGgGv6Egj4baIVCEATCJhkBPxVIx24e3o4mQtICQSGhp6bgYAXG0NAejowGQhoo+toF1AnAnyc2VRUj2sMofqkPsngU7ZArwxUwg3qKUykA71EIECxv+BAIOC8gYcjqxcBHovMRUiFiBWK1QW7mAoCnFQECGPtvUTvhBCrpNcLKOsQj09jx2sAARZjxroQLqDJQCAVAbmOJALu7sz3aT20EDArAoaoHBHwwRwI2FNxAUdqLQrm11S7gNkRcHjyUGOBQGQQIBMICEeyKAqd9COR+mzYPZR4xFKPX/6pEUAIUK9T7AV0tiA0CPCrXEASAUkXEBgEhCZfTyOjOd5nTKgSNVLyGT4/hWNAI9iDhFiXbL5tMDMXAhx2AIKRR5DSCLE49TeG5YJzFRoBIuEjbGxBwZNjPEO1C0gi4GKvCLyZhoDrbk0g4MxEKxcATSDAmhUBM9KBtRDwoEHAxrY0BKw2CHjmxTpXBEayKNiIDXyIAiVxRyT8keW8XkAClowA7QSaRYDkjEMlF6AXBSU7AdfM2JTFDw14CAEOA4NibzWSGQjwTLqyPgTQ/Eyw89knxCO1TbJQIyBkSGl0jJdovaASCIQmbHA5HeiwC3ATLsDj+5J3uPQIiAOBt9IQcP31yUVBhQBX66GFgLoR8OGs/xcwJwJ66kBAgy5gMWwb2PLQ9sc6Ct07Nm8pFIrrC8WBLcV1Xe0d/YViR8e9hcKGru6u9YXu4roNXQVVodi9vnNDx1y/ENuLKrZQKC45z9gUW5ArxJaIyRLhokPI6YjqCCPiFlNYFpT0ckHAe8yDgBMUQYNs0RGGx88QlCh/qSMMegrJrAiYYQFfC5gHxAQdp/hsb6h3HWGMJdii7UUjbBE8qph30X9lS5N5xlS2rFyu2LJKrzb+0EoyQCNsiR//dH7vwX8AsuY4FIcoAAA="
 	bytes, err := base64.StdEncoding.DecodeString(base64Str)
 	if err != nil {
 		t.Fatalf("%+v", err)
@@ -97,10 +97,9 @@ func TestPacket_Write_base64(t *testing.T) {
 		t.Fatalf("%+v", err)
 	}
 	byteBuf := parse.ToByteBuf(decodeString)
-	packet := To_Packet(byteBuf, nil)
+	packets := To_Packets(byteBuf)
 	res := parse.ToByteBuf_empty()
-	packet.Write(res, nil)
-
+	Write_Packets(packets, res)
 	res_bytes := res.ToBytes()
 	res_hex := strings.ToUpper(hex.EncodeToString(res_bytes))
 	t.Logf("%s", hexStr)
@@ -127,7 +126,7 @@ func TestPerformance_parse(t *testing.T) {
 		t.Fatalf("%+v", err)
 	}
 	parse.TestMultiThreadPerformance_parse(decodeString, 1, 1000000000, func(byteBuf *parse.ByteBuf) {
-		To_Packet(byteBuf, nil)
+		To_Packets(byteBuf)
 		//util.Log.Infof("%d", byteBuf.ReaderIndex())
 	})
 }
@@ -139,10 +138,10 @@ func TestPerformance_deParse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	packet := To_Packet(parse.ToByteBuf(decodeString), nil)
+	packet := To_Packet(parse.ToByteBuf(decodeString))
 	buf := parse.ToByteBuf_capacity(1024)
 	parse.TestMultiThreadPerformance_deParse(buf, 1, 1000000000, func(byteBuf *parse.ByteBuf) {
-		packet.Write(byteBuf, nil)
+		packet.Write(byteBuf)
 		//util.Log.Infof("%d", byteBuf.WriterIndex())
 	})
 }

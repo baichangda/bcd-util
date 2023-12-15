@@ -1,0 +1,253 @@
+<html>
+<link href="/resource/jsoneditor.min.css" rel="stylesheet" type="text/css">
+<script src="/resource/jquery-3.7.0.min.js"></script>
+<script src="/resource/jsoneditor.min.js"></script>
+
+<style>
+    input {
+        width: 200px;
+    }
+
+    select {
+        width: 200px;
+    }
+
+    .dataDiv {
+        border: 1px dotted;
+        height: 100%;
+        margin: 1px;
+        float: left;
+        display: inline-block;
+    }
+
+    .dataTable td {
+        border: solid 1px;
+    }
+</style>
+<body>
+<div style="width: 100%;height:850px">
+    <div class="dataDiv" style="width: 280px">
+        <table class="dataTable">
+            <tr>
+                <td style="text-align: right;width: 50px">vin</td>
+                <td>
+                    <input id="vin" value="LSJE36096MS140495"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="text-align: right">车型</td>
+                <td>
+                    <input id="vehicleType" value="EP33"/>
+                </td>
+            </tr>
+            <tr>
+                <td style="border-bottom: 1px dotted;text-align: center" colspan="2">
+                    <button onclick="connectWs()" style="color: red" id="ws_connect_btn">连接ws服务器
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="dataDiv" style="width: 1000px;">
+        <table class="dataTable" style="width: 100%">
+            <tr>
+                <td style="text-align: center;height: 30px">
+                    <button onclick="updateRun()" id="update_run_btn" style="color: red" disabled>更新运行信息
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td style="width: 100%;height: 810px">
+                    <div id="jsoneditor" style="width: 100%; height: 100%;overflow:scroll"></div>
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="dataDiv" style="width: 250px">
+        <div style="height: 30px">
+            <div style="width: 100%;float: left">
+                <button onclick="clearLeftOutput()">清除日志
+                </button>
+            </div>
+        </div>
+        <div style="height: 820px">
+            <div style="width: 100%;float: left">
+                <textarea id="leftOutput" readonly style="width: 100%;height: 100%"></textarea>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+    // create the editor
+    const container = document.getElementById("jsoneditor")
+    const options = {}
+    const editor = new JSONEditor(container, options)
+
+    function getWsUrl() {
+        let loc = window.location, new_uri;
+        if (loc.protocol === "https:") {
+            new_uri = "wss:";
+        } else {
+            new_uri = "ws:";
+        }
+        return new_uri + "//" + loc.host + "/ws";
+    }
+
+    let ws
+    let isConnectWs = false
+
+    function connectWs() {
+        let vin = $("#vin").val();
+        let vehicleType = $("#vehicleType").val();
+        ws = new WebSocket(getWsUrl() + "?vin=" + vin + "&vehicleType=" + vehicleType);
+        ws.onopen = function () {
+            isConnectWs = true
+            $("#ws_connect_btn").css("color", "green")
+            $("#ws_connect_btn").prop("disabled", true)
+            $("#update_run_btn").css("color", "green")
+            $("#update_run_btn").prop("disabled", false)
+            appendToLeftOutput("连接ws服务器成功,开始定时发送数据,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
+        };
+
+        ws.onmessage = function (evt) {
+            onMsg(evt.data)
+        };
+
+        ws.onclose = function () {
+            isConnectWs = false
+            $("#ws_connect_btn").css("color", "red")
+            $("#ws_connect_btn").prop("disabled", false)
+            $("#update_run_btn").css("color", "red")
+            $("#update_run_btn").prop("disabled", true)
+            appendToLeftOutput("ws服务断开,停止发送,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
+        };
+    }
+
+    function onMsg(msg) {
+        let parse = JSON.parse(msg);
+        switch (parse.flag) {
+            case 1: {
+                if (parse.succeed) {
+                    appendToLeftOutput("更新运行信息成功", 2)
+                } else {
+                    appendToLeftOutput("更新运行信息失败", 2)
+                }
+                break
+            }
+            case 101: {
+                editor.set(JSON.parse(parse.data))
+                appendToLeftOutput("接收到服务器运行数据,更新客户端运行信息", 2)
+                break
+            }
+            case 102: {
+                appendToLeftOutput("发送数据到kafka成功", 2)
+                break
+            }
+        }
+    }
+
+    function updateRun() {
+        if (!isConnectWs) {
+            appendToLeftOutput("请先连接ws服务器")
+            return
+        }
+        ws.send(JSON.stringify(
+            {
+                flag: 1,
+                data: JSON.stringify(editor.get())
+            }
+        ))
+        appendToLeftOutput("发送更新运行信息到ws成功", 1)
+    }
+
+    let leftOutputCount = 0
+    const maxOutputCount = 20
+
+    function clearLeftOutput() {
+        $("#leftOutput").val("")
+        leftOutputCount = 0
+    }
+
+    function appendToLeftOutput(msg, type) {
+        let output = $("#leftOutput");
+        if (leftOutputCount >= maxOutputCount) {
+            output.val("")
+            leftOutputCount = 0;
+        }
+        leftOutputCount++
+        let val = output.val();
+        let date = new Date();
+        let pre = getNowDateStr(date)
+        if (type === 1) {
+            pre += "(client)"
+        } else {
+            pre += "(server)"
+        }
+        const curMsg = pre + "\n" + msg + "\n"
+        if (val === "") {
+            output.val(curMsg)
+        } else {
+            output.val(curMsg + "\n" + val)
+        }
+    }
+
+
+    function getNowDateStr(date) {
+        const fullYear = date.getFullYear();
+        const month = date.getMonth() + 1;
+        let monthStr
+        if (month < 10) {
+            monthStr = "0" + month
+        } else {
+            monthStr = month
+        }
+
+        const day = date.getDate();
+        let dayStr
+        if (day < 10) {
+            dayStr = "0" + day
+        } else {
+            dayStr = day
+        }
+
+        const hour = date.getHours();
+        let hourStr
+        if (hour < 10) {
+            hourStr = "0" + hour
+        } else {
+            hourStr = hour
+        }
+
+        const minute = date.getMinutes();
+        let minuteStr
+        if (minute < 10) {
+            minuteStr = "0" + minute
+        } else {
+            minuteStr = minute
+        }
+
+        const second = date.getSeconds();
+        let secondStr
+        if (second < 10) {
+            secondStr = "0" + second
+        } else {
+            secondStr = second
+        }
+
+        const ms = date.getMilliseconds();
+        let msStr
+        if (ms < 10) {
+            msStr = "00" + ms;
+        } else if (ms < 100) {
+            msStr = "0" + ms;
+        } else {
+            msStr = ms;
+        }
+        return fullYear + "-" + monthStr + "-" + dayStr + " " + hourStr + ":" + minuteStr + ":" + secondStr + "." + msStr
+
+    }
+</script>
+</html>
+

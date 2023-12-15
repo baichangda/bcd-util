@@ -13,7 +13,7 @@ type Evt_0001 struct {
 	F_TBOXSysTim int64  `json:"TBOXSysTim"`
 }
 
-func To_Evt_0001(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0001 {
+func To_Evt_0001(_byteBuf *parse.ByteBuf) *Evt_0001 {
 	_instance := Evt_0001{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -26,7 +26,7 @@ func To_Evt_0001(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0001) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0001) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -41,7 +41,7 @@ type Evt_0004 struct {
 	F_GPSSts    uint8   `json:"GPSSts"`
 }
 
-func To_Evt_0004(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0004 {
+func To_Evt_0004(_byteBuf *parse.ByteBuf) *Evt_0004 {
 	_instance := Evt_0004{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -60,7 +60,7 @@ func To_Evt_0004(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0004) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0004) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -77,7 +77,7 @@ type Evt_0005 struct {
 	F_GNSSDirection float64 `json:"GNSSDirection"`
 }
 
-func To_Evt_0005(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0005 {
+func To_Evt_0005(_byteBuf *parse.ByteBuf) *Evt_0005 {
 	_instance := Evt_0005{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -96,7 +96,7 @@ func To_Evt_0005(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0005) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0005) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -112,7 +112,7 @@ type Evt_0006 struct {
 	F_VDop  float64 `json:"VDop"`
 }
 
-func To_Evt_0006(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0006 {
+func To_Evt_0006(_byteBuf *parse.ByteBuf) *Evt_0006 {
 	_instance := Evt_0006{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -128,7 +128,7 @@ func To_Evt_0006(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0006) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0006) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -144,7 +144,7 @@ type Evt_0007 struct {
 	F_AcceZ float64 `json:"AcceZ"`
 }
 
-func To_Evt_0007(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0007 {
+func To_Evt_0007(_byteBuf *parse.ByteBuf) *Evt_0007 {
 	_instance := Evt_0007{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -165,7 +165,7 @@ func To_Evt_0007(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0007) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0007) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -183,7 +183,7 @@ type Evt_0008 struct {
 	F_cellMNC uint16 `json:"cellMNC"`
 }
 
-func To_Evt_0008(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0008 {
+func To_Evt_0008(_byteBuf *parse.ByteBuf) *Evt_0008 {
 	_instance := Evt_0008{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -201,7 +201,7 @@ func To_Evt_0008(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0008) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0008) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -219,7 +219,7 @@ type Evt_0009 struct {
 	F_CellID  uint32 `json:"CellID"`
 }
 
-func To_Evt_0009(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0009 {
+func To_Evt_0009(_byteBuf *parse.ByteBuf) *Evt_0009 {
 	_instance := Evt_0009{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -235,7 +235,7 @@ func To_Evt_0009(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0009) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0009) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -253,7 +253,7 @@ type Evt_000A struct {
 	F_GNSSSATS           uint8  `json:"GNSSSATS"`
 }
 
-func To_Evt_000A(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_000A {
+func To_Evt_000A(_byteBuf *parse.ByteBuf) *Evt_000A {
 	_instance := Evt_000A{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -280,7 +280,7 @@ func To_Evt_000A(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_000A) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_000A) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -305,7 +305,7 @@ type Evt_0800 struct {
 	F_TrShftLvrPosV uint8   `json:"TrShftLvrPosV"`
 }
 
-func To_Evt_0800(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0800 {
+func To_Evt_0800(_byteBuf *parse.ByteBuf) *Evt_0800 {
 	_instance := Evt_0800{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -336,7 +336,7 @@ func To_Evt_0800(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0800) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0800) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -358,7 +358,7 @@ type Evt_0801 struct {
 	F_BrkPdlPos float32 `json:"BrkPdlPos"`
 }
 
-func To_Evt_0801(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0801 {
+func To_Evt_0801(_byteBuf *parse.ByteBuf) *Evt_0801 {
 	_instance := Evt_0801{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -373,7 +373,7 @@ func To_Evt_0801(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0801) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0801) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	F_skip_len := 5
@@ -390,7 +390,7 @@ type Evt_0802 struct {
 	F_VehSpdAvgDrvnV uint8   `json:"VehSpdAvgDrvnV"`
 }
 
-func To_Evt_0802(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0802 {
+func To_Evt_0802(_byteBuf *parse.ByteBuf) *Evt_0802 {
 	_instance := Evt_0802{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -408,7 +408,7 @@ func To_Evt_0802(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0802) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0802) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -427,7 +427,7 @@ type Evt_0803 struct {
 	F_BrkPdlPosV uint8  `json:"BrkPdlPosV"`
 }
 
-func To_Evt_0803(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_0803 {
+func To_Evt_0803(_byteBuf *parse.ByteBuf) *Evt_0803 {
 	_instance := Evt_0803{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -448,7 +448,7 @@ func To_Evt_0803(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_0803) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_0803) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -466,10 +466,10 @@ type Evt_2_6_unknown struct {
 	F_data  [6]int8 `json:"data"`
 }
 
-func To_Evt_2_6_unknown(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_2_6_unknown {
+func To_Evt_2_6_unknown(_byteBuf *parse.ByteBuf) *Evt_2_6_unknown {
 	return (*Evt_2_6_unknown)(unsafe.Pointer(unsafe.SliceData(_byteBuf.Read_slice_uint8(8))))
 }
-func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_slice_uint8(*(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Data: uintptr(unsafe.Pointer(__instance)),
 		Len:  8,
@@ -478,12 +478,12 @@ func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf, _parentParseCo
 }
 
 type Evt_4_x_unknown struct {
-	F_evtId  uint16 `json:"evtId"`
-	F_evtLen uint16 `json:"evtLen"`
-	F_data   []int8 `json:"data"`
+	F_evtId  uint16             `json:"evtId"`
+	F_evtLen uint16             `json:"evtLen"`
+	F_data   parse.JsonUint8Arr `json:"data"`
 }
 
-func To_Evt_4_x_unknown(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_4_x_unknown {
+func To_Evt_4_x_unknown(_byteBuf *parse.ByteBuf) *Evt_4_x_unknown {
 	_instance := Evt_4_x_unknown{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -492,17 +492,17 @@ func To_Evt_4_x_unknown(_byteBuf *parse.ByteBuf, _parentParseContext *parse.Pars
 	_instance.F_evtLen = F_evtLen_v
 
 	F_data_len := (int)(F_evtLen_v)
-	F_data_arr := _byteBuf.Read_slice_int8(F_data_len)
+	F_data_arr := _byteBuf.Read_slice_uint8(F_data_len)
 	_instance.F_data = F_data_arr
 	return &_instance
 }
 
-func (__instance *Evt_4_x_unknown) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_4_x_unknown) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	F_data_arr := _instance.F_data
-	_byteBuf.Write_slice_int8(F_data_arr)
+	_byteBuf.Write_slice_uint8(F_data_arr)
 }
 
 type Evt_D006 struct {
@@ -596,7 +596,7 @@ type Evt_D006 struct {
 	F_FuelCsump              uint16  `json:"FuelCsump"`
 }
 
-func To_Evt_D006(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D006 {
+func To_Evt_D006(_byteBuf *parse.ByteBuf) *Evt_D006 {
 	_instance := Evt_D006{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -867,7 +867,7 @@ func To_Evt_D006(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D006) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D006) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -976,7 +976,7 @@ type Evt_D008 struct {
 	F_DTCInfomationIMCU int64  `json:"DTCInfomationIMCU"`
 }
 
-func To_Evt_D008(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D008 {
+func To_Evt_D008(_byteBuf *parse.ByteBuf) *Evt_D008 {
 	_instance := Evt_D008{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1019,7 +1019,7 @@ func To_Evt_D008(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D008) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D008) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1078,7 +1078,7 @@ type Evt_D009 struct {
 	F_BMSOnbdChrgSpRsn       uint8  `json:"BMSOnbdChrgSpRsn"`
 }
 
-func To_Evt_D009(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D009 {
+func To_Evt_D009(_byteBuf *parse.ByteBuf) *Evt_D009 {
 	_instance := Evt_D009{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1200,7 +1200,7 @@ func To_Evt_D009(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D009) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D009) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1254,7 +1254,7 @@ type Evt_D00A struct {
 	F_EsimID    string `json:"EsimID"`
 }
 
-func To_Evt_D00A(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00A {
+func To_Evt_D00A(_byteBuf *parse.ByteBuf) *Evt_D00A {
 	_instance := Evt_D00A{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1281,7 +1281,7 @@ func To_Evt_D00A(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00A) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00A) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1304,7 +1304,7 @@ type Evt_D00B struct {
 	F_BMSCellVolV      parse.JsonUint8Arr `json:"BMSCellVolV"`
 }
 
-func To_Evt_D00B(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00B {
+func To_Evt_D00B(_byteBuf *parse.ByteBuf) *Evt_D00B {
 	_instance := Evt_D00B{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1328,7 +1328,7 @@ func To_Evt_D00B(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00B) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00B) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1348,7 +1348,7 @@ type Evt_D00C struct {
 	F_BMSCellTemV      parse.JsonUint8Arr `json:"BMSCellTemV"`
 }
 
-func To_Evt_D00C(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00C {
+func To_Evt_D00C(_byteBuf *parse.ByteBuf) *Evt_D00C {
 	_instance := Evt_D00C{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1372,7 +1372,7 @@ func To_Evt_D00C(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00C) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00C) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1392,7 +1392,7 @@ type Evt_D00D struct {
 	F_BMSBusbarTemV      parse.JsonUint8Arr `json:"BMSBusbarTemV"`
 }
 
-func To_Evt_D00D(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00D {
+func To_Evt_D00D(_byteBuf *parse.ByteBuf) *Evt_D00D {
 	_instance := Evt_D00D{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1416,7 +1416,7 @@ func To_Evt_D00D(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00D) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00D) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1435,7 +1435,7 @@ type Evt_D00E struct {
 	F_BMSRptBatCodeAsc parse.JsonUint8Arr `json:"BMSRptBatCodeAsc"`
 }
 
-func To_Evt_D00E(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00E {
+func To_Evt_D00E(_byteBuf *parse.ByteBuf) *Evt_D00E {
 	_instance := Evt_D00E{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1457,7 +1457,7 @@ func To_Evt_D00E(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00E) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00E) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1495,7 +1495,7 @@ type Evt_D00F struct {
 	F_OtsdAirTemCrValV     uint8   `json:"OtsdAirTemCrValV"`
 }
 
-func To_Evt_D00F(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D00F {
+func To_Evt_D00F(_byteBuf *parse.ByteBuf) *Evt_D00F {
 	_instance := Evt_D00F{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1571,7 +1571,7 @@ func To_Evt_D00F(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_D00F) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D00F) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
@@ -1607,10 +1607,10 @@ type Evt_D01D struct {
 	F_CellID5G  uint64 `json:"CellID5G"`
 }
 
-func To_Evt_D01D(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_D01D {
+func To_Evt_D01D(_byteBuf *parse.ByteBuf) *Evt_D01D {
 	return (*Evt_D01D)(unsafe.Pointer(unsafe.SliceData(_byteBuf.Read_slice_uint8(16))))
 }
-func (__instance *Evt_D01D) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_D01D) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_slice_uint8(*(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
 		Data: uintptr(unsafe.Pointer(__instance)),
 		Len:  16,
@@ -1623,7 +1623,7 @@ type Evt_FFFF struct {
 	F_EvtCRC uint64 `json:"EvtCRC"`
 }
 
-func To_Evt_FFFF(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Evt_FFFF {
+func To_Evt_FFFF(_byteBuf *parse.ByteBuf) *Evt_FFFF {
 	_instance := Evt_FFFF{}
 	F_evtId_v := _byteBuf.Read_uint16()
 	_instance.F_evtId = F_evtId_v
@@ -1636,7 +1636,7 @@ func To_Evt_FFFF(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContex
 	return &_instance
 }
 
-func (__instance *Evt_FFFF) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
+func (__instance *Evt_FFFF) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
@@ -1645,72 +1645,86 @@ func (__instance *Evt_FFFF) Write(_byteBuf *parse.ByteBuf, _parentParseContext *
 }
 
 type Packet struct {
-	F_evts any `json:"evts"`
+	F_evt_0001        *Evt_0001         `json:"evt_0001"`
+	F_evt_0004        *Evt_0004         `json:"evt_0004"`
+	F_evt_0005        *Evt_0005         `json:"evt_0005"`
+	F_evt_0006        *Evt_0006         `json:"evt_0006"`
+	F_evt_0007        *Evt_0007         `json:"evt_0007"`
+	F_evt_0008        *Evt_0008         `json:"evt_0008"`
+	F_evt_0009        *Evt_0009         `json:"evt_0009"`
+	F_evt_000A        *Evt_000A         `json:"evt_000A"`
+	F_evt_0800        *Evt_0800         `json:"evt_0800"`
+	F_evt_0801        *Evt_0801         `json:"evt_0801"`
+	F_evt_0802        *Evt_0802         `json:"evt_0802"`
+	F_evt_0803        *Evt_0803         `json:"evt_0803"`
+	F_evt_D006        *Evt_D006         `json:"evt_D006"`
+	F_evt_D008        *Evt_D008         `json:"evt_D008"`
+	F_evt_D009        *Evt_D009         `json:"evt_D009"`
+	F_evt_D00A        *Evt_D00A         `json:"evt_D00A"`
+	F_evt_D00B        *Evt_D00B         `json:"evt_D00B"`
+	F_evt_D00C        *Evt_D00C         `json:"evt_D00C"`
+	F_evt_D00D        *Evt_D00D         `json:"evt_D00D"`
+	F_evt_D00E        *Evt_D00E         `json:"evt_D00E"`
+	F_evt_D00F        *Evt_D00F         `json:"evt_D00F"`
+	F_evt_D01D        *Evt_D01D         `json:"evt_D01D"`
+	F_evt_2_6_unknown []Evt_2_6_unknown `json:"evt_2_6_unknown"`
+	F_evt_4_x_unknown []Evt_4_x_unknown `json:"evt_4_x_unknown"`
+	F_evt_FFFF        *Evt_FFFF         `json:"evt_FFFF"`
 }
 
-func To_Packet(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) *Packet {
+func To_Packet(_byteBuf *parse.ByteBuf) *Packet {
 	_instance := Packet{}
-	_parseContext := parse.ToParseContext(&_instance, _parentParseContext)
-	_instance.F_evts = To_F_evts(_byteBuf, _parseContext)
-	return &_instance
-}
-
-func (__instance *Packet) Write(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) {
-	_instance := *__instance
-	_parseContext := parse.ToParseContext(__instance, _parentParseContext)
-	Write_F_evts(_byteBuf, _instance.F_evts, _parseContext)
-}
-
-func To_F_evts(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext) any {
-	evts := make([]any, 0)
+A:
 	for _byteBuf.Readable() {
 		evtId := _byteBuf.Get_uint16()
-		var evt any
 		switch evtId {
 		case 0x0001:
-			evt = To_Evt_0001(_byteBuf, _parentParseContext)
+			if _instance.F_evt_0001 != nil {
+				break A
+			}
+			_instance.F_evt_0001 = To_Evt_0001(_byteBuf)
 		case 0x0004:
-			evt = To_Evt_0004(_byteBuf, _parentParseContext)
+			_instance.F_evt_0004 = To_Evt_0004(_byteBuf)
 		case 0x0005:
-			evt = To_Evt_0005(_byteBuf, _parentParseContext)
+			_instance.F_evt_0005 = To_Evt_0005(_byteBuf)
 		case 0x0006:
-			evt = To_Evt_0006(_byteBuf, _parentParseContext)
+			_instance.F_evt_0006 = To_Evt_0006(_byteBuf)
 		case 0x0007:
-			evt = To_Evt_0007(_byteBuf, _parentParseContext)
+			_instance.F_evt_0007 = To_Evt_0007(_byteBuf)
 		case 0x0008:
-			evt = To_Evt_0008(_byteBuf, _parentParseContext)
+			_instance.F_evt_0008 = To_Evt_0008(_byteBuf)
 		case 0x0009:
-			evt = To_Evt_0009(_byteBuf, _parentParseContext)
+			_instance.F_evt_0009 = To_Evt_0009(_byteBuf)
 		case 0x000A:
-			evt = To_Evt_000A(_byteBuf, _parentParseContext)
+			_instance.F_evt_000A = To_Evt_000A(_byteBuf)
 		case 0x0801:
-			evt = To_Evt_0801(_byteBuf, _parentParseContext)
+			_instance.F_evt_0801 = To_Evt_0801(_byteBuf)
 		case 0x0802:
-			evt = To_Evt_0802(_byteBuf, _parentParseContext)
+			_instance.F_evt_0802 = To_Evt_0802(_byteBuf)
 		case 0x0803:
-			evt = To_Evt_0803(_byteBuf, _parentParseContext)
+			_instance.F_evt_0803 = To_Evt_0803(_byteBuf)
 		case 0xD006:
-			evt = To_Evt_D006(_byteBuf, _parentParseContext)
+			_instance.F_evt_D006 = To_Evt_D006(_byteBuf)
 		case 0xD008:
-			evt = To_Evt_D008(_byteBuf, _parentParseContext)
+			_instance.F_evt_D008 = To_Evt_D008(_byteBuf)
 		case 0xD009:
-			evt = To_Evt_D009(_byteBuf, _parentParseContext)
+			_instance.F_evt_D009 = To_Evt_D009(_byteBuf)
 		case 0xD00A:
-			evt = To_Evt_D00A(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00A = To_Evt_D00A(_byteBuf)
 		case 0xD00B:
-			evt = To_Evt_D00B(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00B = To_Evt_D00B(_byteBuf)
 		case 0xD00C:
-			evt = To_Evt_D00C(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00C = To_Evt_D00C(_byteBuf)
 		case 0xD00D:
-			evt = To_Evt_D00D(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00D = To_Evt_D00D(_byteBuf)
 		case 0xD00E:
-			evt = To_Evt_D00E(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00E = To_Evt_D00E(_byteBuf)
 		case 0xD00F:
-			evt = To_Evt_D00F(_byteBuf, _parentParseContext)
+			_instance.F_evt_D00F = To_Evt_D00F(_byteBuf)
 		case 0xD01D:
-			evt = To_Evt_D01D(_byteBuf, _parentParseContext)
+			_instance.F_evt_D01D = To_Evt_D01D(_byteBuf)
 		case 0xFFFF:
-			evt = To_Evt_FFFF(_byteBuf, _parentParseContext)
+			_instance.F_evt_FFFF = To_Evt_FFFF(_byteBuf)
 		default:
 			if evtId >= 0x0001 && evtId <= 0x07FF ||
 				(evtId >= 0x0800 && evtId <= 0x0FFF) ||
@@ -1720,9 +1734,9 @@ func To_F_evts(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext)
 				(evtId >= 0x6000 && evtId <= 0x6FFF) ||
 				(evtId >= 0x7000 && evtId <= 0x8FFF) ||
 				(evtId >= 0x9000 && evtId <= 0xAFFF) {
-				evt = To_Evt_2_6_unknown(_byteBuf, _parentParseContext)
+				_instance.F_evt_2_6_unknown = append(_instance.F_evt_2_6_unknown, *To_Evt_2_6_unknown(_byteBuf))
 			} else if evtId >= 0xD000 && evtId <= 0xDFFF {
-				evt = To_Evt_4_x_unknown(_byteBuf, _parentParseContext)
+				_instance.F_evt_4_x_unknown = append(_instance.F_evt_4_x_unknown, *To_Evt_4_x_unknown(_byteBuf))
 			} else {
 				evtIdHex := hex.EncodeToString([]byte{uint8(evtId >> 8), uint8(evtId)})
 				util.Log.Warnf("evtId[%s] not support", evtIdHex)
@@ -1730,14 +1744,103 @@ func To_F_evts(_byteBuf *parse.ByteBuf, _parentParseContext *parse.ParseContext)
 			}
 
 		}
-		evts = append(evts, evt)
 	}
-	return evts
+	return &_instance
 }
 
-func Write_F_evts(_byteBuf *parse.ByteBuf, __instance any, _parentParseContext *parse.ParseContext) {
-	evts := __instance.([]any)
-	for _, e := range evts {
-		e.(parse.Writeable).Write(_byteBuf, _parentParseContext)
+func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
+	_instance := *__instance
+	if _instance.F_evt_0001 != nil {
+		_instance.F_evt_0001.Write(_byteBuf)
+	}
+	if _instance.F_evt_0004 != nil {
+		_instance.F_evt_0004.Write(_byteBuf)
+	}
+	if _instance.F_evt_0005 != nil {
+		_instance.F_evt_0005.Write(_byteBuf)
+	}
+	if _instance.F_evt_0006 != nil {
+		_instance.F_evt_0006.Write(_byteBuf)
+	}
+	if _instance.F_evt_0007 != nil {
+		_instance.F_evt_0007.Write(_byteBuf)
+	}
+	if _instance.F_evt_0008 != nil {
+		_instance.F_evt_0008.Write(_byteBuf)
+	}
+	if _instance.F_evt_0009 != nil {
+		_instance.F_evt_0009.Write(_byteBuf)
+	}
+	if _instance.F_evt_000A != nil {
+		_instance.F_evt_000A.Write(_byteBuf)
+	}
+	if _instance.F_evt_0800 != nil {
+		_instance.F_evt_0800.Write(_byteBuf)
+	}
+	if _instance.F_evt_0801 != nil {
+		_instance.F_evt_0801.Write(_byteBuf)
+	}
+	if _instance.F_evt_0802 != nil {
+		_instance.F_evt_0802.Write(_byteBuf)
+	}
+	if _instance.F_evt_0803 != nil {
+		_instance.F_evt_0803.Write(_byteBuf)
+	}
+	if _instance.F_evt_D006 != nil {
+		_instance.F_evt_D006.Write(_byteBuf)
+	}
+	if _instance.F_evt_D008 != nil {
+		_instance.F_evt_D008.Write(_byteBuf)
+	}
+	if _instance.F_evt_D009 != nil {
+		_instance.F_evt_D009.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00A != nil {
+		_instance.F_evt_D00A.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00B != nil {
+		_instance.F_evt_D00B.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00C != nil {
+		_instance.F_evt_D00C.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00D != nil {
+		_instance.F_evt_D00D.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00E != nil {
+		_instance.F_evt_D00E.Write(_byteBuf)
+	}
+	if _instance.F_evt_D00F != nil {
+		_instance.F_evt_D00F.Write(_byteBuf)
+	}
+	if _instance.F_evt_D01D != nil {
+		_instance.F_evt_D01D.Write(_byteBuf)
+	}
+	if _instance.F_evt_2_6_unknown != nil {
+		for _, e := range _instance.F_evt_2_6_unknown {
+			e.Write(_byteBuf)
+		}
+	}
+	if _instance.F_evt_4_x_unknown != nil {
+		for _, e := range _instance.F_evt_4_x_unknown {
+			e.Write(_byteBuf)
+		}
+	}
+	if _instance.F_evt_FFFF != nil {
+		_instance.F_evt_FFFF.Write(_byteBuf)
+	}
+}
+
+func To_Packets(_byteBuf *parse.ByteBuf) []Packet {
+	var ps []Packet
+	for _byteBuf.Readable() {
+		ps = append(ps, *To_Packet(_byteBuf))
+	}
+	return ps
+}
+
+func Write_Packets(packets []Packet, _byteBuf *parse.ByteBuf) {
+	for _, packet := range packets {
+		packet.Write(_byteBuf)
 	}
 }

@@ -386,7 +386,7 @@ func (e *WsClient) HandleConnectTcp(data string) {
 	})
 }
 
-func (e *WsClient) HandleUpdateRunData(data string) error {
+func (e *WsClient) HandleUpdateRunData(data string) {
 	vehicleRunData := gb32960.VehicleRunData{}
 	err := json.Unmarshal([]byte(data), &vehicleRunData)
 	if err != nil {
@@ -396,9 +396,6 @@ func (e *WsClient) HandleUpdateRunData(data string) error {
 			Data:    "",
 			Succeed: false,
 		})
-		if err != nil {
-			return err
-		}
 	}
 	e.packet.F_data = &vehicleRunData
 	e.send(&OutMsg{
@@ -406,9 +403,5 @@ func (e *WsClient) HandleUpdateRunData(data string) error {
 		Data:    "",
 		Succeed: true,
 	})
-	if err != nil {
-		return err
-	}
 	util.Log.Infof("HandleUpdateRunData vin[%s]", e.vin)
-	return nil
 }
