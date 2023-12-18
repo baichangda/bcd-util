@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
+	"io"
 	"io/fs"
 	"net"
 	"net/http"
@@ -186,6 +187,60 @@ func start() {
 	engine.StaticFS("/immotors/resource", http.FS(sub))
 
 	//engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
+
+	engine.POST("/immotors/parse", func(ctx *gin.Context) {
+		res := make(map[string]any)
+		all, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
+		ctx.Header("content-type", "application/json;charset=utf-8")
+
+		bytes, err := base64.StdEncoding.DecodeString(string(all))
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			res["msg"] = "解析失败、数据不是base64格式"
+			res["succeed"] = false
+			ctx.JSON(200, res)
+			return
+		}
+
+		unGzip, err := util.UnGzip(bytes)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			res["msg"] = "解析失败、数据不是gzip格式"
+			res["succeed"] = false
+			ctx.JSON(200, res)
+			return
+		}
+
+		buf := parse.ToByteBuf(unGzip)
+
+		var packet *immotors.Packet
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					util.Log.Errorf("%+v", err)
+					res["msg"] = "解析失败、报文不符合智己协议格式"
+					res["succeed"] = false
+					ctx.JSON(200, res)
+				}
+			}()
+			packet = immotors.To_Packet(buf)
+		}()
+
+		if packet != nil {
+			packetJson, err := json.Marshal(packet)
+			if err != nil {
+				util.Log.Errorf("%+v", err)
+				return
+			}
+			res["data"] = string(packetJson)
+			res["succeed"] = true
+			ctx.JSON(200, res)
+		}
+	})
 
 	engine.GET("/immotors/ws", func(ctx *gin.Context) {
 		//升级websocket

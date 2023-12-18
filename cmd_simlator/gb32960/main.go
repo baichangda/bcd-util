@@ -14,6 +14,7 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"io"
 	"io/fs"
 	"net"
 	"net/http"
@@ -265,11 +266,15 @@ func start() {
 
 	//engine.Static("/gb32960/resource", "cmd_simlator/gb32960/resource")
 
-	engine.GET("/gb32960/parse", func(ctx *gin.Context) {
+	engine.POST("/gb32960/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
-		hexStr := ctx.Query("hex")
+		all, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
 		ctx.Header("content-type", "application/json;charset=utf-8")
-		decodeString, err := hex.DecodeString(hexStr)
+		decodeString, err := hex.DecodeString(string(all))
 		if err != nil {
 			util.Log.Errorf("%+v", err)
 			res["msg"] = "解析失败、数据不是16进制"
