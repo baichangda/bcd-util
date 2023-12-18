@@ -14,6 +14,7 @@ import (
 	"github.com/gobwas/ws/wsutil"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -255,14 +256,14 @@ func start() {
 		c.Redirect(http.StatusMovedPermanently, "/gb32960/resource/index.html")
 	})
 
-	//sub, err2 := fs.Sub(FS, "resource")
-	//if err2 != nil {
-	//	util.Log.Errorf("%+v", err2)
-	//	return
-	//}
-	//engine.StaticFS("/gb32960/resource", http.FS(sub))
+	sub, err2 := fs.Sub(FS, "resource")
+	if err2 != nil {
+		util.Log.Errorf("%+v", err2)
+		return
+	}
+	engine.StaticFS("/gb32960/resource", http.FS(sub))
 
-	engine.Static("/gb32960/resource", "cmd_simlator/gb32960/resource")
+	//engine.Static("/gb32960/resource", "cmd_simlator/gb32960/resource")
 
 	engine.GET("/gb32960/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)

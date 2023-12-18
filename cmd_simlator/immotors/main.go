@@ -174,6 +174,10 @@ func start() {
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
+	engine.GET("/immotors", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/immotors/resource/index.html")
+	})
+
 	sub, err2 := fs.Sub(FS, "resource")
 	if err2 != nil {
 		util.Log.Errorf("%+v", err2)
