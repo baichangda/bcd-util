@@ -156,7 +156,7 @@ func (e *WsClient) init(vin string, conn net.Conn, onMsg func(msg *InMsg)) error
 	}
 	byteBuf := parse.ToByteBuf(decodeString)
 
-	temp := gb32960.To_Packet(byteBuf, nil)
+	temp := gb32960.To_Packet(byteBuf)
 	temp.F_vin = vin
 	e.packet = temp
 
@@ -251,8 +251,8 @@ func start() {
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	engine.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
+	engine.GET("/gb32960", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/gb32960/resource/index.html")
 	})
 
 	//sub, err2 := fs.Sub(FS, "resource")
@@ -260,11 +260,11 @@ func start() {
 	//	util.Log.Errorf("%+v", err2)
 	//	return
 	//}
-	//engine.StaticFS("/resource", http.FS(sub))
+	//engine.StaticFS("/gb32960/resource", http.FS(sub))
 
-	engine.Static("/resource", "cmd_simlator/gb32960/resource")
+	engine.Static("/gb32960/resource", "cmd_simlator/gb32960/resource")
 
-	engine.GET("/parse", func(ctx *gin.Context) {
+	engine.GET("/gb32960/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
 		hexStr := ctx.Query("hex")
 		ctx.Header("content-type", "application/json;charset=utf-8")
@@ -288,7 +288,7 @@ func start() {
 					ctx.JSON(200, res)
 				}
 			}()
-			packet = gb32960.To_Packet(buf, nil)
+			packet = gb32960.To_Packet(buf)
 		}()
 
 		if packet != nil {
@@ -303,7 +303,7 @@ func start() {
 		}
 	})
 
-	engine.GET("/ws", func(ctx *gin.Context) {
+	engine.GET("/gb32960/ws", func(ctx *gin.Context) {
 		//升级websocket
 		wsConn, _, _, err := ws.UpgradeHTTP(ctx.Request, ctx.Writer)
 		if err != nil {
@@ -340,7 +340,7 @@ func (e *WsClient) sendRunData(sendTs int64) {
 	vehicleRunData.F_collectTime = sendTime
 	buf := parse.ToByteBuf_empty()
 
-	e.packet.Write(buf, nil)
+	e.packet.Write(buf)
 	b := buf.ToBytes()
 	e.tcpClient.send(b)
 	util.Log.Infof("sendRunData vin[%s] time[%s] succeed", e.vin, sendTime.Format("20060102150405"))

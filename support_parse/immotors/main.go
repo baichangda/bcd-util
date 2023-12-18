@@ -462,8 +462,8 @@ func (__instance *Evt_0803) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_2_6_unknown struct {
-	F_evtId uint16  `json:"evtId"`
-	F_data  [6]int8 `json:"data"`
+	F_evtId uint16   `json:"evtId"`
+	F_data  [6]uint8 `json:"data"`
 }
 
 func To_Evt_2_6_unknown(_byteBuf *parse.ByteBuf) *Evt_2_6_unknown {
@@ -1645,31 +1645,31 @@ func (__instance *Evt_FFFF) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Packet struct {
-	F_evt_0001        *Evt_0001         `json:"evt_0001"`
-	F_evt_0004        *Evt_0004         `json:"evt_0004"`
-	F_evt_0005        *Evt_0005         `json:"evt_0005"`
-	F_evt_0006        *Evt_0006         `json:"evt_0006"`
-	F_evt_0007        *Evt_0007         `json:"evt_0007"`
-	F_evt_0008        *Evt_0008         `json:"evt_0008"`
-	F_evt_0009        *Evt_0009         `json:"evt_0009"`
-	F_evt_000A        *Evt_000A         `json:"evt_000A"`
-	F_evt_0800        *Evt_0800         `json:"evt_0800"`
-	F_evt_0801        *Evt_0801         `json:"evt_0801"`
-	F_evt_0802        *Evt_0802         `json:"evt_0802"`
-	F_evt_0803        *Evt_0803         `json:"evt_0803"`
-	F_evt_D006        *Evt_D006         `json:"evt_D006"`
-	F_evt_D008        *Evt_D008         `json:"evt_D008"`
-	F_evt_D009        *Evt_D009         `json:"evt_D009"`
-	F_evt_D00A        *Evt_D00A         `json:"evt_D00A"`
-	F_evt_D00B        *Evt_D00B         `json:"evt_D00B"`
-	F_evt_D00C        *Evt_D00C         `json:"evt_D00C"`
-	F_evt_D00D        *Evt_D00D         `json:"evt_D00D"`
-	F_evt_D00E        *Evt_D00E         `json:"evt_D00E"`
-	F_evt_D00F        *Evt_D00F         `json:"evt_D00F"`
-	F_evt_D01D        *Evt_D01D         `json:"evt_D01D"`
+	F_evt_0001        *Evt_0001         `json:"evt_0001,omitempty"`
+	F_evt_0004        *Evt_0004         `json:"evt_0004,omitempty"`
+	F_evt_0005        *Evt_0005         `json:"evt_0005,omitempty"`
+	F_evt_0006        *Evt_0006         `json:"evt_0006,omitempty"`
+	F_evt_0007        *Evt_0007         `json:"evt_0007,omitempty"`
+	F_evt_0008        *Evt_0008         `json:"evt_0008,omitempty"`
+	F_evt_0009        *Evt_0009         `json:"evt_0009,omitempty"`
+	F_evt_000A        *Evt_000A         `json:"evt_000A,omitempty"`
+	F_evt_0800        *Evt_0800         `json:"evt_0800,omitempty"`
+	F_evt_0801        *Evt_0801         `json:"evt_0801,omitempty"`
+	F_evt_0802        *Evt_0802         `json:"evt_0802,omitempty"`
+	F_evt_0803        *Evt_0803         `json:"evt_0803,omitempty"`
+	F_evt_D006        *Evt_D006         `json:"evt_D006,omitempty"`
+	F_evt_D008        *Evt_D008         `json:"evt_D008,omitempty"`
+	F_evt_D009        *Evt_D009         `json:"evt_D009,omitempty"`
+	F_evt_D00A        *Evt_D00A         `json:"evt_D00A,omitempty"`
+	F_evt_D00B        *Evt_D00B         `json:"evt_D00B,omitempty"`
+	F_evt_D00C        *Evt_D00C         `json:"evt_D00C,omitempty"`
+	F_evt_D00D        *Evt_D00D         `json:"evt_D00D,omitempty"`
+	F_evt_D00E        *Evt_D00E         `json:"evt_D00E,omitempty"`
+	F_evt_D00F        *Evt_D00F         `json:"evt_D00F,omitempty"`
+	F_evt_D01D        *Evt_D01D         `json:"evt_D01D,omitempty"`
 	F_evt_2_6_unknown []Evt_2_6_unknown `json:"evt_2_6_unknown"`
 	F_evt_4_x_unknown []Evt_4_x_unknown `json:"evt_4_x_unknown"`
-	F_evt_FFFF        *Evt_FFFF         `json:"evt_FFFF"`
+	F_evt_FFFF        *Evt_FFFF         `json:"evt_FFFF,omitempty"`
 }
 
 func To_Packet(_byteBuf *parse.ByteBuf) *Packet {

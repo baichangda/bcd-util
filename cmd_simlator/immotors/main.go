@@ -67,8 +67,8 @@ var topic string
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "simlator6",
-		Short: "模拟器",
+		Use:   "immotors",
+		Short: "智己模拟器",
 		Run: func(cmd *cobra.Command, args []string) {
 			start()
 		},
@@ -174,20 +174,16 @@ func start() {
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	engine.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
-	})
-
 	sub, err2 := fs.Sub(FS, "resource")
 	if err2 != nil {
 		util.Log.Errorf("%+v", err2)
 		return
 	}
-	engine.StaticFS("/resource", http.FS(sub))
+	engine.StaticFS("/immotors/resource", http.FS(sub))
 
-	//engine.Static("/resource", "cmd_simlator/immotors/resource")
+	//engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
 
-	engine.GET("/ws", func(ctx *gin.Context) {
+	engine.GET("/immotors/ws", func(ctx *gin.Context) {
 		//升级websocket
 		conn, _, _, err := ws.UpgradeHTTP(ctx.Request, ctx.Writer)
 		if err != nil {
@@ -296,7 +292,7 @@ func (e *WsClient) send(cancelCtx context.Context, w *kafka.Writer) error {
 	now := time.Now()
 	ts := now.UnixMilli() / 1000
 	temp := e.packet
-	var packets []immotors.Packet
+	packets := make([]immotors.Packet, 10)
 	for i := 0; i < 10; i++ {
 		cur := *temp
 		cur.F_evt_0001 = &immotors.Evt_0001{
