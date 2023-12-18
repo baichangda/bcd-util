@@ -65,6 +65,7 @@ type JsonExt struct {
 
 var kafkaAddress []string
 var topic string
+var port int
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -76,6 +77,7 @@ func Cmd() *cobra.Command {
 	}
 	cmd.Flags().StringSliceVarP(&kafkaAddress, "kafkaAddress", "a", []string{"10.0.11.50:39003"}, "kafka地址")
 	cmd.Flags().StringVarP(&topic, "topic", "t", "gw-test", "发送的topic")
+	cmd.Flags().IntVarP(&port, "port", "p", 13579, "http端口")
 	return &cmd
 }
 
@@ -329,7 +331,7 @@ func start() {
 		}()
 
 	})
-	err := engine.Run(":13579")
+	err := engine.Run(":" + strconv.Itoa(port))
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 	}
