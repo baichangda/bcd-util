@@ -2391,14 +2391,7 @@ A:
 		case 0xFFFF:
 			_instance.F_evt_FFFF = To_Evt_FFFF(_byteBuf)
 		default:
-			if evtId >= 0x0001 && evtId <= 0x07FF ||
-				(evtId >= 0x0800 && evtId <= 0x0FFF) ||
-				(evtId >= 0x1000 && evtId <= 0x2FFF) ||
-				(evtId >= 0x3000 && evtId <= 0x4FFF) ||
-				(evtId >= 0x5000 && evtId <= 0x5FFF) ||
-				(evtId >= 0x6000 && evtId <= 0x6FFF) ||
-				(evtId >= 0x7000 && evtId <= 0x8FFF) ||
-				(evtId >= 0x9000 && evtId <= 0xAFFF) {
+			if evtId >= 0x0001 && evtId <= 0xAFFF {
 				_instance.F_evt_2_6_unknown = append(_instance.F_evt_2_6_unknown, *To_Evt_2_6_unknown(_byteBuf))
 			} else if evtId >= 0xD000 && evtId <= 0xDFFF {
 				_instance.F_evt_4_x_unknown = append(_instance.F_evt_4_x_unknown, *To_Evt_4_x_unknown(_byteBuf))
