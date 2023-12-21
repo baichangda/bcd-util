@@ -59,7 +59,7 @@ func (__instance *Evt_0003) Write(_byteBuf *parse.ByteBuf) {
 
 type Evt_0004 struct {
 	F_evtId     uint16  `json:"evtId"`
-	F_GnssAlt   float64 `json:"GnssAlt"`
+	F_GnssAlt   float32 `json:"GnssAlt"`
 	F_Longitude float64 `json:"Longitude"`
 	F_GPSSts    uint8   `json:"GPSSts"`
 }
@@ -68,8 +68,8 @@ func To_Evt_0004(_byteBuf *parse.ByteBuf) *Evt_0004 {
 	_instance := Evt_0004{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_GnssAlt = float64(_bitBuf.Read(16, true, true))*0.1 - 500
-	_instance.F_Longitude = float64(_bitBuf.Read(29, true, true)) * 0.000001
+	_instance.F_GnssAlt = float32(_bitBuf.Read(16, true, true))*0.1 - 500
+	_instance.F_Longitude = float64(_bitBuf.Read(29, true, false)) * 0.000001
 	_instance.F_GPSSts = uint8(_bitBuf.Read(2, true, true))
 	_bitBuf.Finish()
 
@@ -81,7 +81,7 @@ func (__instance *Evt_0004) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
 	_bitBuf.Write(int64(parse.Round((_instance.F_GnssAlt+500)/0.1)), 16, true, true)
-	_bitBuf.Write(int64(parse.Round(_instance.F_Longitude/0.000001)), 29, true, true)
+	_bitBuf.Write(int64(parse.Round(_instance.F_Longitude/0.000001)), 29, true, false)
 	_bitBuf.Write(int64(_instance.F_GPSSts), 2, true, true)
 	_bitBuf.Finish()
 }
@@ -90,16 +90,16 @@ type Evt_0005 struct {
 	F_evtId         uint16  `json:"evtId"`
 	F_Latitude      float64 `json:"Latitude"`
 	F_VehTyp        uint8   `json:"VehTyp"`
-	F_GNSSDirection float64 `json:"GNSSDirection"`
+	F_GNSSDirection float32 `json:"GNSSDirection"`
 }
 
 func To_Evt_0005(_byteBuf *parse.ByteBuf) *Evt_0005 {
 	_instance := Evt_0005{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_Latitude = float64(_bitBuf.Read(28, true, true)) * 0.000001
+	_instance.F_Latitude = float64(_bitBuf.Read(28, true, false)) * 0.000001
 	_instance.F_VehTyp = uint8(_bitBuf.Read(4, true, true))
-	_instance.F_GNSSDirection = float64(_bitBuf.Read(16, true, true)) * 0.01
+	_instance.F_GNSSDirection = float32(_bitBuf.Read(16, true, true)) * 0.01
 	_bitBuf.Finish()
 
 	return &_instance
@@ -109,7 +109,7 @@ func (__instance *Evt_0005) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(parse.Round(_instance.F_Latitude/0.000001)), 28, true, true)
+	_bitBuf.Write(int64(parse.Round(_instance.F_Latitude/0.000001)), 28, true, false)
 	_bitBuf.Write(int64(_instance.F_VehTyp), 4, true, true)
 	_bitBuf.Write(int64(parse.Round(_instance.F_GNSSDirection/0.01)), 16, true, true)
 	_bitBuf.Finish()
@@ -117,16 +117,16 @@ func (__instance *Evt_0005) Write(_byteBuf *parse.ByteBuf) {
 
 type Evt_0006 struct {
 	F_evtId uint16  `json:"evtId"`
-	F_HDop  float64 `json:"HDop"`
-	F_VDop  float64 `json:"VDop"`
+	F_HDop  float32 `json:"HDop"`
+	F_VDop  float32 `json:"VDop"`
 }
 
 func To_Evt_0006(_byteBuf *parse.ByteBuf) *Evt_0006 {
 	_instance := Evt_0006{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_HDop = float64(_bitBuf.Read(24, true, true)) * 0.1
-	_instance.F_VDop = float64(_bitBuf.Read(24, true, true)) * 0.1
+	_instance.F_HDop = float32(_bitBuf.Read(24, true, true)) * 0.1
+	_instance.F_VDop = float32(_bitBuf.Read(24, true, true)) * 0.1
 	_bitBuf.Finish()
 
 	return &_instance
@@ -143,20 +143,20 @@ func (__instance *Evt_0006) Write(_byteBuf *parse.ByteBuf) {
 
 type Evt_0007 struct {
 	F_evtId uint16  `json:"evtId"`
-	F_AcceX float64 `json:"AcceX"`
-	F_AcceY float64 `json:"AcceY"`
-	F_AcceZ float64 `json:"AcceZ"`
+	F_AcceX float32 `json:"AcceX"`
+	F_AcceY float32 `json:"AcceY"`
+	F_AcceZ float32 `json:"AcceZ"`
 }
 
 func To_Evt_0007(_byteBuf *parse.ByteBuf) *Evt_0007 {
 	_instance := Evt_0007{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_AcceX = float64(_bitBuf.Read(14, true, false)) * 0.0009765625
+	_instance.F_AcceX = float32(_bitBuf.Read(14, true, false)) * 0.0009765625
 	_bitBuf.Finish()
-	_instance.F_AcceY = float64(_bitBuf.Read(14, true, false)) * 0.0009765625
+	_instance.F_AcceY = float32(_bitBuf.Read(14, true, false)) * 0.0009765625
 	_bitBuf.Finish()
-	_instance.F_AcceZ = float64(_bitBuf.Read(14, true, false)) * 0.0009765625
+	_instance.F_AcceZ = float32(_bitBuf.Read(14, true, false)) * 0.0009765625
 	_bitBuf.Finish()
 	return &_instance
 }
@@ -244,7 +244,7 @@ func To_Evt_000A(_byteBuf *parse.ByteBuf) *Evt_000A {
 	_instance.F_evtId = _byteBuf.Read_uint16()
 
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_cellSignalStrength = int8(_bitBuf.Read(8, true, true))
+	_instance.F_cellSignalStrength = int8(_bitBuf.Read(8, true, false))
 	_instance.F_cellRAT = uint8(_bitBuf.Read(3, true, true))
 	_instance.F_cellRATadd = uint8(_bitBuf.Read(3, true, true))
 	_instance.F_cellChanID = uint16(_bitBuf.Read(9, true, true))
@@ -259,7 +259,7 @@ func (__instance *Evt_000A) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(_instance.F_cellSignalStrength), 8, true, true)
+	_bitBuf.Write(int64(_instance.F_cellSignalStrength), 8, true, false)
 	_bitBuf.Write(int64(_instance.F_cellRAT), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_cellRATadd), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_cellChanID), 9, true, true)
@@ -1838,8 +1838,8 @@ type Evt_D018 struct {
 	F_MqttConnFailRsn uint8   `json:"MqttConnFailRsn"`
 	F_ECallSts        uint8   `json:"ECallSts"`
 	F_LocDRSts        uint8   `json:"LocDRSts"`
-	F_LongitudeDR     float32 `json:"LongitudeDR"`
-	F_LatitudeDR      float32 `json:"LatitudeDR"`
+	F_LongitudeDR     float64 `json:"LongitudeDR"`
+	F_LatitudeDR      float64 `json:"LatitudeDR"`
 	F_LocGnns1Sts     uint8   `json:"LocGnns1Sts"`
 	F_TBOXGPSTime     int64   `json:"TBOXGPSTime"`
 	F_LocGnns2Sts     uint8   `json:"LocGnns2Sts"`
@@ -1859,8 +1859,8 @@ func To_Evt_D018(_byteBuf *parse.ByteBuf) *Evt_D018 {
 	_instance.F_MqttConnFailRsn = uint8(_bitBuf.Read(2, true, true))
 	_instance.F_ECallSts = uint8(_bitBuf.Read(4, true, true))
 	_instance.F_LocDRSts = uint8(_bitBuf.Read(4, true, true))
-	_instance.F_LongitudeDR = float32(_bitBuf.Read(29, true, true)) * 0.000001
-	_instance.F_LatitudeDR = float32(_bitBuf.Read(28, true, true)) * 0.000001
+	_instance.F_LongitudeDR = float64(_bitBuf.Read(29, true, false)) * 0.000001
+	_instance.F_LatitudeDR = float64(_bitBuf.Read(28, true, false)) * 0.000001
 	_instance.F_LocGnns1Sts = uint8(_bitBuf.Read(4, true, true))
 	_instance.F_TBOXGPSTime = _bitBuf.Read(48, true, true)
 	_instance.F_LocGnns2Sts = uint8(_bitBuf.Read(4, true, true))
@@ -1886,8 +1886,8 @@ func (__instance *Evt_D018) Write(_byteBuf *parse.ByteBuf) {
 	_bitBuf.Write(int64(_instance.F_MqttConnFailRsn), 2, true, true)
 	_bitBuf.Write(int64(_instance.F_ECallSts), 4, true, true)
 	_bitBuf.Write(int64(_instance.F_LocDRSts), 4, true, true)
-	_bitBuf.Write(int64(_instance.F_LongitudeDR*1000000), 29, true, true)
-	_bitBuf.Write(int64(_instance.F_LatitudeDR*1000000), 28, true, true)
+	_bitBuf.Write(int64(_instance.F_LongitudeDR*1000000), 29, true, false)
+	_bitBuf.Write(int64(_instance.F_LatitudeDR*1000000), 28, true, false)
 	_bitBuf.Write(int64(_instance.F_LocGnns1Sts), 4, true, true)
 	_bitBuf.Write(int64(_instance.F_TBOXGPSTime), 48, true, true)
 	_bitBuf.Write(int64(_instance.F_LocGnns2Sts), 4, true, true)
