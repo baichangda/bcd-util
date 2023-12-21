@@ -4,8 +4,6 @@ import (
 	"bcd-util/support_parse/parse"
 	"bcd-util/util"
 	"encoding/hex"
-	"reflect"
-	"unsafe"
 )
 
 type Evt_0001 struct {
@@ -286,7 +284,7 @@ func To_Evt_000B(_byteBuf *parse.ByteBuf) *Evt_000B {
 	_instance.F_iNetworkSts = uint8(_bitBuf.Read(1, true, true))
 	_instance.F_iNetworkSts_ErrCode = uint16(_bitBuf.Read(16, true, true))
 	_bitBuf.Finish()
-	_byteBuf.Skip(3)
+	_byteBuf.Skip(2)
 	return &_instance
 }
 
@@ -298,7 +296,7 @@ func (__instance *Evt_000B) Write(_byteBuf *parse.ByteBuf) {
 	_bitBuf.Write(int64(_instance.F_iNetworkSts), 1, true, true)
 	_bitBuf.Write(int64(_instance.F_iNetworkSts_ErrCode), 16, true, true)
 	_bitBuf.Finish()
-	_byteBuf.Write_zero(3)
+	_byteBuf.Write_zero(2)
 }
 
 type Evt_000C struct {
@@ -372,7 +370,7 @@ func To_Evt_000E(_byteBuf *parse.ByteBuf) *Evt_000E {
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
 	_instance.F_BMSChrgSts = uint8(_bitBuf.Read(5, true, true))
 	_instance.F_BMSPackSOCBkup = float32(_bitBuf.Read(10, true, true)) * 0.1
-	_instance.F_BMSPackSOCVBkup = uint8(_bitBuf.Read(1, true, true) + 2000)
+	_instance.F_BMSPackSOCVBkup = uint8(_bitBuf.Read(1, true, true))
 	_instance.F_BMSOfbdChrgSpRsn = uint8(_bitBuf.Read(8, true, true))
 	_instance.F_BMSWrlsChrgSpRsn = uint8(_bitBuf.Read(8, true, true))
 	_bitBuf.Finish()
@@ -385,8 +383,8 @@ func (__instance *Evt_000E) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
 	_bitBuf.Write(int64(_instance.F_BMSChrgSts), 5, true, true)
-	_bitBuf.Write(int64(_instance.F_BMSPackSOCBkup), 10, true, true)
-	_bitBuf.Write(int64(_instance.F_BMSPackSOCVBkup*10), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_BMSPackSOCBkup*10), 10, true, true)
+	_bitBuf.Write(int64(_instance.F_BMSPackSOCVBkup), 1, true, true)
 	_bitBuf.Write(int64(_instance.F_BMSOfbdChrgSpRsn), 8, true, true)
 	_bitBuf.Write(int64(_instance.F_BMSWrlsChrgSpRsn), 8, true, true)
 	_bitBuf.Finish()
@@ -551,19 +549,20 @@ func (__instance *Evt_0803) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_2_6_unknown struct {
-	F_evtId uint16   `json:"evtId"`
-	F_data  [6]uint8 `json:"data"`
+	F_evtId uint16             `json:"evtId"`
+	F_data  parse.JsonUint8Arr `json:"data"`
 }
 
 func To_Evt_2_6_unknown(_byteBuf *parse.ByteBuf) *Evt_2_6_unknown {
-	return (*Evt_2_6_unknown)(unsafe.Pointer(unsafe.SliceData(_byteBuf.Read_slice_uint8(8))))
+	_instance := Evt_2_6_unknown{}
+	_instance.F_evtId = _byteBuf.Read_uint16()
+	_instance.F_data = _byteBuf.Read_slice_uint8(6)
+	return &_instance
 }
 func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf) {
-	_byteBuf.Write_slice_uint8(*(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
-		Data: uintptr(unsafe.Pointer(__instance)),
-		Len:  8,
-		Cap:  8,
-	})))
+	_instance := *__instance
+	_byteBuf.Write_uint16(_instance.F_evtId)
+	_byteBuf.Write_slice_uint8(_instance.F_data)
 }
 
 type Evt_4_x_unknown struct {
@@ -2026,6 +2025,7 @@ func (__instance *Evt_D01A) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint8(_instance.F_iIAMInterSts)
 	_byteBuf.Write_uint8(_instance.F_iMpuIPTableRuleSts)
 	_byteBuf.Write_uint8(_instance.F_iModemIPTableRuleSts)
+	_byteBuf.Write_uint8(_instance.F_iARPRuleSts)
 	_byteBuf.Write_uint16(_instance.F_iICC2PHYSGMIISts)
 	_byteBuf.Write_uint16(_instance.F_iMpuRGMIISts)
 	_byteBuf.Write_uint16(_instance.F_iModemRGMIISts)
@@ -2127,7 +2127,6 @@ func To_Evt_D01C(_byteBuf *parse.ByteBuf) *Evt_D01C {
 	_instance.F_NetType = _byteBuf.Read_uint8()
 	_instance.F_rssi = _byteBuf.Read_uint16()
 	_instance.F_rsrp = _byteBuf.Read_uint16()
-	_instance.F_rsrp = _byteBuf.Read_uint16()
 	_instance.F_rscp = _byteBuf.Read_uint16()
 	_instance.F_sinr = _byteBuf.Read_uint16()
 	_instance.F_ecio = _byteBuf.Read_uint16()
@@ -2148,7 +2147,6 @@ func (__instance *Evt_D01C) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint8(_instance.F_NetType)
 	_byteBuf.Write_uint16(_instance.F_rssi)
 	_byteBuf.Write_uint16(_instance.F_rsrp)
-	_byteBuf.Write_uint16(_instance.F_rsrp)
 	_byteBuf.Write_uint16(_instance.F_rscp)
 	_byteBuf.Write_uint16(_instance.F_sinr)
 	_byteBuf.Write_uint16(_instance.F_ecio)
@@ -2166,14 +2164,29 @@ type Evt_D01D struct {
 }
 
 func To_Evt_D01D(_byteBuf *parse.ByteBuf) *Evt_D01D {
-	return (*Evt_D01D)(unsafe.Pointer(unsafe.SliceData(_byteBuf.Read_slice_uint8(16))))
+	_instance := Evt_D01D{}
+	_instance.F_evtId = _byteBuf.Read_uint16()
+	_instance.F_evtLen = _byteBuf.Read_uint16()
+	index := _byteBuf.ReaderIndex()
+	_instance.F_cellLAC5G = _byteBuf.Read_uint32()
+	_instance.F_CellID5G = _byteBuf.Read_uint64()
+	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	if skip > 0 {
+		_byteBuf.Skip(skip)
+	}
+	return &_instance
 }
 func (__instance *Evt_D01D) Write(_byteBuf *parse.ByteBuf) {
-	_byteBuf.Write_slice_uint8(*(*[]byte)(unsafe.Pointer(&reflect.SliceHeader{
-		Data: uintptr(unsafe.Pointer(__instance)),
-		Len:  16,
-		Cap:  16,
-	})))
+	_instance := *__instance
+	_byteBuf.Write_uint16(_instance.F_evtId)
+	_byteBuf.Write_uint16(_instance.F_evtLen)
+	index := _byteBuf.WriterIndex()
+	_byteBuf.Write_uint32(_instance.F_cellLAC5G)
+	_byteBuf.Write_uint64(_instance.F_CellID5G)
+	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	if skip > 0 {
+		_byteBuf.Write_zero(skip)
+	}
 }
 
 type Evt_D01F struct {
@@ -2336,6 +2349,8 @@ A:
 			_instance.F_evt_000E = To_Evt_000E(_byteBuf)
 		case 0x000F:
 			_instance.F_evt_000F = To_Evt_000F(_byteBuf)
+		case 0x0800:
+			_instance.F_evt_0800 = To_Evt_0800(_byteBuf)
 		case 0x0801:
 			_instance.F_evt_0801 = To_Evt_0801(_byteBuf)
 		case 0x0802:
