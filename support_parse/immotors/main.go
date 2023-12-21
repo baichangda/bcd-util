@@ -98,7 +98,8 @@ func To_Evt_0005(_byteBuf *parse.ByteBuf) *Evt_0005 {
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
 	_instance.F_Latitude = float64(_bitBuf.Read(28, true, false)) * 0.000001
-	_instance.F_VehTyp = uint8(_bitBuf.Read(4, true, true))
+	_bitBuf.Skip(2)
+	_instance.F_VehTyp = uint8(_bitBuf.Read(2, true, true))
 	_instance.F_GNSSDirection = float32(_bitBuf.Read(16, true, true)) * 0.01
 	_bitBuf.Finish()
 
@@ -110,7 +111,8 @@ func (__instance *Evt_0005) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
 	_bitBuf.Write(int64(parse.Round(_instance.F_Latitude/0.000001)), 28, true, false)
-	_bitBuf.Write(int64(_instance.F_VehTyp), 4, true, true)
+	_bitBuf.Skip(2)
+	_bitBuf.Write(int64(_instance.F_VehTyp), 2, true, true)
 	_bitBuf.Write(int64(parse.Round(_instance.F_GNSSDirection/0.01)), 16, true, true)
 	_bitBuf.Finish()
 }

@@ -92,7 +92,7 @@ func startClient(vin string) {
 		util.Log.Errorf("%+v", err)
 		return
 	}
-	packet := gb32960.To_Packet(parse.ToByteBuf(decodeString), nil)
+	packet := gb32960.To_Packet(parse.ToByteBuf(decodeString))
 	packet.F_vin = vin
 
 	dial, err := net.Dial("tcp", address)
@@ -126,7 +126,7 @@ func startClient(vin string) {
 		}
 		doBeforeSend(packet, sendTs)
 		sendBuf.Clear()
-		packet.Write(sendBuf, nil)
+		packet.Write(sendBuf)
 		atomic.AddUint32(&sendNum, 1)
 		_, err := dial.Write(sendBuf.ToBytes())
 		if err != nil {

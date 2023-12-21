@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bcd-util/cmd_kafka"
 	"bcd-util/cmd_monitor"
 	"bcd-util/cmd_ocr"
 	"bcd-util/cmd_pressTest"
@@ -13,6 +14,7 @@ var rootCmd = &cobra.Command{}
 
 func main() {
 	rootCmd.AddCommand(cmd_redis.Cmd())
+	rootCmd.AddCommand(cmd_kafka.Cmd())
 	rootCmd.AddCommand(cmd_monitor.Cmd())
 	rootCmd.AddCommand(cmd_pressTest.Cmd())
 	rootCmd.AddCommand(cmd_simlator.Cmd())
