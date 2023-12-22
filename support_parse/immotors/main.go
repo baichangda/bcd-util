@@ -892,20 +892,17 @@ func To_Evt_D008(_byteBuf *parse.ByteBuf) *Evt_D008 {
 	_instance := Evt_D008{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationBMS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationECM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationEPB = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationPLCM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationTCM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationTPMS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationTC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationISC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationSAC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIMCU = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationBMS = read_7(_byteBuf)
+	_instance.F_DTCInfomationECM = read_7(_byteBuf)
+	_instance.F_DTCInfomationEPB = read_7(_byteBuf)
+	_instance.F_DTCInfomationPLCM = read_7(_byteBuf)
+	_instance.F_DTCInfomationTCM = read_7(_byteBuf)
+	_instance.F_DTCInfomationTPMS = read_7(_byteBuf)
+	_instance.F_DTCInfomationTC = read_7(_byteBuf)
+	_instance.F_DTCInfomationISC = read_7(_byteBuf)
+	_instance.F_DTCInfomationSAC = read_7(_byteBuf)
+	_instance.F_DTCInfomationIMCU = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 70
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -916,20 +913,17 @@ func (__instance *Evt_D008) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationBMS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationECM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationEPB, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationPLCM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationTCM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationTPMS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationTC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationISC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationSAC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIMCU, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationBMS)
+	write_7(_byteBuf, _instance.F_DTCInfomationECM)
+	write_7(_byteBuf, _instance.F_DTCInfomationEPB)
+	write_7(_byteBuf, _instance.F_DTCInfomationPLCM)
+	write_7(_byteBuf, _instance.F_DTCInfomationTCM)
+	write_7(_byteBuf, _instance.F_DTCInfomationTPMS)
+	write_7(_byteBuf, _instance.F_DTCInfomationTC)
+	write_7(_byteBuf, _instance.F_DTCInfomationISC)
+	write_7(_byteBuf, _instance.F_DTCInfomationSAC)
+	write_7(_byteBuf, _instance.F_DTCInfomationIMCU)
+	skip := int(_instance.F_evtLen) - 70
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1418,18 +1412,15 @@ func To_Evt_D010(_byteBuf *parse.ByteBuf) *Evt_D010 {
 	_instance := Evt_D010{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationIAM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIPD = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIECU = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationFDR = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationLFSDA = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRFSDA = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationLHRDA = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRHRDA = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationIAM = read_7(_byteBuf)
+	_instance.F_DTCInfomationIPD = read_7(_byteBuf)
+	_instance.F_DTCInfomationIECU = read_7(_byteBuf)
+	_instance.F_DTCInfomationFDR = read_7(_byteBuf)
+	_instance.F_DTCInfomationLFSDA = read_7(_byteBuf)
+	_instance.F_DTCInfomationRFSDA = read_7(_byteBuf)
+	_instance.F_DTCInfomationLHRDA = read_7(_byteBuf)
+	_instance.F_DTCInfomationRHRDA = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 56
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1440,18 +1431,15 @@ func (__instance *Evt_D010) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationIAM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIPD, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIECU, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationFDR, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationLFSDA, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRFSDA, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationLHRDA, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRHRDA, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationIAM)
+	write_7(_byteBuf, _instance.F_DTCInfomationIPD)
+	write_7(_byteBuf, _instance.F_DTCInfomationIECU)
+	write_7(_byteBuf, _instance.F_DTCInfomationFDR)
+	write_7(_byteBuf, _instance.F_DTCInfomationLFSDA)
+	write_7(_byteBuf, _instance.F_DTCInfomationRFSDA)
+	write_7(_byteBuf, _instance.F_DTCInfomationLHRDA)
+	write_7(_byteBuf, _instance.F_DTCInfomationRHRDA)
+	skip := int(_instance.F_evtLen) - 56
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1471,15 +1459,12 @@ func To_Evt_D011(_byteBuf *parse.ByteBuf) *Evt_D011 {
 	_instance := Evt_D011{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationEPMCU = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationWLC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationSCU = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationEOPC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationCCU = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationEPMCU = read_7(_byteBuf)
+	_instance.F_DTCInfomationWLC = read_7(_byteBuf)
+	_instance.F_DTCInfomationSCU = read_7(_byteBuf)
+	_instance.F_DTCInfomationEOPC = read_7(_byteBuf)
+	_instance.F_DTCInfomationCCU = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 35
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1490,15 +1475,12 @@ func (__instance *Evt_D011) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationEPMCU, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationWLC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationSCU, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationEOPC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationCCU, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationEPMCU)
+	write_7(_byteBuf, _instance.F_DTCInfomationWLC)
+	write_7(_byteBuf, _instance.F_DTCInfomationSCU)
+	write_7(_byteBuf, _instance.F_DTCInfomationEOPC)
+	write_7(_byteBuf, _instance.F_DTCInfomationCCU)
+	skip := int(_instance.F_evtLen) - 35
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1522,19 +1504,18 @@ func To_Evt_D012(_byteBuf *parse.ByteBuf) *Evt_D012 {
 	_instance := Evt_D012{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationSDM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIBS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationEPS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationEPS_S = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationSCM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRBM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationSAS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRWSGW = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRWS = _bitBuf.Read(56, true, true)
+	_instance.F_DTCInfomationSDM = read_7(_byteBuf)
+	_instance.F_DTCInfomationIBS = read_7(_byteBuf)
+	_instance.F_DTCInfomationEPS = read_7(_byteBuf)
+	_instance.F_DTCInfomationEPS_S = read_7(_byteBuf)
+	_instance.F_DTCInfomationSCM = read_7(_byteBuf)
+	_instance.F_DTCInfomationRBM = read_7(_byteBuf)
+	_instance.F_DTCInfomationSAS = read_7(_byteBuf)
+	_instance.F_DTCInfomationRWSGW = read_7(_byteBuf)
+	_instance.F_DTCInfomationRWS = read_7(_byteBuf)
 	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	skip := int(_instance.F_evtLen) - 63
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1545,19 +1526,16 @@ func (__instance *Evt_D012) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationSDM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIBS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationEPS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationEPS_S, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationSCM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRBM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationSAS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRWSGW, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRWS, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationSDM)
+	write_7(_byteBuf, _instance.F_DTCInfomationIBS)
+	write_7(_byteBuf, _instance.F_DTCInfomationEPS)
+	write_7(_byteBuf, _instance.F_DTCInfomationEPS_S)
+	write_7(_byteBuf, _instance.F_DTCInfomationSCM)
+	write_7(_byteBuf, _instance.F_DTCInfomationRBM)
+	write_7(_byteBuf, _instance.F_DTCInfomationSAS)
+	write_7(_byteBuf, _instance.F_DTCInfomationRWSGW)
+	write_7(_byteBuf, _instance.F_DTCInfomationRWS)
+	skip := int(_instance.F_evtLen) - 63
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1583,21 +1561,18 @@ func To_Evt_D013(_byteBuf *parse.ByteBuf) *Evt_D013 {
 	_instance := Evt_D013{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationDCM_FL = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationDCM_FR = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationDCM_RL = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationDCM_RR = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationATC = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationAMR = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationBPEPS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationMSM_Drv = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationMSM_Psng = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationDLP = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationBCM = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationDCM_FL = read_7(_byteBuf)
+	_instance.F_DTCInfomationDCM_FR = read_7(_byteBuf)
+	_instance.F_DTCInfomationDCM_RL = read_7(_byteBuf)
+	_instance.F_DTCInfomationDCM_RR = read_7(_byteBuf)
+	_instance.F_DTCInfomationATC = read_7(_byteBuf)
+	_instance.F_DTCInfomationAMR = read_7(_byteBuf)
+	_instance.F_DTCInfomationBPEPS = read_7(_byteBuf)
+	_instance.F_DTCInfomationMSM_Drv = read_7(_byteBuf)
+	_instance.F_DTCInfomationMSM_Psng = read_7(_byteBuf)
+	_instance.F_DTCInfomationDLP = read_7(_byteBuf)
+	_instance.F_DTCInfomationBCM = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 77
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1608,21 +1583,18 @@ func (__instance *Evt_D013) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationDCM_FL, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationDCM_FR, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationDCM_RL, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationDCM_RR, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationATC, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationAMR, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationBPEPS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationMSM_Drv, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationMSM_Psng, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationDLP, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationBCM, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationDCM_FL)
+	write_7(_byteBuf, _instance.F_DTCInfomationDCM_FR)
+	write_7(_byteBuf, _instance.F_DTCInfomationDCM_RL)
+	write_7(_byteBuf, _instance.F_DTCInfomationDCM_RR)
+	write_7(_byteBuf, _instance.F_DTCInfomationATC)
+	write_7(_byteBuf, _instance.F_DTCInfomationAMR)
+	write_7(_byteBuf, _instance.F_DTCInfomationBPEPS)
+	write_7(_byteBuf, _instance.F_DTCInfomationMSM_Drv)
+	write_7(_byteBuf, _instance.F_DTCInfomationMSM_Psng)
+	write_7(_byteBuf, _instance.F_DTCInfomationDLP)
+	write_7(_byteBuf, _instance.F_DTCInfomationBCM)
+	skip := int(_instance.F_evtLen) - 77
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1642,15 +1614,14 @@ func To_Evt_D014(_byteBuf *parse.ByteBuf) *Evt_D014 {
 	_instance := Evt_D014{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationICM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationCARLog = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIMATE = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationAMP = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationPGM = _bitBuf.Read(56, true, true)
+	_instance.F_DTCInfomationICM = read_7(_byteBuf)
+	_instance.F_DTCInfomationCARLog = read_7(_byteBuf)
+	_instance.F_DTCInfomationIMATE = read_7(_byteBuf)
+	_instance.F_DTCInfomationAMP = read_7(_byteBuf)
+	_instance.F_DTCInfomationPGM = read_7(_byteBuf)
 	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	skip := int(_instance.F_evtLen) - 35
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1661,15 +1632,12 @@ func (__instance *Evt_D014) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationICM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationCARLog, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIMATE, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationAMP, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationPGM, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationICM)
+	write_7(_byteBuf, _instance.F_DTCInfomationCARLog)
+	write_7(_byteBuf, _instance.F_DTCInfomationIMATE)
+	write_7(_byteBuf, _instance.F_DTCInfomationAMP)
+	write_7(_byteBuf, _instance.F_DTCInfomationPGM)
+	skip := int(_instance.F_evtLen) - 35
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1685,11 +1653,8 @@ func To_Evt_D015(_byteBuf *parse.ByteBuf) *Evt_D015 {
 	_instance := Evt_D015{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationICC = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationICC = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 7
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1700,11 +1665,8 @@ func (__instance *Evt_D015) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationICC, 56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	write_7(_byteBuf, _instance.F_DTCInfomationICC)
+	skip := int(_instance.F_evtLen) - 7
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1726,17 +1688,16 @@ func To_Evt_D016(_byteBuf *parse.ByteBuf) *Evt_D016 {
 	_instance := Evt_D016{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationLHCMS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRHCMS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRLSM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRRSM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationPMA = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationLVBM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationIMU = _bitBuf.Read(56, true, true)
+	_instance.F_DTCInfomationLHCMS = read_7(_byteBuf)
+	_instance.F_DTCInfomationRHCMS = read_7(_byteBuf)
+	_instance.F_DTCInfomationRLSM = read_7(_byteBuf)
+	_instance.F_DTCInfomationRRSM = read_7(_byteBuf)
+	_instance.F_DTCInfomationPMA = read_7(_byteBuf)
+	_instance.F_DTCInfomationLVBM = read_7(_byteBuf)
+	_instance.F_DTCInfomationIMU = read_7(_byteBuf)
 	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	skip := int(_instance.F_evtLen) - 49
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1747,17 +1708,16 @@ func (__instance *Evt_D016) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationLHCMS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRHCMS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRLSM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRRSM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationPMA, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationLVBM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationIMU, 56, true, true)
+	write_7(_byteBuf, _instance.F_DTCInfomationLHCMS)
+	write_7(_byteBuf, _instance.F_DTCInfomationRHCMS)
+	write_7(_byteBuf, _instance.F_DTCInfomationRLSM)
+	write_7(_byteBuf, _instance.F_DTCInfomationRRSM)
+	write_7(_byteBuf, _instance.F_DTCInfomationPMA)
+	write_7(_byteBuf, _instance.F_DTCInfomationLVBM)
+	write_7(_byteBuf, _instance.F_DTCInfomationIMU)
 	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	skip := int(_instance.F_evtLen) - 49
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -1778,16 +1738,13 @@ func To_Evt_D017(_byteBuf *parse.ByteBuf) *Evt_D017 {
 	_instance := Evt_D017{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_evtLen = _byteBuf.Read_uint16()
-	index := _byteBuf.ReaderIndex()
-	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_DTCInfomationIPS = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationRrDetnRdr = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationHUD = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationFLIDAR = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationFVCM = _bitBuf.Read(56, true, true)
-	_instance.F_DTCInfomationSPD = _bitBuf.Read(56, true, true)
-	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	_instance.F_DTCInfomationIPS = read_7(_byteBuf)
+	_instance.F_DTCInfomationRrDetnRdr = read_7(_byteBuf)
+	_instance.F_DTCInfomationHUD = read_7(_byteBuf)
+	_instance.F_DTCInfomationFLIDAR = read_7(_byteBuf)
+	_instance.F_DTCInfomationFVCM = read_7(_byteBuf)
+	_instance.F_DTCInfomationSPD = read_7(_byteBuf)
+	skip := int(_instance.F_evtLen) - 42
 	if skip > 0 {
 		_byteBuf.Skip(skip)
 	}
@@ -1798,16 +1755,15 @@ func (__instance *Evt_D017) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(_instance.F_evtLen)
-	index := _byteBuf.WriterIndex()
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(_instance.F_DTCInfomationIPS, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationRrDetnRdr, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationHUD, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationFLIDAR, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationFVCM, 56, true, true)
-	_bitBuf.Write(_instance.F_DTCInfomationSPD, 56, true, true)
+	write_7(_byteBuf, _instance.F_DTCInfomationIPS)
+	write_7(_byteBuf, _instance.F_DTCInfomationRrDetnRdr)
+	write_7(_byteBuf, _instance.F_DTCInfomationHUD)
+	write_7(_byteBuf, _instance.F_DTCInfomationFLIDAR)
+	write_7(_byteBuf, _instance.F_DTCInfomationFVCM)
+	write_7(_byteBuf, _instance.F_DTCInfomationSPD)
 	_bitBuf.Finish()
-	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	skip := int(_instance.F_evtLen) - 42
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
 	}
@@ -2563,4 +2519,14 @@ func Write_Packets(packets []Packet, _byteBuf *parse.ByteBuf) {
 	for _, packet := range packets {
 		packet.Write(_byteBuf)
 	}
+}
+
+func read_7(_byteBuf *parse.ByteBuf) int64 {
+	arr := _byteBuf.Read_slice_uint8(7)
+	return (int64(arr[0]) << 48) | (int64(arr[1]) << 40) | (int64(arr[2]) << 32) | (int64(arr[3]) << 24) | (int64(arr[4]) << 16) | (int64(arr[5]) << 8) | int64(arr[6])
+}
+
+func write_7(_byteBuf *parse.ByteBuf, v int64) {
+	arr := []uint8{uint8(v >> 48), uint8(v >> 40), uint8(v >> 32), uint8(v >> 24), uint8(v >> 16), uint8(v >> 8), uint8(v)}
+	_byteBuf.Write_slice_uint8(arr)
 }
