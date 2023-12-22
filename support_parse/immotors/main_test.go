@@ -57,10 +57,6 @@ func TestPacket_Write(t *testing.T) {
 	}
 	byteBuf := parse.ToByteBuf(decodeString)
 	packet := To_Packet(byteBuf)
-	if err != nil {
-		t.Fatalf("%+v", err)
-	}
-
 	res := parse.ToByteBuf_empty()
 	packet.Write(res)
 
