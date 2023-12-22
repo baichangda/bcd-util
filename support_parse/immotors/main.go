@@ -1292,14 +1292,7 @@ func To_Evt_D00E(_byteBuf *parse.ByteBuf) *Evt_D00E {
 	index := _byteBuf.ReaderIndex()
 	F_BMSRptBatCodeNum_v := _byteBuf.Read_uint8()
 	_instance.F_BMSRptBatCodeNum = F_BMSRptBatCodeNum_v
-
-	F_BMSRptBatCodeAsc_len := (int)(F_BMSRptBatCodeNum_v)
-	F_BMSRptBatCodeAsc_arr := make([]uint8, F_BMSRptBatCodeAsc_len, F_BMSRptBatCodeAsc_len)
-	for i := 0; i < F_BMSRptBatCodeAsc_len; i++ {
-		F_BMSRptBatCodeAsc_arr[i] = _byteBuf.Read_uint8()
-	}
-	_instance.F_BMSRptBatCodeAsc = F_BMSRptBatCodeAsc_arr
-
+	_instance.F_BMSRptBatCodeAsc = _byteBuf.Read_slice_uint8((int)(F_BMSRptBatCodeNum_v))
 	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
 	if skip > 0 {
 		_byteBuf.Skip(skip)
@@ -1313,11 +1306,7 @@ func (__instance *Evt_D00E) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	index := _byteBuf.WriterIndex()
 	_byteBuf.Write_uint8(_instance.F_BMSRptBatCodeNum)
-	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	F_BMSRptBatCodeAsc_arr := _instance.F_BMSRptBatCodeAsc
-	for i := 0; i < len(F_BMSRptBatCodeAsc_arr); i++ {
-		_bitBuf.Write(int64(F_BMSRptBatCodeAsc_arr[i]), 8, true, true)
-	}
+	_byteBuf.Write_slice_uint8(_instance.F_BMSRptBatCodeAsc)
 	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
