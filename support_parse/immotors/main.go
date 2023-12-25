@@ -1051,7 +1051,7 @@ func (__instance *Evt_D009) Write(_byteBuf *parse.ByteBuf) {
 	_bitBuf.Write(int64(_instance.F_BMSPoorCellCnstncyAlrm), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_BMSCellOverChrgdAlrm), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_BMSLowPtIsltnRstcAlrm), 3, true, true)
-	_bitBuf.Write(int64((_instance.F_TMRtrTem + 40)), 8, true, true)
+	_bitBuf.Write(int64(_instance.F_TMRtrTem+40), 8, true, true)
 	_bitBuf.Write(int64(_instance.F_TMStrOvTempAlrm), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_TMInvtrOvTempAlrm), 3, true, true)
 	_bitBuf.Write(int64(_instance.F_ISCStrOvTempAlrm), 3, true, true)
@@ -2248,8 +2248,8 @@ type Packet struct {
 	F_evt_D01C        *Evt_D01C         `json:"evt_D01C,omitempty"`
 	F_evt_D01D        *Evt_D01D         `json:"evt_D01D,omitempty"`
 	F_evt_D01F        *Evt_D01F         `json:"evt_D01F,omitempty"`
-	F_evt_2_6_unknown []Evt_2_6_unknown `json:"evt_2_6_unknown"`
-	F_evt_4_x_unknown []Evt_4_x_unknown `json:"evt_4_x_unknown"`
+	F_evt_2_6_unknown []Evt_2_6_unknown `json:"evt_2_6_unknown,omitempty"`
+	F_evt_4_x_unknown []Evt_4_x_unknown `json:"evt_4_x_unknown,omitempty"`
 	F_evt_FFFF        *Evt_FFFF         `json:"evt_FFFF,omitempty"`
 }
 
