@@ -693,15 +693,15 @@ func (__instance *VehicleStorageVoltageData) Write(_byteBuf *parse.ByteBuf) {
 
 type VehicleRunData struct {
 	F_collectTime                   time.Time                      `json:"collectTime"`
-	F_vehicleBaseData               *VehicleBaseData               `json:"vehicleBaseData"`
-	F_vehicleMotorData              *VehicleMotorData              `json:"vehicleMotorData"`
-	F_vehicleFuelBatteryData        *VehicleFuelBatteryData        `json:"vehicleFuelBatteryData"`
-	F_vehicleEngineData             *VehicleEngineData             `json:"vehicleEngineData"`
-	F_vehiclePositionData           *VehiclePositionData           `json:"vehiclePositionData"`
-	F_vehicleLimitValueData         *VehicleLimitValueData         `json:"vehicleLimitValueData"`
-	F_vehicleAlarmData              *VehicleAlarmData              `json:"vehicleAlarmData"`
-	F_vehicleStorageVoltageData     *VehicleStorageVoltageData     `json:"vehicleStorageVoltageData"`
-	F_vehicleStorageTemperatureData *VehicleStorageTemperatureData `json:"vehicleStorageTemperatureData"`
+	F_vehicleBaseData               *VehicleBaseData               `json:"vehicleBaseData,omitempty"`
+	F_vehicleMotorData              *VehicleMotorData              `json:"vehicleMotorData,omitempty"`
+	F_vehicleFuelBatteryData        *VehicleFuelBatteryData        `json:"vehicleFuelBatteryData,omitempty"`
+	F_vehicleEngineData             *VehicleEngineData             `json:"vehicleEngineData,omitempty"`
+	F_vehiclePositionData           *VehiclePositionData           `json:"vehiclePositionData,omitempty"`
+	F_vehicleLimitValueData         *VehicleLimitValueData         `json:"vehicleLimitValueData,omitempty"`
+	F_vehicleAlarmData              *VehicleAlarmData              `json:"vehicleAlarmData,omitempty"`
+	F_vehicleStorageVoltageData     *VehicleStorageVoltageData     `json:"vehicleStorageVoltageData,omitempty"`
+	F_vehicleStorageTemperatureData *VehicleStorageTemperatureData `json:"vehicleStorageTemperatureData,omitempty"`
 }
 
 func To_VehicleRunData(_byteBuf *parse.ByteBuf, contentLength int) *VehicleRunData {
