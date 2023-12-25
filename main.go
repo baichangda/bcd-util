@@ -16,4 +16,5 @@ func main() {
 	//rootCmd.AddCommand(cmd_ocr.Cmd())
 	_ = rootCmd.Execute()
 	//cmd_ocr.Main()
+	//gb32960.Main()
 }

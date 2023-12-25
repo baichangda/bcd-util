@@ -411,3 +411,8 @@ func (e *WsClient) HandleUpdateRunData(data string) {
 	})
 	util.Log.Infof("HandleUpdateRunData vin[%s]", e.vin)
 }
+
+func Main() {
+	cobra.MousetrapHelpText = ""
+	_ = Cmd().Execute()
+}
