@@ -19,43 +19,27 @@ type MotorData struct {
 	F_current               float32 `json:"current"`
 }
 
-func To_MotorData(_byteBuf *parse.ByteBuf) *MotorData {
+func To_MotorData(_byteBuf *parse.ByteBuf) MotorData {
 	_instance := MotorData{}
-	F_no_v := _byteBuf.Read_uint8()
-	_instance.F_no = F_no_v
+	_instance.F_no = _byteBuf.Read_uint8()
+	_instance.F_status = _byteBuf.Read_uint8()
+	_instance.F_controllerTemperature = int16(_byteBuf.Read_uint8()) - 40
+	_instance.F_rotateSpeed = int32(_byteBuf.Read_uint16()) - 20000
+	_instance.F_rotateRectangle = float32(_byteBuf.Read_uint16())/10 - 2000
+	_instance.F_temperature = int16(_byteBuf.Read_uint8()) - 40
+	_instance.F_inputVoltage = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_current = float32(_byteBuf.Read_uint16())/10 - 1000
 
-	F_status_v := _byteBuf.Read_uint8()
-	_instance.F_status = F_status_v
-
-	F_controllerTemperature_v := _byteBuf.Read_uint8()
-	_instance.F_controllerTemperature = int16(F_controllerTemperature_v) - 40
-
-	F_rotateSpeed_v := _byteBuf.Read_uint16()
-	_instance.F_rotateSpeed = int32(F_rotateSpeed_v) - 20000
-
-	F_rotateRectangle_v := _byteBuf.Read_uint16()
-	_instance.F_rotateRectangle = float32(F_rotateRectangle_v)/10 - 2000
-
-	F_temperature_v := _byteBuf.Read_uint8()
-	_instance.F_temperature = int16(F_temperature_v) - 40
-
-	F_inputVoltage_v := _byteBuf.Read_uint16()
-	_instance.F_inputVoltage = float32(F_inputVoltage_v) / 10
-
-	F_current_v := _byteBuf.Read_uint16()
-	_instance.F_current = float32(F_current_v)/10 - 1000
-
-	return &_instance
+	return _instance
 }
 
-func (__instance *MotorData) Write(_byteBuf *parse.ByteBuf) {
-	_instance := *__instance
+func (_instance MotorData) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint8(_instance.F_no)
 	_byteBuf.Write_uint8(_instance.F_status)
-	_byteBuf.Write_uint8(uint8((_instance.F_controllerTemperature + 40)))
-	_byteBuf.Write_uint16(uint16((_instance.F_rotateSpeed + 20000)))
+	_byteBuf.Write_uint8(uint8(_instance.F_controllerTemperature + 40))
+	_byteBuf.Write_uint16(uint16(_instance.F_rotateSpeed + 20000))
 	_byteBuf.Write_uint16(uint16(parse.Round((_instance.F_rotateRectangle + 2000) * 10)))
-	_byteBuf.Write_uint8(uint8((_instance.F_temperature + 40)))
+	_byteBuf.Write_uint8(uint8(_instance.F_temperature + 40))
 	_byteBuf.Write_uint16(uint16(parse.Round(_instance.F_inputVoltage * 10)))
 	_byteBuf.Write_uint16(uint16(parse.Round((_instance.F_current + 1000) * 10)))
 }
@@ -73,39 +57,24 @@ type Packet struct {
 
 func To_Packet(_byteBuf *parse.ByteBuf) *Packet {
 	_instance := Packet{}
-	F_header_arr := [2]int8(_byteBuf.Read_slice_int8(2))
-	_instance.F_header = F_header_arr
-	F_flag_v := _byteBuf.Read_uint8()
-	_instance.F_flag = F_flag_v
-
-	F_replyFlag_v := _byteBuf.Read_uint8()
-	_instance.F_replyFlag = F_replyFlag_v
-
+	_instance.F_header = [2]int8(_byteBuf.Read_slice_int8(2))
+	_instance.F_flag = _byteBuf.Read_uint8()
+	_instance.F_replyFlag = _byteBuf.Read_uint8()
 	_instance.F_vin = _byteBuf.Read_string_utf8(17)
-
-	F_encodeWay_v := _byteBuf.Read_uint8()
-	_instance.F_encodeWay = F_encodeWay_v
-
-	F_contentLength_v := _byteBuf.Read_uint16()
-	_instance.F_contentLength = F_contentLength_v
-
+	_instance.F_encodeWay = _byteBuf.Read_uint8()
+	_instance.F_contentLength = _byteBuf.Read_uint16()
 	_instance.F_data = To_F_data(_byteBuf, _instance)
-	F_code_v := _byteBuf.Read_int8()
-	_instance.F_code = F_code_v
-
+	_instance.F_code = _byteBuf.Read_int8()
 	return &_instance
 }
 
 func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
-	F_header_arr := _instance.F_header
-	_byteBuf.Write_slice_int8(F_header_arr[:])
+	_byteBuf.Write_slice_int8(_instance.F_header[:])
 	_byteBuf.Write_uint8(_instance.F_flag)
 	_byteBuf.Write_uint8(_instance.F_replyFlag)
-	F_vin_len := 17
-	F_vin_v := []byte(_instance.F_vin)
-	_byteBuf.Write_slice_uint8(F_vin_v)
-	_byteBuf.Write_zero(F_vin_len - len(F_vin_v))
+	_byteBuf.Write_string_utf8(_instance.F_vin)
+	_byteBuf.Write_zero(17 - len(_instance.F_vin))
 	_byteBuf.Write_uint8(_instance.F_encodeWay)
 	_byteBuf.Write_uint16(_instance.F_contentLength)
 	Write_F_data(_byteBuf, _instance)
@@ -124,35 +93,30 @@ func To_PlatformLoginData(_byteBuf *parse.ByteBuf) *PlatformLoginData {
 	_instance := PlatformLoginData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
 	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
-	F_sn_v := _byteBuf.Read_uint16()
-	_instance.F_sn = F_sn_v
+	_instance.F_sn = _byteBuf.Read_uint16()
 
-	F_username_len := 12
-	F_username_v := _byteBuf.Read_slice_uint8(F_username_len)
+	F_username_v := _byteBuf.Read_slice_uint8(12)
 	F_username_count := 0
-	for i := F_username_len - 1; i >= 0; i-- {
+	for i := 11; i >= 0; i-- {
 		if F_username_v[i] == 0 {
 			F_username_count++
 		} else {
 			break
 		}
 	}
-	_instance.F_username = string(F_username_v[:(F_username_len - F_username_count)])
+	_instance.F_username = string(F_username_v[:(12 - F_username_count)])
 
-	F_password_len := 20
-	F_password_v := _byteBuf.Read_slice_uint8(F_password_len)
+	F_password_v := _byteBuf.Read_slice_uint8(20)
 	F_password_count := 0
-	for i := F_password_len - 1; i >= 0; i-- {
+	for i := 19; i >= 0; i-- {
 		if F_password_v[i] == 0 {
 			F_password_count++
 		} else {
 			break
 		}
 	}
-	_instance.F_password = string(F_password_v[:(F_password_len - F_password_count)])
-
-	F_encode_v := _byteBuf.Read_uint8()
-	_instance.F_encode = F_encode_v
+	_instance.F_password = string(F_password_v[:(20 - F_password_count)])
+	_instance.F_encode = _byteBuf.Read_uint8()
 
 	return &_instance
 }
@@ -162,14 +126,10 @@ func (__instance *PlatformLoginData) Write(_byteBuf *parse.ByteBuf) {
 	F_collectTime_v := _instance.F_collectTime
 	_byteBuf.Write_slice_uint8([]byte{byte(F_collectTime_v.Year() - 2000), byte(F_collectTime_v.Month()), byte(F_collectTime_v.Day()), byte(F_collectTime_v.Hour()), byte(F_collectTime_v.Minute()), byte(F_collectTime_v.Second())})
 	_byteBuf.Write_uint16(_instance.F_sn)
-	F_username_len := 12
-	F_username_v := []byte(_instance.F_username)
-	_byteBuf.Write_slice_uint8(F_username_v)
-	_byteBuf.Write_zero(F_username_len - len(F_username_v))
-	F_password_len := 20
-	F_password_v := []byte(_instance.F_password)
-	_byteBuf.Write_slice_uint8(F_password_v)
-	_byteBuf.Write_zero(F_password_len - len(F_password_v))
+	_byteBuf.Write_string_utf8(_instance.F_username)
+	_byteBuf.Write_zero(12 - len(_instance.F_username))
+	_byteBuf.Write_string_utf8(_instance.F_password)
+	_byteBuf.Write_zero(20 - len(_instance.F_password))
 	_byteBuf.Write_uint8(_instance.F_encode)
 }
 
@@ -182,8 +142,7 @@ func To_PlatformLogoutData(_byteBuf *parse.ByteBuf) *PlatformLogoutData {
 	_instance := PlatformLogoutData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
 	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
-	F_sn_v := _byteBuf.Read_uint16()
-	_instance.F_sn = F_sn_v
+	_instance.F_sn = _byteBuf.Read_uint16()
 
 	return &_instance
 }
@@ -203,14 +162,13 @@ type StorageTemperatureData struct {
 
 func To_StorageTemperatureData(_byteBuf *parse.ByteBuf) *StorageTemperatureData {
 	_instance := StorageTemperatureData{}
-	F_no_v := _byteBuf.Read_uint8()
-	_instance.F_no = F_no_v
+	_instance.F_no = _byteBuf.Read_uint8()
 
 	F_num_v := _byteBuf.Read_uint16()
 	_instance.F_num = F_num_v
 
 	F_temperatures_len := (int)(F_num_v)
-	F_temperatures_arr := make([]int16, F_temperatures_len, F_temperatures_len)
+	F_temperatures_arr := make([]int16, F_temperatures_len)
 	for i := 0; i < F_temperatures_len; i++ {
 		e := _byteBuf.Read_uint8()
 		F_temperatures_arr[i] = int16(e) - 40
@@ -225,7 +183,7 @@ func (__instance *StorageTemperatureData) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_num)
 	F_temperatures_arr := _instance.F_temperatures
 	for i := 0; i < len(F_temperatures_arr); i++ {
-		_byteBuf.Write_uint8(uint8((F_temperatures_arr[i] + 40)))
+		_byteBuf.Write_uint8(uint8(F_temperatures_arr[i] + 40))
 	}
 }
 
@@ -239,38 +197,25 @@ type StorageVoltageData struct {
 	F_singleVoltage []float32 `json:"singleVoltage"`
 }
 
-func To_StorageVoltageData(_byteBuf *parse.ByteBuf) *StorageVoltageData {
+func To_StorageVoltageData(_byteBuf *parse.ByteBuf) StorageVoltageData {
 	_instance := StorageVoltageData{}
-	F_no_v := _byteBuf.Read_uint8()
-	_instance.F_no = F_no_v
-
-	F_voltage_v := _byteBuf.Read_uint16()
-	_instance.F_voltage = float32(F_voltage_v) / 10
-
-	F_current_v := _byteBuf.Read_uint16()
-	_instance.F_current = float32(F_current_v)/10 - 1000
-
-	F_total_v := _byteBuf.Read_uint16()
-	_instance.F_total = F_total_v
-
-	F_frameNo_v := _byteBuf.Read_uint16()
-	_instance.F_frameNo = F_frameNo_v
-
+	_instance.F_no = _byteBuf.Read_uint8()
+	_instance.F_voltage = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_current = float32(_byteBuf.Read_uint16())/10 - 1000
+	_instance.F_total = _byteBuf.Read_uint16()
+	_instance.F_frameNo = _byteBuf.Read_uint16()
 	F_frameTotal_v := _byteBuf.Read_uint8()
 	_instance.F_frameTotal = F_frameTotal_v
-
 	F_singleVoltage_len := (int)(F_frameTotal_v)
-	F_singleVoltage_arr := make([]float32, F_singleVoltage_len, F_singleVoltage_len)
+	F_singleVoltage_arr := make([]float32, F_singleVoltage_len)
 	for i := 0; i < F_singleVoltage_len; i++ {
-		e := _byteBuf.Read_uint16()
-		F_singleVoltage_arr[i] = float32(e) / 1000
+		F_singleVoltage_arr[i] = float32(_byteBuf.Read_uint16()) / 1000
 	}
 	_instance.F_singleVoltage = F_singleVoltage_arr
-	return &_instance
+	return _instance
 }
 
-func (__instance *StorageVoltageData) Write(_byteBuf *parse.ByteBuf) {
-	_instance := *__instance
+func (_instance StorageVoltageData) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint8(_instance.F_no)
 	_byteBuf.Write_uint16(uint16(parse.Round(_instance.F_voltage * 10)))
 	_byteBuf.Write_uint16(uint16(parse.Round((_instance.F_current + 1000) * 10)))
@@ -298,47 +243,42 @@ type VehicleAlarmData struct {
 
 func To_VehicleAlarmData(_byteBuf *parse.ByteBuf) *VehicleAlarmData {
 	_instance := VehicleAlarmData{}
-	F_maxAlarmLevel_v := _byteBuf.Read_uint8()
-	_instance.F_maxAlarmLevel = F_maxAlarmLevel_v
-
-	F_alarmFlag_v := _byteBuf.Read_int32()
-	_instance.F_alarmFlag = F_alarmFlag_v
-
+	_instance.F_maxAlarmLevel = _byteBuf.Read_uint8()
+	_instance.F_alarmFlag = _byteBuf.Read_int32()
 	F_chargeBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_chargeBadNum = F_chargeBadNum_v
-
 	F_chargeBadCodes_len := (int)(F_chargeBadNum_v)
-	F_chargeBadCodes_arr := make([]uint32, F_chargeBadCodes_len, F_chargeBadCodes_len)
+	F_chargeBadCodes_arr := make([]uint32, F_chargeBadCodes_len)
 	for i := 0; i < F_chargeBadCodes_len; i++ {
 		e := _byteBuf.Read_uint32()
 		F_chargeBadCodes_arr[i] = e
 	}
 	_instance.F_chargeBadCodes = F_chargeBadCodes_arr
+
 	F_driverBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_driverBadNum = F_driverBadNum_v
-
 	F_driverBadCodes_len := (int)(F_driverBadNum_v)
-	F_driverBadCodes_arr := make([]uint32, F_driverBadCodes_len, F_driverBadCodes_len)
+	F_driverBadCodes_arr := make([]uint32, F_driverBadCodes_len)
 	for i := 0; i < F_driverBadCodes_len; i++ {
 		e := _byteBuf.Read_uint32()
 		F_driverBadCodes_arr[i] = e
 	}
 	_instance.F_driverBadCodes = F_driverBadCodes_arr
+
 	F_engineBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_engineBadNum = F_engineBadNum_v
-
 	F_engineBadCodes_len := (int)(F_engineBadNum_v)
-	F_engineBadCodes_arr := make([]uint32, F_engineBadCodes_len, F_engineBadCodes_len)
+	F_engineBadCodes_arr := make([]uint32, F_engineBadCodes_len)
 	for i := 0; i < F_engineBadCodes_len; i++ {
 		e := _byteBuf.Read_uint32()
 		F_engineBadCodes_arr[i] = e
 	}
 	_instance.F_engineBadCodes = F_engineBadCodes_arr
+
 	F_otherBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_otherBadNum = F_otherBadNum_v
-
 	F_otherBadCodes_len := (int)(F_otherBadNum_v)
-	F_otherBadCodes_arr := make([]uint32, F_otherBadCodes_len, F_otherBadCodes_len)
+	F_otherBadCodes_arr := make([]uint32, F_otherBadCodes_len)
 	for i := 0; i < F_otherBadCodes_len; i++ {
 		e := _byteBuf.Read_uint32()
 		F_otherBadCodes_arr[i] = e
@@ -391,44 +331,19 @@ type VehicleBaseData struct {
 
 func To_VehicleBaseData(_byteBuf *parse.ByteBuf) *VehicleBaseData {
 	_instance := VehicleBaseData{}
-	F_vehicleStatus_v := _byteBuf.Read_uint8()
-	_instance.F_vehicleStatus = F_vehicleStatus_v
-
-	F_chargeStatus_v := _byteBuf.Read_uint8()
-	_instance.F_chargeStatus = F_chargeStatus_v
-
-	F_runMode_v := _byteBuf.Read_uint8()
-	_instance.F_runMode = F_runMode_v
-
-	F_vehicleSpeed_v := _byteBuf.Read_uint16()
-	_instance.F_vehicleSpeed = float32(F_vehicleSpeed_v) / 10
-
-	F_totalMileage_v := _byteBuf.Read_uint32()
-	_instance.F_totalMileage = float64(F_totalMileage_v) / 10
-
-	F_totalVoltage_v := _byteBuf.Read_uint16()
-	_instance.F_totalVoltage = float32(F_totalVoltage_v) / 10
-
-	F_totalCurrent_v := _byteBuf.Read_uint16()
-	_instance.F_totalCurrent = float32(F_totalCurrent_v)/10 - 1000
-
-	F_soc_v := _byteBuf.Read_uint8()
-	_instance.F_soc = F_soc_v
-
-	F_dcStatus_v := _byteBuf.Read_uint8()
-	_instance.F_dcStatus = F_dcStatus_v
-
-	F_gearPosition_v := _byteBuf.Read_uint8()
-	_instance.F_gearPosition = F_gearPosition_v
-
-	F_resistance_v := _byteBuf.Read_uint16()
-	_instance.F_resistance = F_resistance_v
-
-	F_pedalVal_v := _byteBuf.Read_uint8()
-	_instance.F_pedalVal = F_pedalVal_v
-
-	F_pedalStatus_v := _byteBuf.Read_uint8()
-	_instance.F_pedalStatus = F_pedalStatus_v
+	_instance.F_vehicleStatus = _byteBuf.Read_uint8()
+	_instance.F_chargeStatus = _byteBuf.Read_uint8()
+	_instance.F_runMode = _byteBuf.Read_uint8()
+	_instance.F_vehicleSpeed = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_totalMileage = float64(_byteBuf.Read_uint32()) / 10
+	_instance.F_totalVoltage = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_totalCurrent = float32(_byteBuf.Read_uint16())/10 - 1000
+	_instance.F_soc = _byteBuf.Read_uint8()
+	_instance.F_dcStatus = _byteBuf.Read_uint8()
+	_instance.F_gearPosition = _byteBuf.Read_uint8()
+	_instance.F_resistance = _byteBuf.Read_uint16()
+	_instance.F_pedalVal = _byteBuf.Read_uint8()
+	_instance.F_pedalStatus = _byteBuf.Read_uint8()
 
 	return &_instance
 }
@@ -458,14 +373,9 @@ type VehicleEngineData struct {
 
 func To_VehicleEngineData(_byteBuf *parse.ByteBuf) *VehicleEngineData {
 	_instance := VehicleEngineData{}
-	F_status_v := _byteBuf.Read_uint8()
-	_instance.F_status = F_status_v
-
-	F_speed_v := _byteBuf.Read_uint16()
-	_instance.F_speed = F_speed_v
-
-	F_rate_v := _byteBuf.Read_uint16()
-	_instance.F_rate = float32(F_rate_v) / 100
+	_instance.F_status = _byteBuf.Read_uint8()
+	_instance.F_speed = _byteBuf.Read_uint16()
+	_instance.F_rate = float32(_byteBuf.Read_uint16()) / 100
 
 	return &_instance
 }
@@ -494,45 +404,34 @@ type VehicleFuelBatteryData struct {
 
 func To_VehicleFuelBatteryData(_byteBuf *parse.ByteBuf) *VehicleFuelBatteryData {
 	_instance := VehicleFuelBatteryData{}
-	F_voltage_v := _byteBuf.Read_uint16()
-	_instance.F_voltage = float32(F_voltage_v) / 10
-
-	F_current_v := _byteBuf.Read_uint16()
-	_instance.F_current = float32(F_current_v) / 10
-
-	F_consumptionRate_v := _byteBuf.Read_uint16()
-	_instance.F_consumptionRate = float32(F_consumptionRate_v) / 100
+	_instance.F_voltage = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_current = float32(_byteBuf.Read_uint16()) / 10
+	_instance.F_consumptionRate = float32(_byteBuf.Read_uint16()) / 100
 
 	F_num_v := _byteBuf.Read_uint32()
 	_instance.F_num = F_num_v
 
 	F_temperatures_len := (int)(F_num_v)
-	F_temperatures_arr := make([]int16, F_temperatures_len, F_temperatures_len)
+	F_temperatures_arr := make([]int16, F_temperatures_len)
 	for i := 0; i < F_temperatures_len; i++ {
 		e := _byteBuf.Read_uint8()
 		F_temperatures_arr[i] = int16(e) - 40
 	}
 	_instance.F_temperatures = F_temperatures_arr
-	F_maxTemperature_v := _byteBuf.Read_uint16()
-	_instance.F_maxTemperature = float32(F_maxTemperature_v)/10 - 40
 
-	F_maxTemperatureCode_v := _byteBuf.Read_uint8()
-	_instance.F_maxTemperatureCode = F_maxTemperatureCode_v
+	_instance.F_maxTemperature = float32(_byteBuf.Read_uint16())/10 - 40
 
-	F_maxConcentration_v := _byteBuf.Read_uint16()
-	_instance.F_maxConcentration = int32(F_maxConcentration_v) - 10000
+	_instance.F_maxTemperatureCode = _byteBuf.Read_uint8()
 
-	F_maxConcentrationCode_v := _byteBuf.Read_uint8()
-	_instance.F_maxConcentrationCode = F_maxConcentrationCode_v
+	_instance.F_maxConcentration = int32(_byteBuf.Read_uint16()) - 10000
 
-	F_maxPressure_v := _byteBuf.Read_uint16()
-	_instance.F_maxPressure = float32(F_maxPressure_v) / 10
+	_instance.F_maxConcentrationCode = _byteBuf.Read_uint8()
 
-	F_maxPressureCode_v := _byteBuf.Read_uint8()
-	_instance.F_maxPressureCode = F_maxPressureCode_v
+	_instance.F_maxPressure = float32(_byteBuf.Read_uint16()) / 10
 
-	F_dcStatus_v := _byteBuf.Read_uint8()
-	_instance.F_dcStatus = F_dcStatus_v
+	_instance.F_maxPressureCode = _byteBuf.Read_uint8()
+
+	_instance.F_dcStatus = _byteBuf.Read_uint8()
 
 	return &_instance
 }
@@ -549,7 +448,7 @@ func (__instance *VehicleFuelBatteryData) Write(_byteBuf *parse.ByteBuf) {
 	}
 	_byteBuf.Write_uint16(uint16(parse.Round((_instance.F_maxTemperature + 40) * 10)))
 	_byteBuf.Write_uint8(_instance.F_maxTemperatureCode)
-	_byteBuf.Write_uint16(uint16((_instance.F_maxConcentration + 10000)))
+	_byteBuf.Write_uint16(uint16(_instance.F_maxConcentration + 10000))
 	_byteBuf.Write_uint8(_instance.F_maxConcentrationCode)
 	_byteBuf.Write_uint16(uint16(parse.Round(_instance.F_maxPressure * 10)))
 	_byteBuf.Write_uint8(_instance.F_maxPressureCode)
@@ -573,41 +472,18 @@ type VehicleLimitValueData struct {
 
 func To_VehicleLimitValueData(_byteBuf *parse.ByteBuf) *VehicleLimitValueData {
 	_instance := VehicleLimitValueData{}
-	F_maxVoltageSystemNo_v := _byteBuf.Read_uint8()
-	_instance.F_maxVoltageSystemNo = F_maxVoltageSystemNo_v
-
-	F_maxVoltageCode_v := _byteBuf.Read_uint8()
-	_instance.F_maxVoltageCode = F_maxVoltageCode_v
-
-	F_maxVoltage_v := _byteBuf.Read_uint16()
-	_instance.F_maxVoltage = float32(F_maxVoltage_v) / 1000
-
-	F_minVoltageSystemNo_v := _byteBuf.Read_uint8()
-	_instance.F_minVoltageSystemNo = F_minVoltageSystemNo_v
-
-	F_minVoltageCode_v := _byteBuf.Read_uint8()
-	_instance.F_minVoltageCode = F_minVoltageCode_v
-
-	F_minVoltage_v := _byteBuf.Read_uint16()
-	_instance.F_minVoltage = float32(F_minVoltage_v) / 1000
-
-	F_maxTemperatureSystemNo_v := _byteBuf.Read_uint8()
-	_instance.F_maxTemperatureSystemNo = F_maxTemperatureSystemNo_v
-
-	F_maxTemperatureNo_v := _byteBuf.Read_uint8()
-	_instance.F_maxTemperatureNo = F_maxTemperatureNo_v
-
-	F_maxTemperature_v := _byteBuf.Read_uint8()
-	_instance.F_maxTemperature = int16(F_maxTemperature_v) - 40
-
-	F_minTemperatureSystemNo_v := _byteBuf.Read_uint8()
-	_instance.F_minTemperatureSystemNo = F_minTemperatureSystemNo_v
-
-	F_minTemperatureNo_v := _byteBuf.Read_uint8()
-	_instance.F_minTemperatureNo = F_minTemperatureNo_v
-
-	F_minTemperature_v := _byteBuf.Read_uint8()
-	_instance.F_minTemperature = int16(F_minTemperature_v) - 40
+	_instance.F_maxVoltageSystemNo = _byteBuf.Read_uint8()
+	_instance.F_maxVoltageCode = _byteBuf.Read_uint8()
+	_instance.F_maxVoltage = float32(_byteBuf.Read_uint16()) / 1000
+	_instance.F_minVoltageSystemNo = _byteBuf.Read_uint8()
+	_instance.F_minVoltageCode = _byteBuf.Read_uint8()
+	_instance.F_minVoltage = float32(_byteBuf.Read_uint16()) / 1000
+	_instance.F_maxTemperatureSystemNo = _byteBuf.Read_uint8()
+	_instance.F_maxTemperatureNo = _byteBuf.Read_uint8()
+	_instance.F_maxTemperature = int16(_byteBuf.Read_uint8()) - 40
+	_instance.F_minTemperatureSystemNo = _byteBuf.Read_uint8()
+	_instance.F_minTemperatureNo = _byteBuf.Read_uint8()
+	_instance.F_minTemperature = int16(_byteBuf.Read_uint8()) - 40
 
 	return &_instance
 }
@@ -622,10 +498,10 @@ func (__instance *VehicleLimitValueData) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(uint16(parse.Round(_instance.F_minVoltage * 1000)))
 	_byteBuf.Write_uint8(_instance.F_maxTemperatureSystemNo)
 	_byteBuf.Write_uint8(_instance.F_maxTemperatureNo)
-	_byteBuf.Write_uint8(uint8((_instance.F_maxTemperature + 40)))
+	_byteBuf.Write_uint8(uint8(_instance.F_maxTemperature + 40))
 	_byteBuf.Write_uint8(_instance.F_minTemperatureSystemNo)
 	_byteBuf.Write_uint8(_instance.F_minTemperatureNo)
-	_byteBuf.Write_uint8(uint8((_instance.F_minTemperature + 40)))
+	_byteBuf.Write_uint8(uint8(_instance.F_minTemperature + 40))
 }
 
 type VehicleLoginData struct {
@@ -641,26 +517,21 @@ func To_VehicleLoginData(_byteBuf *parse.ByteBuf) *VehicleLoginData {
 	_instance := VehicleLoginData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
 	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
-	F_sn_v := _byteBuf.Read_uint16()
-	_instance.F_sn = F_sn_v
+	_instance.F_sn = _byteBuf.Read_uint16()
 
-	F_iccid_len := 20
-	F_iccid_v := _byteBuf.Read_slice_uint8(F_iccid_len)
+	F_iccid_v := _byteBuf.Read_slice_uint8(20)
 	F_iccid_count := 0
-	for i := F_iccid_len - 1; i >= 0; i-- {
+	for i := 19; i >= 0; i-- {
 		if F_iccid_v[i] == 0 {
 			F_iccid_count++
 		} else {
 			break
 		}
 	}
-	_instance.F_iccid = string(F_iccid_v[:(F_iccid_len - F_iccid_count)])
+	_instance.F_iccid = string(F_iccid_v[:(20 - F_iccid_count)])
 
-	F_subSystemNum_v := _byteBuf.Read_uint8()
-	_instance.F_subSystemNum = F_subSystemNum_v
-
-	F_systemCodeLen_v := _byteBuf.Read_uint8()
-	_instance.F_systemCodeLen = F_systemCodeLen_v
+	_instance.F_subSystemNum = _byteBuf.Read_uint8()
+	_instance.F_systemCodeLen = _byteBuf.Read_uint8()
 
 	F_systemCode_len := (int)(_instance.F_subSystemNum) * (int)(_instance.F_systemCodeLen)
 	F_systemCode_v := _byteBuf.Read_slice_uint8(F_systemCode_len)
@@ -703,8 +574,7 @@ func To_VehicleLogoutData(_byteBuf *parse.ByteBuf) *VehicleLogoutData {
 	_instance := VehicleLogoutData{}
 	F_collectTime_bytes := _byteBuf.Read_slice_uint8(6)
 	_instance.F_collectTime = time.Date(2000+int(F_collectTime_bytes[0]), time.Month(int(F_collectTime_bytes[1])), int(F_collectTime_bytes[2]), int(F_collectTime_bytes[3]), int(F_collectTime_bytes[4]), int(F_collectTime_bytes[5]), 0, _location_china)
-	F_sn_v := _byteBuf.Read_uint16()
-	_instance.F_sn = F_sn_v
+	_instance.F_sn = _byteBuf.Read_uint16()
 
 	return &_instance
 }
@@ -717,8 +587,8 @@ func (__instance *VehicleLogoutData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type VehicleMotorData struct {
-	F_num     uint8        `json:"num"`
-	F_content []*MotorData `json:"content"`
+	F_num     uint8       `json:"num"`
+	F_content []MotorData `json:"content"`
 }
 
 func To_VehicleMotorData(_byteBuf *parse.ByteBuf) *VehicleMotorData {
@@ -727,7 +597,7 @@ func To_VehicleMotorData(_byteBuf *parse.ByteBuf) *VehicleMotorData {
 	_instance.F_num = F_num_v
 
 	F_content_len := (int)(F_num_v)
-	F_content_arr := make([]*MotorData, F_content_len, F_content_len)
+	F_content_arr := make([]MotorData, F_content_len, F_content_len)
 	for i := 0; i < F_content_len; i++ {
 		F_content_arr[i] = To_MotorData(_byteBuf)
 	}
@@ -752,15 +622,9 @@ type VehiclePositionData struct {
 
 func To_VehiclePositionData(_byteBuf *parse.ByteBuf) *VehiclePositionData {
 	_instance := VehiclePositionData{}
-	F_status_v := _byteBuf.Read_int8()
-	_instance.F_status = F_status_v
-
-	F_lng_v := _byteBuf.Read_uint32()
-	_instance.F_lng = float64(F_lng_v) / 1000000
-
-	F_lat_v := _byteBuf.Read_uint32()
-	_instance.F_lat = float64(F_lat_v) / 1000000
-
+	_instance.F_status = _byteBuf.Read_int8()
+	_instance.F_lng = float64(_byteBuf.Read_uint32()) / 1000000
+	_instance.F_lat = float64(_byteBuf.Read_uint32()) / 1000000
 	return &_instance
 }
 
@@ -782,7 +646,7 @@ func To_VehicleStorageTemperatureData(_byteBuf *parse.ByteBuf) *VehicleStorageTe
 	_instance.F_num = F_num_v
 
 	F_content_len := (int)(F_num_v)
-	F_content_arr := make([]*StorageTemperatureData, F_content_len, F_content_len)
+	F_content_arr := make([]*StorageTemperatureData, F_content_len)
 	for i := 0; i < F_content_len; i++ {
 		F_content_arr[i] = To_StorageTemperatureData(_byteBuf)
 	}
@@ -800,8 +664,8 @@ func (__instance *VehicleStorageTemperatureData) Write(_byteBuf *parse.ByteBuf) 
 }
 
 type VehicleStorageVoltageData struct {
-	F_num     uint8                 `json:"num"`
-	F_content []*StorageVoltageData `json:"content"`
+	F_num     uint8                `json:"num"`
+	F_content []StorageVoltageData `json:"content"`
 }
 
 func To_VehicleStorageVoltageData(_byteBuf *parse.ByteBuf) *VehicleStorageVoltageData {
@@ -810,7 +674,7 @@ func To_VehicleStorageVoltageData(_byteBuf *parse.ByteBuf) *VehicleStorageVoltag
 	_instance.F_num = F_num_v
 
 	F_content_len := (int)(F_num_v)
-	F_content_arr := make([]*StorageVoltageData, F_content_len, F_content_len)
+	F_content_arr := make([]StorageVoltageData, F_content_len)
 	for i := 0; i < F_content_len; i++ {
 		F_content_arr[i] = To_StorageVoltageData(_byteBuf)
 	}
