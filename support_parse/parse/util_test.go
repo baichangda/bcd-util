@@ -117,3 +117,13 @@ func Test_Msg_tailer(t *testing.T) {
 	}))
 	t.Logf("%+v", m)
 }
+
+func Test2(t *testing.T) {
+	var i1 uint8 = 255
+	t.Log(int64(i1))
+	t.Log(int8(i1))
+	var i2 int8 = -1
+	t.Log(uint16(i2))
+	t.Log(int16(i2))
+	t.Log(uint8(i2))
+}
