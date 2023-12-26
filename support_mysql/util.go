@@ -8,16 +8,19 @@ import (
 )
 
 var cache = make(map[string]string)
-var cacheLock = sync.Mutex{}
+var cacheLock = sync.RWMutex{}
 
 func getValTemplate(sqlPre string) string {
+	cacheLock.RLock()
 	valTemplate, ok := cache[sqlPre]
+	cacheLock.RUnlock()
 	if !ok {
 		cacheLock.Lock()
 		valTemplate, ok = cache[sqlPre]
 		if !ok {
 			paramNum := strings.Count(sqlPre, ",") + 1
 			valTemplate = "(" + strings.Repeat(",?", paramNum)[1:] + ")"
+			cache[sqlPre] = valTemplate
 		}
 		cacheLock.Unlock()
 	}
