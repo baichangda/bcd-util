@@ -9,17 +9,17 @@ type RoundType interface {
 func Round[V RoundType](v V) V {
 	if v > 0 {
 		if (int64(v*10) % 10) >= 5 {
-			return v + 1
+			return V(int64(v) + 1)
 		} else {
-			return v
+			return V(int64(v))
 		}
 	} else if v == 0 {
 		return 0
 	} else {
-		if (int64(-v*10) % 10) >= 5 {
-			return v - 1
+		if (int64(v*10) % 10) >= 5 {
+			return V(int64(v) - 1)
 		} else {
-			return v
+			return V(int64(v))
 		}
 	}
 }

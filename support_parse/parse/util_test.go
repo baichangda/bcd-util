@@ -6,6 +6,24 @@ import (
 	"unsafe"
 )
 
+func BenchmarkRound(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Round(11.12345)
+		Round(11.54321)
+		Round(-11.12345)
+		Round(-11.54321)
+	}
+}
+
+func BenchmarkRound_slow(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		Round_slow(11.12345)
+		Round_slow(11.54321)
+		Round_slow(-11.12345)
+		Round_slow(-11.54321)
+	}
+}
+
 func TestRound(t *testing.T) {
 	round1 := Round(1234.5678)
 	t.Log(round1)
@@ -21,7 +39,7 @@ func TestRound(t *testing.T) {
 
 	round3 := Round(float64(-1015))
 	t.Log(round3)
-	if round2 != -1015 {
+	if round3 != -1015 {
 		t.Fail()
 	}
 }
