@@ -41,8 +41,8 @@ func Cmd() *cobra.Command {
 				files = []string{filePath}
 			}
 
-			messages := make([]kafka.Message, len(files))
-			for i, f := range files {
+			var messages []kafka.Message
+			for _, f := range files {
 				file, err := os.Open(f)
 				if err != nil {
 					util.Log.Errorf("%+v", err)
@@ -53,12 +53,17 @@ func Cmd() *cobra.Command {
 					util.Log.Errorf("%+v", err)
 					return
 				}
-				util.Log.Infof("read file[%s] len[%d]", f, len(all))
+				validCount := 0
 				for _, e := range all {
-					messages[i] = kafka.Message{
-						Value: e,
+					if len(strings.TrimSpace(string(e))) == 0 {
+						continue
 					}
+					messages = append(messages, kafka.Message{
+						Value: e,
+					})
+					validCount++
 				}
+				util.Log.Infof("read file[%s] count[%d/%d]", f, validCount, len(all))
 			}
 			//连接kafka
 			kafkaWriter := &kafka.Writer{
@@ -75,7 +80,7 @@ func Cmd() *cobra.Command {
 				util.Log.Errorf("%+v", err)
 				return
 			}
-			util.Log.Infof("send to kafka[%s] topic[%s] succeed", strings.Join(prop.Addrs, ","), prop.Topic)
+			util.Log.Infof("send to kafka[%s] topic[%s] count[%d] succeed", strings.Join(prop.Addrs, ","), prop.Topic, len(messages))
 		},
 	}
 	cmd.Flags().StringVarP(&filePath, "filePath", "f", "data.txt", "要发送数据文件路径(可以是文件夹、如果是文件夹则发送文件夹下面所有.txt文件、其中子级目录忽略)")
