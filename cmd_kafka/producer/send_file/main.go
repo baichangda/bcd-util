@@ -13,6 +13,7 @@ import (
 )
 
 var filePath string
+var split string
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -39,17 +40,24 @@ func Cmd() *cobra.Command {
 			} else {
 				files = []string{filePath}
 			}
-			util.Log.Infof("read files:\n%s", strings.Join(files, "\n"))
 
 			messages := make([]kafka.Message, len(files))
 			for i, f := range files {
-				file, err := os.ReadFile(f)
+				file, err := os.Open(f)
 				if err != nil {
 					util.Log.Errorf("%+v", err)
 					return
 				}
-				messages[i] = kafka.Message{
-					Value: file,
+				all, err := util.ReadSplitAll_reader(file, split[0])
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+					return
+				}
+				util.Log.Infof("read file[%s] len[%d]", f, len(all))
+				for _, e := range all {
+					messages[i] = kafka.Message{
+						Value: e,
+					}
 				}
 			}
 			//连接kafka
@@ -71,5 +79,6 @@ func Cmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVarP(&filePath, "filePath", "f", "data.txt", "要发送数据文件路径(可以是文件夹、如果是文件夹则发送文件夹下面所有.txt文件、其中子级目录忽略)")
+	cmd.Flags().StringVarP(&filePath, "split", "s", "\n", "针对每个发送的数据文件、按照分隔符分割、发送多条记录)")
 	return &cmd
 }
