@@ -22,7 +22,7 @@ func Cmd() *cobra.Command {
 		Run: func(cmd *cobra.Command, args []string) {
 			stat, err := os.Stat(filePath)
 			if err != nil {
-				util.Log.Errorf("文件[%s]不存在", filePath)
+				util.Log.Errorf("file[%s] not exist", filePath)
 				return
 			}
 			var files []string
