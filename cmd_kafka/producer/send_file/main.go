@@ -43,12 +43,7 @@ func Cmd() *cobra.Command {
 
 			var messages []kafka.Message
 			for _, f := range files {
-				file, err := os.Open(f)
-				if err != nil {
-					util.Log.Errorf("%+v", err)
-					return
-				}
-				all, err := util.ReadSplitAll_reader(file, split[0])
+				all, err := util.ReadSplitAll_file(f, split[0])
 				if err != nil {
 					util.Log.Errorf("%+v", err)
 					return
