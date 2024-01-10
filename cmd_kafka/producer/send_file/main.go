@@ -1,7 +1,7 @@
 package send_file
 
 import (
-	"bcd-util/cmd_kafka/prop"
+	"bcd-util/cmd_kafka/producer/prop"
 	"bcd-util/util"
 	"context"
 	"github.com/segmentio/kafka-go"
