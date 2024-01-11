@@ -32,6 +32,7 @@ func Cmd() *cobra.Command {
 		Use:   "web",
 		Short: "启动web服务器、可以发送数据到kafka",
 		Run: func(cmd *cobra.Command, args []string) {
+			gin.SetMode(gin.ReleaseMode)
 			engine := gin.New()
 
 			sub, err2 := fs.Sub(FS, "resource")

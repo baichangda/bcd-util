@@ -25,6 +25,7 @@ func Cmd() *cobra.Command {
 		Use:   "ocr",
 		Short: `启动ocr web服务`,
 		Run: func(cmd *cobra.Command, args []string) {
+			gin.SetMode(gin.ReleaseMode)
 			engine := gin.New()
 			engine.GET("/", func(c *gin.Context) {
 				c.Redirect(http.StatusMovedPermanently, "/resource/index.html")

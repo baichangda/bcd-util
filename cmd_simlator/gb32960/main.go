@@ -250,6 +250,7 @@ func (e *WsClient) startSendRunData() {
 var FS embed.FS
 
 func start() {
+	gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 

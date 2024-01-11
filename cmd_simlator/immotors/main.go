@@ -159,6 +159,7 @@ func (e *WsClient) HandleUpdatePacket(cancelCtx context.Context, data string) {
 var FS embed.FS
 
 func start() {
+	gin.SetMode(gin.ReleaseMode)
 	//连接kafka
 	kafkaWriter := &kafka.Writer{
 		Addr:         kafka.TCP(kafkaAddress...),
