@@ -89,7 +89,7 @@
         ws = new WebSocket(getWsUrl() + "?kafkaAddrs=" + kafkaAddrs + "&kafkaTopic=" + kafkaTopic + "&kafkaGroupId=" + kafkaGroupId);
 
         ws.onopen = function () {
-            appendToOutput("连接ws成功、开始连接kafka", 1)
+            appendToOutput("连接ws成功、开始连接kafka消费...", 1)
             $("#connectWs_btn").prop("disabled", true)
             $("#connectWs_btn").css("color", "green")
         };
@@ -113,11 +113,7 @@
                 break
             }
             case 102: {
-                if (parse.succeed) {
-                    appendToOutput("连接kafka成功、开始消费", 2)
-                } else {
-                    appendToOutput("kafka消费错误:\n" + parse.data, 2)
-                }
+                appendToOutput("kafka消费错误:\n" + parse.data, 2)
                 break
             }
         }

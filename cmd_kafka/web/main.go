@@ -154,13 +154,10 @@ func (e *WsClient) init(kafkaAddrs []string, kafkaTopic string, kafkaGroupId str
 
 	go func() {
 		reader := kafka.NewReader(kafka.ReaderConfig{
-			Brokers: kafkaAddrs,
-			GroupID: kafkaGroupId,
-			Topic:   kafkaTopic,
-			Dialer: &kafka.Dialer{
-				Timeout:   3 * time.Second,
-				DualStack: true,
-			},
+			Brokers:     kafkaAddrs,
+			GroupID:     kafkaGroupId,
+			Topic:       kafkaTopic,
+			MaxAttempts: 1,
 		})
 		defer reader.Close()
 
