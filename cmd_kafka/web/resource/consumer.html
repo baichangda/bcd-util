@@ -86,7 +86,7 @@
             appendToOutput("kafka groupId不能为空", 1)
             return
         }
-        ws = new WebSocket(getWsUrl() + "?kafkaAddrs=" + kafkaAddrs + "&kafkaTopic=" + kafkaTopic + "&kafkaGroupId=" + kafkaGroupId);
+        ws = new WebSocket(getWsUrl() + "?kafkaAddrs=" + encodeURIComponent(kafkaAddrs) + "&kafkaTopic=" + encodeURIComponent(kafkaTopic) + "&kafkaGroupId=" + encodeURIComponent(kafkaGroupId));
 
         ws.onopen = function () {
             appendToOutput("连接ws成功、开始连接kafka消费...", 1)
