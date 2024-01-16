@@ -164,24 +164,6 @@ func (e *WsClient) init(kafkaAddrs []string, kafkaTopic string, kafkaGroupId str
 		})
 		defer reader.Close()
 
-		//go func() {
-		//	for {
-		//		select {
-		//		case <-stopCtx.Done():
-		//			return
-		//		case <-time.After(1 * time.Second):
-		//			stats := reader.Stats()
-		//			util.Log.Infof("%+v", stats)
-		//		}
-		//	}
-		//}()
-		//
-		//e.send(&OutMsg{
-		//	Flag:    102,
-		//	Data:    "",
-		//	Succeed: true,
-		//})
-
 		util.Log.Infof("init kafkaAddrs[%s] kafkaTopic[%s] kafkaGroupId[%s]", strings.Join(kafkaAddrs, ","), kafkaTopic, kafkaGroupId)
 
 		for {
