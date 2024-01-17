@@ -32,8 +32,7 @@ func (e *BitBuf_reader) Read(bit int, bigEndian bool, unsigned bool) int64 {
 	finalBitOffset := temp & 7
 	var byteLen int
 	var l int64
-	if (temp & 7) == 0 {
-		byteLen = (temp >> 3)
+	if finalBitOffset == 0 {
 		byteLen = temp >> 3
 		l = int64(b) << (temp - 8)
 	} else {
@@ -74,7 +73,7 @@ func (e *BitBuf_reader) Skip(bit int) {
 	newBitOffsetZero := finalBitOffset == 0
 	var byteLen int
 	if newBitOffsetZero {
-		byteLen = (temp >> 3)
+		byteLen = temp >> 3
 	} else {
 		byteLen = (temp >> 3) + 1
 	}
