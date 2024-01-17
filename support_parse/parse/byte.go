@@ -1,6 +1,7 @@
 package parse
 
 import (
+	"bcd-util/util"
 	"math"
 	"reflect"
 	"strconv"
@@ -476,7 +477,8 @@ func (b *ByteBuf) Get_bytes(n int) []byte {
 
 func (b *ByteBuf) Get_string_utf8(n int) string {
 	bytes := b.bytes[b.rIndex : b.rIndex+n]
-	return string(bytes)
+	return util.Bytes2String(bytes)
+	//return string(bytes)
 }
 
 func (b *ByteBuf) Read_slice_int8(n int) []int8 {
@@ -498,7 +500,8 @@ func (b *ByteBuf) Read_slice_uint8(n int) []uint8 {
 func (b *ByteBuf) Read_string_utf8(n int) string {
 	bytes := b.bytes[b.rIndex : b.rIndex+n]
 	b.rIndex += n
-	return string(bytes)
+	//return string(bytes)
+	return util.Bytes2String(bytes)
 }
 
 func (b *ByteBuf) Write_uint8(v uint8) {
@@ -802,7 +805,7 @@ func (b *ByteBuf) Write_zero(n int) {
 }
 
 func (b *ByteBuf) Write_string_utf8(v string) {
-	bytes := []byte(v)
+	bytes := util.String2Bytes(v)
 	b.Write_slice_uint8(bytes)
 }
 
