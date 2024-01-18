@@ -4,6 +4,7 @@ import (
 	"bcd-util/support_parse/parse"
 	"bcd-util/util"
 	"encoding/hex"
+	"unsafe"
 )
 
 type Evt_0001 struct {
@@ -542,20 +543,21 @@ func (__instance *Evt_0803) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_2_6_unknown struct {
-	F_evtId uint16             `json:"evtId"`
-	F_data  parse.JsonUint8Arr `json:"data"`
+	F_evtId uint16  `json:"evtId"`
+	F_data  [6]byte `json:"data"`
 }
 
 func To_Evt_2_6_unknown(_byteBuf *parse.ByteBuf) *Evt_2_6_unknown {
 	_instance := Evt_2_6_unknown{}
 	_instance.F_evtId = _byteBuf.Read_uint16()
-	_instance.F_data = _byteBuf.Read_slice_uint8(6)
+	arr := _byteBuf.Read_slice_uint8(6)
+	_instance.F_data = *(*[6]byte)(unsafe.Pointer(&arr[0]))
 	return &_instance
 }
 func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint16(_instance.F_evtId)
-	_byteBuf.Write_slice_uint8(_instance.F_data)
+	_byteBuf.Write_slice_uint8(_instance.F_data[:])
 }
 
 type Evt_4_x_unknown struct {
@@ -2493,13 +2495,13 @@ func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 		_instance.F_evt_D01F.Write(_byteBuf)
 	}
 	if _instance.F_evt_2_6_unknown != nil {
-		for _, e := range _instance.F_evt_2_6_unknown {
-			e.Write(_byteBuf)
+		for i, _ := range _instance.F_evt_2_6_unknown {
+			_instance.F_evt_2_6_unknown[i].Write(_byteBuf)
 		}
 	}
 	if _instance.F_evt_4_x_unknown != nil {
-		for _, e := range _instance.F_evt_4_x_unknown {
-			e.Write(_byteBuf)
+		for i, _ := range _instance.F_evt_4_x_unknown {
+			_instance.F_evt_4_x_unknown[i].Write(_byteBuf)
 		}
 	}
 	if _instance.F_evt_FFFF != nil {
@@ -2516,7 +2518,7 @@ func To_Packets(_byteBuf *parse.ByteBuf) []Packet {
 }
 
 func Write_Packets(packets []Packet, _byteBuf *parse.ByteBuf) {
-	for _, packet := range packets {
-		packet.Write(_byteBuf)
+	for i, _ := range packets {
+		packets[i].Write(_byteBuf)
 	}
 }
