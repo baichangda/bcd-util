@@ -17,10 +17,10 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 	"io"
-	"io/fs"
 	"net"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -82,11 +82,12 @@ func Cmd() *cobra.Command {
 	return &cmd
 }
 
-const hexStr = "000100006466E9B3000300006583EC6E000413C339C87BDE00051DD636E16BEC00060000050000070007F024FFF8FFBC000801CC0001000000094300C4100033000AB70400620000000B000000000000000C0017AE000000000D000992400000000E082C00000000000F5208ABE0000008008169000000000801000000000000080200000000000008030250AB000000D006003E8D3A8987B4A0365934F9A820FFFC0080180100060699FC9700008000A0001FF90050010FF915B2001B48006D011F016F26B7E0895F722400B4F800000000D008004600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D00900120000000000000000000FE000010005648000D00A00554C534A4533363039364D533134303439354C53323143303141353239363030303638393836303932313735303030383935323034333839303836303334323032323030303031303231303030303333353932343437D00B00D96C7DF87DC87DF87DE87DF87DD87DF87DE87E007DE07E007DD87DD07DD87DD87DD87DE87DC87DD87DE07DD87DE87DE07DF07DD07DF87DF07E007DE87DF07DE07E087DF07DE87DD87DF87DF07DC87DF07DE07DF07DE07DC87DC87DF07DE87DF87DE87DF07DE07E007DE07DF87DE87DE87DF87DE07DF07DF07DF07DE87E007DF07DE87DE87DF87DF87E007E007E007DF87E087DF07DE07DF87DF07DF87DE07DF87DE87E087DF07DF07DD87DF87DF07DF87DE87E087DE07DE07DF87DE07E007DF87DF07DE87DF07DF87DF87DE87E087DF87DF87DF07E007DE07E08D00C00190C3E003C003C003C003E003C003C003C003D003C003C003C00D00D00190C3F003D003D003E003E003D003D003E003E003C003D003E00D00E00191830354C50454A334333353234304142434230313032303135D00F000C007D00007831800019007E00D01000380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D01100230000000000000000000000000000000000000000000000000000000000000000000000D012003F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D013004D0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D01400230000000000000000000000000000000000000000000000000000000000000000000000D015000700000000000000D016003100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D017002A000000000000000000000000000000000000000000000000000000000000000000000000000000000000D0180014CF639C87BB0EEB1B720000323374D920FA040300D0190010CE10053DB55580000000000000000000D01A002D000000000000000000000000000000000031323334353637383930313233343536373839303132333435363738D01B003F000000313233343536373839303132333435363738000031323334353637383930313233343536373800003132333435363738393031323334353637380000D01C002E31323334353637383930313233343536373831323334353637383930313233343536370000000000000000000000D01D000C000000000000000000000000D01F001000000000000000000000000000000000"
+const hexStr = "000100006466E9B3000300006583EC6E000413C339C87BDE00051DD636E16BEC00060000050000070007F024FFF8FFBC000801CC0001000000094300C4100033000AB70400620000000B000000000000000C0017AE000000000D000992400000000E082C00000000000F5208ABE0000008008169000000000801000000000000080200000000000008030250AB000000D006003E8D3A8987B4A0365D34F9A820FFFC0080180100060699FC9700008000A0001FF90050010FF915B2001B48006D011F016F26B7E0C95F722400B4F800000000D008004600000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D00900120000000000000000000FE000010005648000D00A00554C534A4533363039364D533134303439354C53323143303141353239363030303638393836303932313735303030383935323034333839303836303334323032323030303031303231303030303333353932343437D00B00D96C7DF87DC87DF87DE87DF87DD87DF87DE87E007DE07E007DD87DD07DD87DD87DD87DE87DC87DD87DE07DD87DE87DE07DF07DD07DF87DF07E007DE87DF07DE07E087DF07DE87DD87DF87DF07DC87DF07DE07DF07DE07DC87DC87DF07DE87DF87DE87DF07DE07E007DE07DF87DE87DE87DF87DE07DF07DF07DF07DE87E007DF07DE87DE87DF87DF87E007E007E007DF87E087DF07DE07DF87DF07DF87DE07DF87DE87E087DF07DF07DD87DF87DF07DF87DE87E087DE07DE07DF87DE07E007DF87DF07DE87DF07DF87DF87DE87E087DF87DF87DF07E007DE07E08D00C00190C3E003C003C003C003E003C003C003C003D003C003C003C00D00D00190C3F003D003D003E003E003D003D003E003E003C003D003E00D00E00191830354C50454A334333353234304142434230313032303135D00F000C007D00007831800019007E00D01000380000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D01100230000000000000000000000000000000000000000000000000000000000000000000000D012003F000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D013004D0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D01400230000000000000000000000000000000000000000000000000000000000000000000000D015000700000000000000D016003100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000D017002A000000000000000000000000000000000000000000000000000000000000000000000000000000000000D0180014CF639C87BB0EEB1B720000323374D920FA040300D0190010CE10053DB55580000000000000000000D01A002D000000000000000000000000000000000031323334353637383930313233343536373839303132333435363738D01B003F000000313233343536373839303132333435363738000031323334353637383930313233343536373800003132333435363738393031323334353637380000D01C002E31323334353637383930313233343536373831323334353637383930313233343536370000000000000000000000D01D000C000000000000000000000000D01F001000000000000000000000000000000000"
 
 type InMsg struct {
 	/**
 	1、更新运行数据
+	2、开始发送运行数据
 	*/
 	Flag int    `json:"flag"`
 	Data string `json:"data"`
@@ -95,6 +96,7 @@ type InMsg struct {
 type OutMsg struct {
 	/**
 	1、更新运行数据结果
+	2、开始发送运行数据
 	101、同步服务器运行到客户端
 	102、发送数据到kafka成功通知
 	*/
@@ -104,10 +106,16 @@ type OutMsg struct {
 }
 
 type WsClient struct {
-	vin         string
-	vehicleType string
-	packet      *immotors.Packet
-	conn        net.Conn
+	kafkaWriter  *kafka.Writer
+	vin          string
+	vehicleType  string
+	packet       *immotors.Packet
+	conn         net.Conn
+	cancelCtx    context.Context
+	cancelFn     context.CancelFunc
+	lock         sync.Mutex
+	startSendCtx context.Context
+	startSendFn  context.CancelFunc
 }
 
 func (e *WsClient) init(vin string, vehicleType string, conn net.Conn) error {
@@ -118,22 +126,36 @@ func (e *WsClient) init(vin string, vehicleType string, conn net.Conn) error {
 	//初始化样本
 	bs, err := hex.DecodeString(hexStr)
 	if err != nil {
-		return err
+		return errors.WithStack(err)
 	}
 	byteBuf := parse.ToByteBuf(bs)
 
-	temp := immotors.To_Packets(byteBuf)
-	e.packet = &temp[0]
-	e.packet.F_evt_D00A.F_VIN = vin
+	packet := immotors.To_Packet(byteBuf)
+	packet.F_evt_D00A.F_VIN = vin
+	e.packet = packet
+
+	//更新客户端运行数据
+	marshal1, err := json.MarshalIndent(packet, "", "   ")
+	if err != nil {
+		return errors.WithStack(err)
+	}
+	err = e.response(OutMsg{
+		Flag:    101,
+		Data:    string(marshal1),
+		Succeed: true,
+	})
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (e *WsClient) HandleUpdatePacket(cancelCtx context.Context, data string) {
+func (e *WsClient) HandleUpdatePacket(data string) {
 	packet := immotors.Packet{}
 	err := json.Unmarshal([]byte(data), &packet)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
-		err = e.response(cancelCtx, OutMsg{
+		err = e.response(OutMsg{
 			Flag:    1,
 			Data:    "",
 			Succeed: false,
@@ -144,7 +166,7 @@ func (e *WsClient) HandleUpdatePacket(cancelCtx context.Context, data string) {
 		return
 	}
 	e.packet = &packet
-	err = e.response(cancelCtx, OutMsg{
+	err = e.response(OutMsg{
 		Flag:    1,
 		Data:    "",
 		Succeed: true,
@@ -155,11 +177,76 @@ func (e *WsClient) HandleUpdatePacket(cancelCtx context.Context, data string) {
 	util.Log.Infof("HandleUpdatePacket vin[%s] vehicleType[%s]", e.vin, e.vehicleType)
 }
 
+func (e *WsClient) HandleStartSend(data string) {
+	e.lock.Lock()
+	defer e.lock.Unlock()
+	if data == "1" {
+		if e.startSendFn != nil {
+			e.startSendFn()
+			e.startSendCtx = nil
+			e.startSendFn = nil
+		}
+		ctx, cancelFunc := context.WithCancel(e.cancelCtx)
+		e.startSendCtx = ctx
+		e.startSendFn = cancelFunc
+		//启动协程执行循环发送
+		go func() {
+			nextTs := time.Now().UnixMilli()
+			for {
+				diff := nextTs - time.Now().UnixMilli()
+				if diff <= 0 {
+					select {
+					case <-e.startSendCtx.Done():
+						return
+					default:
+					}
+				} else {
+					select {
+					case <-e.startSendCtx.Done():
+						return
+					case <-time.After(time.Duration(diff) * time.Millisecond):
+					}
+				}
+				err := e.send()
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+					return
+				}
+				//sleep后设置下次发送时间
+				nextTs = nextTs + 10000
+			}
+		}()
+		err := e.response(OutMsg{
+			Flag:    2,
+			Data:    "1",
+			Succeed: true,
+		})
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+		}
+	} else {
+		if e.startSendFn != nil {
+			e.startSendFn()
+			e.startSendCtx = nil
+			e.startSendFn = nil
+		}
+		err := e.response(OutMsg{
+			Flag:    2,
+			Data:    "2",
+			Succeed: true,
+		})
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+		}
+	}
+
+}
+
 //go:embed resource
 var FS embed.FS
 
 func start() {
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	//连接kafka
 	kafkaWriter := &kafka.Writer{
 		Addr:         kafka.TCP(kafkaAddress...),
@@ -179,14 +266,14 @@ func start() {
 		c.Redirect(http.StatusMovedPermanently, "/immotors/resource/index.html")
 	})
 
-	sub, err2 := fs.Sub(FS, "resource")
-	if err2 != nil {
-		util.Log.Errorf("%+v", err2)
-		return
-	}
-	engine.StaticFS("/immotors/resource", http.FS(sub))
+	//sub, err2 := fs.Sub(FS, "resource")
+	//if err2 != nil {
+	//	util.Log.Errorf("%+v", err2)
+	//	return
+	//}
+	//engine.StaticFS("/immotors/resource", http.FS(sub))
 
-	//engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
+	engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
 
 	engine.POST("/immotors/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
@@ -254,58 +341,22 @@ func start() {
 			//获取参数
 			vin := ctx.Query("vin")
 			vehicleType := ctx.Query("vehicleType")
+			//定义ctx
+			cancelCtx, cancelFn := context.WithCancel(context.Background())
+			defer cancelFn()
 			//创建客户端
-			client := &WsClient{}
+			client := &WsClient{
+				cancelCtx:   cancelCtx,
+				cancelFn:    cancelFn,
+				lock:        sync.Mutex{},
+				kafkaWriter: kafkaWriter,
+			}
+
 			err = client.init(vin, vehicleType, conn)
 			if err != nil {
 				util.Log.Errorf("%+v", err)
 				return
 			}
-
-			//定义ctx
-			cancelCtx, cancelFn := context.WithCancel(context.Background())
-			defer cancelFn()
-
-			//更新客户端运行数据
-			marshal1, err := json.MarshalIndent(client.packet, "", "   ")
-			if err != nil {
-				util.Log.Errorf("%+v", err)
-				return
-			}
-			err = client.response(cancelCtx, OutMsg{
-				Flag:    101,
-				Data:    string(marshal1),
-				Succeed: true,
-			})
-			if err != nil {
-				util.Log.Errorf("%+v", err)
-				return
-			}
-
-			//启动协程执行循环发送
-			go func() {
-				prevTs := time.Now().UnixMilli()
-				for {
-					select {
-					case <-cancelCtx.Done():
-						return
-					default:
-						err := client.send(cancelCtx, kafkaWriter)
-						if err != nil {
-							util.Log.Errorf("%+v", err)
-							return
-						}
-					}
-					diff := 10000 + prevTs - time.Now().UnixMilli()
-
-					if diff > 0 {
-						time.Sleep(time.Duration(diff) * time.Millisecond)
-					}
-
-					//sleep后设置下次发送时间
-					prevTs = prevTs + 10000
-				}
-			}()
 
 			for {
 				text, err := wsutil.ReadClientText(conn)
@@ -321,7 +372,9 @@ func start() {
 				}
 				switch inMsg.Flag {
 				case 1:
-					client.HandleUpdatePacket(cancelCtx, inMsg.Data)
+					client.HandleUpdatePacket(inMsg.Data)
+				case 2:
+					client.HandleStartSend(inMsg.Data)
 				default:
 					util.Log.Warnf("flag[%d] not support", inMsg.Flag)
 				}
@@ -335,7 +388,7 @@ func start() {
 	}
 }
 
-func (e *WsClient) response(cancelCtx context.Context, msg OutMsg) error {
+func (e *WsClient) response(msg OutMsg) error {
 	marshal, err := json.Marshal(msg)
 	if err != nil {
 		return errors.WithStack(err)
@@ -347,7 +400,7 @@ func (e *WsClient) response(cancelCtx context.Context, msg OutMsg) error {
 	return nil
 }
 
-func (e *WsClient) send(cancelCtx context.Context, w *kafka.Writer) error {
+func (e *WsClient) send() error {
 	now := time.Now()
 	ts := now.UnixMilli() / 1000
 	temp := e.packet
@@ -379,14 +432,14 @@ func (e *WsClient) send(cancelCtx context.Context, w *kafka.Writer) error {
 		Value: toBytes,
 	}
 
-	err = w.WriteMessages(cancelCtx, msg)
+	err = e.kafkaWriter.WriteMessages(e.cancelCtx, msg)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
 	util.Log.Infof("send vin[%s] vehicleType[%s] time[%s] topic[%s] succeed", e.vin, e.vehicleType, dateStr, topic)
 
-	err = e.response(cancelCtx, OutMsg{
+	err = e.response(OutMsg{
 		Flag:    102,
 		Data:    "",
 		Succeed: true,

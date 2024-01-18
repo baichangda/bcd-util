@@ -54,6 +54,8 @@
                 <td style="text-align: center;height: 30px">
                     <button onclick="updateRun()" id="update_run_btn" style="color: red" disabled>更新运行信息
                     </button>
+                    <button onclick="startSend()" style="color: red" id="startSend_btn">开始/停止发送运行数据
+                    </button>
                 </td>
             </tr>
             <tr>
@@ -66,13 +68,13 @@
     <div class="dataDiv" style="width: 250px">
         <div style="height: 30px">
             <div style="width: 100%;float: left">
-                <button onclick="clearLeftOutput()">清除日志
+                <button onclick="clearOutput()">清除日志
                 </button>
             </div>
         </div>
         <div style="height: 820px">
             <div style="width: 100%;float: left">
-                <textarea id="leftOutput" readonly style="width: 100%;height: 100%"></textarea>
+                <textarea id="output" readonly style="width: 100%;height: 100%"></textarea>
             </div>
         </div>
     </div>
@@ -82,8 +84,10 @@
 <script type="text/javascript">
     // create the editor
     const container = document.getElementById("jsoneditor")
-    const options = {}
+    // const options = {}
+    const options = {mode: 'code'}
     const editor = new JSONEditor(container, options)
+
 
     function getWsUrl() {
         let loc = window.location, new_uri;
@@ -97,6 +101,7 @@
 
     let ws
     let isConnectWs = false
+    let isStartSend = false
 
     function connectWs() {
         let vin = $("#vin").val();
@@ -108,7 +113,7 @@
             $("#ws_connect_btn").prop("disabled", true)
             $("#update_run_btn").css("color", "green")
             $("#update_run_btn").prop("disabled", false)
-            appendToLeftOutput("连接ws服务器成功,开始定时发送数据,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
+            appendToOutput("连接ws服务器成功,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
         };
 
         ws.onmessage = function (evt) {
@@ -117,11 +122,14 @@
 
         ws.onclose = function () {
             isConnectWs = false
+            isStartSend = false
             $("#ws_connect_btn").css("color", "red")
             $("#ws_connect_btn").prop("disabled", false)
+            $("#startSend_btn").css("color", "red")
+            $("#startSend_btn").prop("disabled", false)
             $("#update_run_btn").css("color", "red")
             $("#update_run_btn").prop("disabled", true)
-            appendToLeftOutput("ws服务断开,停止发送,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
+            appendToOutput("ws服务断开,停止发送,vin[" + vin + "],vehicleType[" + vehicleType + "]", 1)
         };
     }
 
@@ -130,27 +138,46 @@
         switch (parse.flag) {
             case 1: {
                 if (parse.succeed) {
-                    appendToLeftOutput("更新运行信息成功", 2)
+                    appendToOutput("更新运行信息成功", 2)
                 } else {
-                    appendToLeftOutput("更新运行信息失败", 2)
+                    appendToOutput("更新运行信息失败", 2)
+                }
+                break
+            }
+            case 2: {
+                if (parse.succeed) {
+                    if (parse.data === "1") {
+                        $("#startSend_btn").css("color", "green")
+                        appendToOutput("已开始周期发送", 2)
+                    } else {
+                        $("#startSend_btn").css("color", "red")
+                        appendToOutput("已停止周期发送", 2)
+                    }
                 }
                 break
             }
             case 101: {
                 editor.set(JSON.parse(parse.data))
-                appendToLeftOutput("接收到服务器运行数据,更新客户端运行信息", 2)
+                appendToOutput("接收到服务器运行数据,更新客户端运行信息", 2)
                 break
             }
             case 102: {
-                appendToLeftOutput("发送数据到kafka成功", 2)
+                appendToOutput("发送数据到kafka成功", 2)
                 break
             }
         }
     }
 
-    function updateRun() {
+    function checkConnectWs() {
         if (!isConnectWs) {
-            appendToLeftOutput("请先连接ws服务器")
+            appendToOutput("请先连接ws服务器")
+            return false
+        }
+        return true
+    }
+
+    function updateRun() {
+        if (!checkConnectWs()) {
             return
         }
         ws.send(JSON.stringify(
@@ -159,24 +186,52 @@
                 data: JSON.stringify(editor.get())
             }
         ))
-        appendToLeftOutput("发送更新运行信息到ws成功", 1)
+        appendToOutput("发送更新运行信息到ws成功", 1)
     }
 
-    let leftOutputCount = 0
+
+    function startSend() {
+        if (!checkConnectWs()) {
+            return
+        }
+        if (isStartSend) {
+            ws.send(JSON.stringify(
+                {
+                    flag: 2,
+                    data: "2",
+                }
+            ))
+            appendToOutput("发送停止发送到ws成功", 1)
+
+            isStartSend = false
+        } else {
+            ws.send(JSON.stringify(
+                {
+                    flag: 2,
+                    data: "1",
+                }
+            ))
+            appendToOutput("发送开始发送到ws成功", 1)
+            $("#startSend_btn").css("color", "green")
+            isStartSend = true
+        }
+    }
+
+    let outputCount = 0
     const maxOutputCount = 20
 
-    function clearLeftOutput() {
-        $("#leftOutput").val("")
-        leftOutputCount = 0
+    function clearOutput() {
+        $("#output").val("")
+        outputCount = 0
     }
 
-    function appendToLeftOutput(msg, type) {
-        let output = $("#leftOutput");
-        if (leftOutputCount >= maxOutputCount) {
+    function appendToOutput(msg, type) {
+        let output = $("#output");
+        if (outputCount >= maxOutputCount) {
             output.val("")
-            leftOutputCount = 0;
+            outputCount = 0;
         }
-        leftOutputCount++
+        outputCount++
         let val = output.val();
         let date = new Date();
         let pre = getNowDateStr(date)
