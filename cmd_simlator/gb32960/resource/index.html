@@ -150,7 +150,7 @@
                     $("#update_run_btn").prop("disabled", false)
                     appendToOutput("连接tcp网关成功,开始发送运行数据", 2)
                 } else {
-                    appendToOutput("连接tcp网关失败", 2)
+                    appendToOutput("连接tcp网关失败["+parse.data+"]", 2)
                 }
                 break
             }

@@ -69,22 +69,21 @@ type TcpClient struct {
 	stopFn  context.CancelFunc
 }
 
-func (e *TcpClient) init(address string, wsClient *WsClient) chan bool {
+func (e *TcpClient) init(address string, wsClient *WsClient, onConnect func(error)) chan bool {
 	resChan := make(chan bool)
 	//启动协程接收tcp网关数据
 	go func() {
 		conn, err := net.Dial("tcp", address)
 		if err != nil {
-			resChan <- false
+			onConnect(err)
 			util.Log.Errorf("%+v", err)
 			return
 		}
 		e.conn = conn
 		defer conn.Close()
+		onConnect(nil)
 
-		resChan <- true
-
-		stopCtx, stopFn := context.WithCancel(context.Background())
+		stopCtx, stopFn := context.WithCancel(wsClient.stopCtx)
 		e.stopCtx = stopCtx
 		e.stopFn = stopFn
 		defer stopFn()
@@ -226,16 +225,12 @@ func (e *WsClient) startSendRunData() {
 				select {
 				case <-e.tcpClient.stopCtx.Done():
 					return
-				case <-e.stopCtx.Done():
-					return
 				case <-time.After(time.Duration(waitMills) * time.Millisecond):
 					e.sendRunData(sendTs)
 				}
 			} else {
 				select {
 				case <-e.tcpClient.stopCtx.Done():
-					return
-				case <-e.stopCtx.Done():
 					return
 				default:
 					e.sendRunData(sendTs)
@@ -250,7 +245,7 @@ func (e *WsClient) startSendRunData() {
 var FS embed.FS
 
 func start() {
-	gin.SetMode(gin.ReleaseMode)
+	//gin.SetMode(gin.ReleaseMode)
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
@@ -380,16 +375,21 @@ func (e *WsClient) onWsMsg(msg *InMsg) {
 func (e *WsClient) HandleConnectTcp(data string) {
 	//初始化tcp连接
 	e.tcpClient = &TcpClient{}
-	resChan := e.tcpClient.init(data, e)
-	res := <-resChan
-	close(resChan)
-	if res {
-		e.startSendRunData()
-	}
-	e.send(&OutMsg{
-		Flag:    1,
-		Data:    "",
-		Succeed: res,
+	e.tcpClient.init(data, e, func(err error) {
+		if err == nil {
+			e.startSendRunData()
+			e.send(&OutMsg{
+				Flag:    1,
+				Data:    "",
+				Succeed: true,
+			})
+		} else {
+			e.send(&OutMsg{
+				Flag:    1,
+				Data:    err.Error(),
+				Succeed: false,
+			})
+		}
 	})
 }
 
