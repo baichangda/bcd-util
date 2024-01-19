@@ -17,6 +17,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"strconv"
@@ -267,14 +268,14 @@ func start() {
 		c.Redirect(http.StatusMovedPermanently, "/immotors/resource/index.html")
 	})
 
-	//sub, err2 := fs.Sub(FS, "resource")
-	//if err2 != nil {
-	//	util.Log.Errorf("%+v", err2)
-	//	return
-	//}
-	//engine.StaticFS("/immotors/resource", http.FS(sub))
+	sub, err2 := fs.Sub(FS, "resource")
+	if err2 != nil {
+		util.Log.Errorf("%+v", err2)
+		return
+	}
+	engine.StaticFS("/immotors/resource", http.FS(sub))
 
-	engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
+	//engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
 
 	engine.POST("/immotors/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
