@@ -172,7 +172,7 @@
 
     function checkConnectWs() {
         if (!isConnectWs) {
-            appendToOutput("请先连接ws服务器")
+            appendToOutput("请先连接ws服务器", 1)
             return false
         }
         return true
@@ -182,10 +182,23 @@
         if (!checkConnectWs()) {
             return
         }
+        let data = editor.get();
+        if (data.hasOwnProperty("evt_D00A")) {
+            let evtD00A = data.evt_D00A;
+            if (evtD00A.hasOwnProperty("VIN")) {
+                let vin = evtD00A.VIN;
+                let exceptVin = $("#vin").val();
+                if (vin !== exceptVin) {
+                    appendToOutput("检测到样例数据的vin[" + vin + "]不一致、修改成样例数据中的vin为[" + exceptVin + "]", 1)
+                    evtD00A.VIN = exceptVin
+                }
+            }
+        }
+        editor.set(data)
         ws.send(JSON.stringify(
             {
                 flag: 1,
-                data: JSON.stringify(editor.get())
+                data: JSON.stringify(data)
             }
         ))
         appendToOutput("发送更新运行信息到ws成功", 1)

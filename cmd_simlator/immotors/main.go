@@ -165,6 +165,7 @@ func (e *WsClient) HandleUpdatePacket(data string) {
 		}
 		return
 	}
+	packet.F_evt_D00A.F_VIN = e.vin
 	e.packet = &packet
 	err = e.response(OutMsg{
 		Flag:    1,
