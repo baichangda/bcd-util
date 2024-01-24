@@ -16,7 +16,7 @@ func Round[V RoundType](v V) V {
 	} else if v == 0 {
 		return 0
 	} else {
-		if (int64(v*10) % 10) >= 5 {
+		if (int64(-v*10) % 10) >= 5 {
 			return V(int64(v) - 1)
 		} else {
 			return V(int64(v))

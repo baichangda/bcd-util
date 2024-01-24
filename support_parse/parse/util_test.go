@@ -37,7 +37,7 @@ func TestRound(t *testing.T) {
 		t.Fail()
 	}
 
-	round3 := Round(float64(-1015))
+	round3 := Round(-1015.4)
 	t.Log(round3)
 	if round3 != -1015 {
 		t.Fail()
