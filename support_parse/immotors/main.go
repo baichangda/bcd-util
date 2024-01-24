@@ -397,7 +397,7 @@ func To_Evt_000F(_byteBuf *parse.ByteBuf) *Evt_000F {
 	_instance.F_evtId = _byteBuf.Read_uint16()
 	_instance.F_TMActuToqHiPre = float32(_byteBuf.Read_uint16())*0.1 - 2000
 	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
-	_instance.F_TMInvtrCrntHiPre = float32(_bitBuf.Read(15, true, true))*0.1 - 2000
+	_instance.F_TMInvtrCrntHiPre = float32(_bitBuf.Read(15, true, true))*0.1 - 1000
 	_bitBuf.Finish()
 	_byteBuf.Skip(2)
 	return &_instance
@@ -408,7 +408,7 @@ func (__instance *Evt_000F) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtId)
 	_byteBuf.Write_uint16(uint16(_instance.F_TMActuToqHiPre*10 + 20000))
 	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
-	_bitBuf.Write(int64(_instance.F_TMInvtrCrntHiPre*10+20000), 15, true, true)
+	_bitBuf.Write(int64(_instance.F_TMInvtrCrntHiPre*10+10000), 15, true, true)
 	_bitBuf.Finish()
 	_byteBuf.Write_zero(2)
 }
