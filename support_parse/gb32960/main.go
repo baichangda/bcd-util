@@ -45,32 +45,32 @@ func (_instance MotorData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Packet struct {
-	F_header        [2]int8 `json:"header"`
-	F_flag          uint8   `json:"flag"`
-	F_replyFlag     uint8   `json:"replyFlag"`
-	F_vin           string  `json:"vin"`
-	F_encodeWay     uint8   `json:"encodeWay"`
-	F_contentLength uint16  `json:"contentLength"`
-	F_data          any     `json:"data"`
-	F_code          int8    `json:"code"`
+	F_header        [2]uint8 `json:"header"`
+	F_flag          uint8    `json:"flag"`
+	F_replyFlag     uint8    `json:"replyFlag"`
+	F_vin           string   `json:"vin"`
+	F_encodeWay     uint8    `json:"encodeWay"`
+	F_contentLength uint16   `json:"contentLength"`
+	F_data          any      `json:"data"`
+	F_code          uint8    `json:"code"`
 }
 
 func To_Packet(_byteBuf *parse.ByteBuf) *Packet {
 	_instance := Packet{}
-	_instance.F_header = [2]int8(_byteBuf.Read_slice_int8(2))
+	_instance.F_header = [2]uint8(_byteBuf.Read_slice_uint8(2))
 	_instance.F_flag = _byteBuf.Read_uint8()
 	_instance.F_replyFlag = _byteBuf.Read_uint8()
 	_instance.F_vin = _byteBuf.Read_string_utf8(17)
 	_instance.F_encodeWay = _byteBuf.Read_uint8()
 	_instance.F_contentLength = _byteBuf.Read_uint16()
 	_instance.F_data = To_F_data(_byteBuf, _instance)
-	_instance.F_code = _byteBuf.Read_int8()
+	_instance.F_code = _byteBuf.Read_uint8()
 	return &_instance
 }
 
 func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
-	_byteBuf.Write_slice_int8(_instance.F_header[:])
+	_byteBuf.Write_slice_uint8(_instance.F_header[:])
 	_byteBuf.Write_uint8(_instance.F_flag)
 	_byteBuf.Write_uint8(_instance.F_replyFlag)
 	_byteBuf.Write_string_utf8(_instance.F_vin)
@@ -78,7 +78,7 @@ func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint8(_instance.F_encodeWay)
 	_byteBuf.Write_uint16(_instance.F_contentLength)
 	Write_F_data(_byteBuf, _instance)
-	_byteBuf.Write_int8(_instance.F_code)
+	_byteBuf.Write_uint8(_instance.F_code)
 }
 
 type PlatformLoginData struct {
@@ -230,7 +230,7 @@ func (_instance StorageVoltageData) Write(_byteBuf *parse.ByteBuf) {
 
 type VehicleAlarmData struct {
 	F_maxAlarmLevel  uint8    `json:"maxAlarmLevel"`
-	F_alarmFlag      int32    `json:"alarmFlag"`
+	F_alarmFlag      uint32   `json:"alarmFlag"`
 	F_chargeBadNum   uint8    `json:"chargeBadNum"`
 	F_chargeBadCodes []uint32 `json:"chargeBadCodes"`
 	F_driverBadNum   uint8    `json:"driverBadNum"`
@@ -244,7 +244,7 @@ type VehicleAlarmData struct {
 func To_VehicleAlarmData(_byteBuf *parse.ByteBuf) *VehicleAlarmData {
 	_instance := VehicleAlarmData{}
 	_instance.F_maxAlarmLevel = _byteBuf.Read_uint8()
-	_instance.F_alarmFlag = _byteBuf.Read_int32()
+	_instance.F_alarmFlag = _byteBuf.Read_uint32()
 	F_chargeBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_chargeBadNum = F_chargeBadNum_v
 	F_chargeBadCodes_len := (int)(F_chargeBadNum_v)
@@ -290,7 +290,7 @@ func To_VehicleAlarmData(_byteBuf *parse.ByteBuf) *VehicleAlarmData {
 func (__instance *VehicleAlarmData) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint8(_instance.F_maxAlarmLevel)
-	_byteBuf.Write_int32(_instance.F_alarmFlag)
+	_byteBuf.Write_uint32(_instance.F_alarmFlag)
 	_byteBuf.Write_uint8(_instance.F_chargeBadNum)
 	F_chargeBadCodes_arr := _instance.F_chargeBadCodes
 	for i := 0; i < len(F_chargeBadCodes_arr); i++ {
@@ -615,14 +615,14 @@ func (__instance *VehicleMotorData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type VehiclePositionData struct {
-	F_status int8    `json:"status"`
+	F_status uint8   `json:"status"`
 	F_lng    float64 `json:"lng"`
 	F_lat    float64 `json:"lat"`
 }
 
 func To_VehiclePositionData(_byteBuf *parse.ByteBuf) *VehiclePositionData {
 	_instance := VehiclePositionData{}
-	_instance.F_status = _byteBuf.Read_int8()
+	_instance.F_status = _byteBuf.Read_uint8()
 	_instance.F_lng = float64(_byteBuf.Read_uint32()) / 1000000
 	_instance.F_lat = float64(_byteBuf.Read_uint32()) / 1000000
 	return &_instance
@@ -630,7 +630,7 @@ func To_VehiclePositionData(_byteBuf *parse.ByteBuf) *VehiclePositionData {
 
 func (__instance *VehiclePositionData) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
-	_byteBuf.Write_int8(_instance.F_status)
+	_byteBuf.Write_uint8(_instance.F_status)
 	_byteBuf.Write_uint32(uint32(parse.Round(_instance.F_lng * 1000000)))
 	_byteBuf.Write_uint32(uint32(parse.Round(_instance.F_lat * 1000000)))
 }
