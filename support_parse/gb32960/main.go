@@ -230,7 +230,7 @@ func (_instance StorageVoltageData) Write(_byteBuf *parse.ByteBuf) {
 
 type VehicleAlarmData struct {
 	F_maxAlarmLevel  uint8    `json:"maxAlarmLevel"`
-	F_alarmFlag      uint32   `json:"alarmFlag"`
+	F_alarmFlag      int32    `json:"alarmFlag"`
 	F_chargeBadNum   uint8    `json:"chargeBadNum"`
 	F_chargeBadCodes []uint32 `json:"chargeBadCodes"`
 	F_driverBadNum   uint8    `json:"driverBadNum"`
@@ -244,7 +244,7 @@ type VehicleAlarmData struct {
 func To_VehicleAlarmData(_byteBuf *parse.ByteBuf) *VehicleAlarmData {
 	_instance := VehicleAlarmData{}
 	_instance.F_maxAlarmLevel = _byteBuf.Read_uint8()
-	_instance.F_alarmFlag = _byteBuf.Read_uint32()
+	_instance.F_alarmFlag = _byteBuf.Read_int32()
 	F_chargeBadNum_v := _byteBuf.Read_uint8()
 	_instance.F_chargeBadNum = F_chargeBadNum_v
 	F_chargeBadCodes_len := (int)(F_chargeBadNum_v)
@@ -290,7 +290,7 @@ func To_VehicleAlarmData(_byteBuf *parse.ByteBuf) *VehicleAlarmData {
 func (__instance *VehicleAlarmData) Write(_byteBuf *parse.ByteBuf) {
 	_instance := *__instance
 	_byteBuf.Write_uint8(_instance.F_maxAlarmLevel)
-	_byteBuf.Write_uint32(_instance.F_alarmFlag)
+	_byteBuf.Write_int32(_instance.F_alarmFlag)
 	_byteBuf.Write_uint8(_instance.F_chargeBadNum)
 	F_chargeBadCodes_arr := _instance.F_chargeBadCodes
 	for i := 0; i < len(F_chargeBadCodes_arr); i++ {
