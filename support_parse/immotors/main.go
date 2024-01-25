@@ -1268,10 +1268,10 @@ func (__instance *Evt_D00D) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_D00E struct {
-	F_evtId            uint16             `json:"evtId"`
-	F_evtLen           uint16             `json:"evtLen"`
-	F_BMSRptBatCodeNum uint8              `json:"BMSRptBatCodeNum"`
-	F_BMSRptBatCodeAsc parse.JsonUint8Arr `json:"BMSRptBatCodeAsc"`
+	F_evtId            uint16 `json:"evtId"`
+	F_evtLen           uint16 `json:"evtLen"`
+	F_BMSRptBatCodeNum uint8  `json:"BMSRptBatCodeNum"`
+	F_BMSRptBatCodeAsc string `json:"BMSRptBatCodeAsc"`
 }
 
 func To_Evt_D00E(_byteBuf *parse.ByteBuf) *Evt_D00E {
@@ -1281,7 +1281,7 @@ func To_Evt_D00E(_byteBuf *parse.ByteBuf) *Evt_D00E {
 	index := _byteBuf.ReaderIndex()
 	F_BMSRptBatCodeNum_v := _byteBuf.Read_uint8()
 	_instance.F_BMSRptBatCodeNum = F_BMSRptBatCodeNum_v
-	_instance.F_BMSRptBatCodeAsc = _byteBuf.Read_slice_uint8((int)(F_BMSRptBatCodeNum_v))
+	_instance.F_BMSRptBatCodeAsc = _byteBuf.Read_string_utf8((int)(F_BMSRptBatCodeNum_v))
 	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
 	if skip > 0 {
 		_byteBuf.Skip(skip)
@@ -1295,7 +1295,7 @@ func (__instance *Evt_D00E) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_uint16(_instance.F_evtLen)
 	index := _byteBuf.WriterIndex()
 	_byteBuf.Write_uint8(_instance.F_BMSRptBatCodeNum)
-	_byteBuf.Write_slice_uint8(_instance.F_BMSRptBatCodeAsc)
+	_byteBuf.Write_string_utf8(_instance.F_BMSRptBatCodeAsc)
 	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
 	if skip > 0 {
 		_byteBuf.Write_zero(skip)
