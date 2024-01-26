@@ -561,9 +561,9 @@ func (__instance *Evt_2_6_unknown) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_4_x_unknown struct {
-	F_evtId  uint16             `json:"evtId"`
-	F_evtLen uint16             `json:"evtLen"`
-	F_data   parse.JsonUint8Arr `json:"data"`
+	F_evtId  uint16        `json:"evtId"`
+	F_evtLen uint16        `json:"evtLen"`
+	F_data   util.Uint8Arr `json:"data"`
 }
 
 func To_Evt_4_x_unknown(_byteBuf *parse.ByteBuf) *Evt_4_x_unknown {
@@ -1119,11 +1119,11 @@ type Evt_D00B_BMSCellVol struct {
 }
 
 type Evt_D00B struct {
-	F_evtId            uint16             `json:"evtId"`
-	F_evtLen           uint16             `json:"evtLen"`
-	F_BMSCellVolSumNum uint8              `json:"BMSCellVolSumNum"`
-	F_BMSCellVol       []float32          `json:"BMSCellVol"`
-	F_BMSCellVolV      parse.JsonUint8Arr `json:"BMSCellVolV"`
+	F_evtId            uint16        `json:"evtId"`
+	F_evtLen           uint16        `json:"evtLen"`
+	F_BMSCellVolSumNum uint8         `json:"BMSCellVolSumNum"`
+	F_BMSCellVol       []float32     `json:"BMSCellVol"`
+	F_BMSCellVolV      util.Uint8Arr `json:"BMSCellVolV"`
 }
 
 func To_Evt_D00B(_byteBuf *parse.ByteBuf) *Evt_D00B {
@@ -1169,11 +1169,11 @@ func (__instance *Evt_D00B) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_D00C struct {
-	F_evtId            uint16             `json:"evtId"`
-	F_evtLen           uint16             `json:"evtLen"`
-	F_BMSCellTemSumNum uint8              `json:"BMSCellTemSumNum"`
-	F_BMSCellTem       []int16            `json:"BMSCellTem"`
-	F_BMSCellTemV      parse.JsonUint8Arr `json:"BMSCellTemV"`
+	F_evtId            uint16        `json:"evtId"`
+	F_evtLen           uint16        `json:"evtLen"`
+	F_BMSCellTemSumNum uint8         `json:"BMSCellTemSumNum"`
+	F_BMSCellTem       []int16       `json:"BMSCellTem"`
+	F_BMSCellTemV      util.Uint8Arr `json:"BMSCellTemV"`
 }
 
 func To_Evt_D00C(_byteBuf *parse.ByteBuf) *Evt_D00C {
@@ -1219,11 +1219,11 @@ func (__instance *Evt_D00C) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type Evt_D00D struct {
-	F_evtId              uint16             `json:"evtId"`
-	F_evtLen             uint16             `json:"evtLen"`
-	F_BMSBusbarTemSumNum uint8              `json:"BMSBusbarTemSumNum"`
-	F_BMSBusbarTem       []int16            `json:"BMSBusbarTem"`
-	F_BMSBusbarTemV      parse.JsonUint8Arr `json:"BMSBusbarTemV"`
+	F_evtId              uint16        `json:"evtId"`
+	F_evtLen             uint16        `json:"evtLen"`
+	F_BMSBusbarTemSumNum uint8         `json:"BMSBusbarTemSumNum"`
+	F_BMSBusbarTem       []int16       `json:"BMSBusbarTem"`
+	F_BMSBusbarTemV      util.Uint8Arr `json:"BMSBusbarTemV"`
 }
 
 func To_Evt_D00D(_byteBuf *parse.ByteBuf) *Evt_D00D {
