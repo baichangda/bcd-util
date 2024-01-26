@@ -7,7 +7,7 @@ import (
 )
 
 func TestUint8Arr_MarshalJSON(t *testing.T) {
-	arr1 := Uint8Arr{1, 2, 3}
+	arr1 := ByteSlice{1, 2, 3}
 	marshal1, err := json.Marshal(arr1)
 	if err != nil {
 		t.Error(err)
@@ -16,7 +16,7 @@ func TestUint8Arr_MarshalJSON(t *testing.T) {
 		t.Failed()
 	}
 
-	var arr2 Uint8Arr
+	var arr2 ByteSlice
 	err = json.Unmarshal(marshal1, &arr2)
 	if err != nil {
 		t.Error(err)
@@ -32,7 +32,7 @@ func TestUnixTime_MarshalJSON(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
-	ts := UnixTime(parse)
+	ts := TimeTs(parse)
 	marshal1, err := json.Marshal(ts)
 	if err != nil {
 		t.Error(err)
@@ -41,7 +41,7 @@ func TestUnixTime_MarshalJSON(t *testing.T) {
 		t.Failed()
 	}
 
-	var t2 UnixTime
+	var t2 TimeTs
 	err = json.Unmarshal(marshal1, &t2)
 	if err != nil {
 		t.Error(err)

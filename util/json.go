@@ -6,9 +6,9 @@ import (
 	"time"
 )
 
-type Uint8Arr []uint8
+type ByteSlice []uint8
 
-func (e Uint8Arr) MarshalJSON() ([]byte, error) {
+func (e ByteSlice) MarshalJSON() ([]byte, error) {
 	var result string
 	if e == nil {
 		result = "null"
@@ -27,17 +27,17 @@ func (e Uint8Arr) MarshalJSON() ([]byte, error) {
 	return []byte(result), nil
 }
 
-type UnixTime time.Time
+type TimeTs time.Time
 
-func (t UnixTime) MarshalJSON() ([]byte, error) {
+func (t TimeTs) MarshalJSON() ([]byte, error) {
 	return ([]byte)(strconv.FormatInt(time.Time(t).UnixMilli(), 10)), nil
 }
 
-func (t *UnixTime) UnmarshalJSON(data []byte) error {
+func (t *TimeTs) UnmarshalJSON(data []byte) error {
 	num, err := strconv.Atoi(string(data))
 	if err != nil {
 		return err
 	}
-	*t = UnixTime(time.UnixMilli(int64(num)))
+	*t = TimeTs(time.UnixMilli(int64(num)))
 	return nil
 }
