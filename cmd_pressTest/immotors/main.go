@@ -1,10 +1,12 @@
-package gb32960
+package immotors
 
 import (
-	"bcd-util/support_parse/gb32960"
+	"bcd-util/support_parse/immotors"
 	"bcd-util/support_parse/parse"
 	"bcd-util/util"
-	"encoding/hex"
+	"encoding/base64"
+	"encoding/json"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"net"
 	"os"
@@ -14,7 +16,7 @@ import (
 	"time"
 )
 
-var sample string
+var sample []byte
 
 var period int
 var startIndex int
@@ -22,10 +24,50 @@ var num int
 var address string
 var filePath string
 
+type Json struct {
+	FileName    string  `json:"fileName"`
+	FileContent string  `json:"fileContent"`
+	Timestamp   int64   `json:"timestamp"`
+	MessageId   string  `json:"messageId"`
+	Ext         JsonExt `json:"ext"`
+}
+
+func ToJson(vin string, vehicleType string, ts int64, packets []immotors.Packet) (*Json, error) {
+	ts = ts - 9
+	dateStr := time.Unix(ts, 0).Format("20060102150405")
+	buf_empty := parse.ToByteBuf_empty()
+	immotors.Write_Packets(packets, buf_empty)
+	toBytes := buf_empty.ToBytes()
+	//util.Log.Infof("--------------\n%s", hex.EncodeToString(toBytes))
+	r, err := util.Gzip(toBytes)
+	if err != nil {
+		return nil, err
+	}
+	return &Json{
+		FileName:    vin + "_" + dateStr[0:8] + "_" + dateStr[8:] + "_E_V2.0.6.8.bl.gz",
+		FileContent: base64.StdEncoding.EncodeToString(r),
+		Timestamp:   ts,
+		MessageId:   vin + strconv.FormatInt(ts, 10),
+		Ext:         JsonExt{VehicleModel: vehicleType},
+	}, nil
+}
+
+func (e *Json) ToBytes() ([]byte, error) {
+	marshal, err := json.Marshal(e)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
+	return marshal, nil
+}
+
+type JsonExt struct {
+	VehicleModel string `json:"vehicleModel"`
+}
+
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "gb32960",
-		Short: "gb32960压力测试、车辆vin以TEST000000开头、后面按照顺序生成序号",
+		Use:   "immotors",
+		Short: "智己飞凡、车辆vin以TEST000000开头、后面按照顺序生成序号",
 		Run: func(cmd *cobra.Command, args []string) {
 			Start()
 		},
@@ -34,7 +76,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().IntVarP(&startIndex, "startIndex", "s", 0, "车辆开始索引(从0开始)")
 	cmd.Flags().IntVarP(&num, "num", "n", 1, "压测车辆数")
 	cmd.Flags().StringVarP(&address, "address", "a", "127.0.0.1:6666", "网关tcp地址")
-	cmd.Flags().StringVarP(&filePath, "filePath", "f", "sample.txt", "存储样例报文的路径(必须且仅存储一条报文在文件中)")
+	cmd.Flags().StringVarP(&filePath, "filePath", "f", "sample.txt", "存储样例报文的路径(必须且仅存储一条报文在文件中、格式为包含10条的原始报文base64的)")
 	_ = cmd.MarkFlagRequired("address")
 	return &cmd
 }
@@ -59,12 +101,30 @@ func Start() {
 		util.Log.Errorf("%+v", err)
 		return
 	}
-	sample = strings.TrimSpace(string(file))
-	if sample == "" {
+	content := strings.TrimSpace(string(file))
+	if content == "" {
 		util.Log.Errorf("sample file[%s] content is empty", filePath)
 		return
 	}
-	util.Log.Infof("load sample:\n%s", sample)
+	util.Log.Infof("load sample:\n%s", content)
+
+	bytes, err := base64.StdEncoding.DecodeString(content)
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	unGzip, err := util.UnGzip(bytes)
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	sample = unGzip
+	byteBuf := parse.ToByteBuf(unGzip)
+	packets := immotors.To_Packets(byteBuf)
+	if len(packets) != 10 {
+		util.Log.Infof("sample packets len[%d],must be 10", len(packets))
+		return
+	}
 
 	go func() {
 		for {
@@ -101,15 +161,11 @@ func Start() {
 }
 
 func startClient(vin string) {
-	//初始化报文
-	decodeString, err := hex.DecodeString(sample)
-	if err != nil {
-		util.Log.Errorf("%+v", err)
-		return
+	byteBuf := parse.ToByteBuf(sample)
+	packets := immotors.To_Packets(byteBuf)
+	for _, packet := range packets {
+		packet.F_evt_D00A.F_VIN = vin
 	}
-	packet := gb32960.To_Packet(parse.ToByteBuf(decodeString))
-	packet.F_vin = vin
-
 	dial, err := net.Dial("tcp", address)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
@@ -133,26 +189,27 @@ func startClient(vin string) {
 	}()
 
 	var sendTs = time.Now().UnixMilli()
-	var sendBuf = parse.ToByteBuf_empty()
 	for {
 		waitMills := sendTs - time.Now().UnixMilli()
 		if waitMills > 0 {
 			time.Sleep(time.Duration(waitMills) * time.Millisecond)
 		}
-		doBeforeSend(packet, sendTs)
-		sendBuf.Clear()
-		packet.Write(sendBuf)
+		res, err := ToJson(vin, "EP33", sendTs, packets)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
+		bytes, err := res.ToBytes()
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
 		atomic.AddUint32(&sendNum, 1)
-		_, err := dial.Write(sendBuf.ToBytes())
+		_, err = dial.Write(bytes)
 		if err != nil {
 			util.Log.Errorf("%+v", err)
 			return
 		}
 		sendTs += int64(period) * 1000
 	}
-}
-
-func doBeforeSend(packet *gb32960.Packet, ts int64) {
-	vehicleRunData := packet.F_data.(*gb32960.VehicleRunData)
-	vehicleRunData.F_collectTime = time.UnixMilli(ts)
 }
