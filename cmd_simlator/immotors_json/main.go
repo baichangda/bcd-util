@@ -1,4 +1,4 @@
-package immotors
+package immotors_json
 
 import (
 	"bcd-util/support_parse/immotors"
@@ -6,7 +6,6 @@ import (
 	"bcd-util/util"
 	"context"
 	"embed"
-	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"github.com/gin-contrib/gzip"
@@ -16,7 +15,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
-	"io"
 	"io/fs"
 	"net"
 	"net/http"
@@ -25,54 +23,14 @@ import (
 	"time"
 )
 
-type Json struct {
-	FileName    string  `json:"fileName"`
-	FileContent string  `json:"fileContent"`
-	Timestamp   int64   `json:"timestamp"`
-	MessageId   string  `json:"messageId"`
-	Ext         JsonExt `json:"ext"`
-}
-
-func ToJson(vin string, vehicleType string, ts int64, packets []immotors.Packet) (*Json, error) {
-	ts = ts - 9
-	dateStr := time.Unix(ts, 0).Format("20060102150405")
-	buf_empty := parse.ToByteBuf_empty()
-	immotors.Write_Packets(packets, buf_empty)
-	toBytes := buf_empty.ToBytes()
-	//util.Log.Infof("--------------\n%s", hex.EncodeToString(toBytes))
-	r, err := util.Gzip(toBytes)
-	if err != nil {
-		return nil, err
-	}
-	return &Json{
-		FileName:    vin + "_" + dateStr[0:8] + "_" + dateStr[8:] + "_E_V2.0.6.8.bl.gz",
-		FileContent: base64.StdEncoding.EncodeToString(r),
-		Timestamp:   ts,
-		MessageId:   vin + strconv.FormatInt(ts, 10),
-		Ext:         JsonExt{VehicleModel: vehicleType},
-	}, nil
-}
-
-func (e *Json) ToBytes() ([]byte, error) {
-	marshal, err := json.Marshal(e)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return marshal, nil
-}
-
-type JsonExt struct {
-	VehicleModel string `json:"vehicleModel"`
-}
-
 var kafkaAddress []string
 var topic string
 var port int
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "immotors",
-		Short: "智己模拟器",
+		Use:   "immotors_json",
+		Short: "智己模拟器(json)",
 		Run: func(cmd *cobra.Command, args []string) {
 			start()
 		},
@@ -109,8 +67,7 @@ type OutMsg struct {
 type WsClient struct {
 	kafkaWriter  *kafka.Writer
 	vin          string
-	vehicleType  string
-	packet       *immotors.Packet
+	sample       *Json
 	conn         net.Conn
 	cancelCtx    context.Context
 	cancelFn     context.CancelFunc
@@ -119,9 +76,8 @@ type WsClient struct {
 	startSendFn  context.CancelFunc
 }
 
-func (e *WsClient) init(vin string, vehicleType string, conn net.Conn) error {
+func (e *WsClient) init(vin string, conn net.Conn) error {
 	e.vin = vin
-	e.vehicleType = vehicleType
 	e.conn = conn
 
 	//初始化样本
@@ -133,10 +89,11 @@ func (e *WsClient) init(vin string, vehicleType string, conn net.Conn) error {
 
 	packet := immotors.To_Packet(byteBuf)
 	packet.F_evt_D00A.F_VIN = vin
-	e.packet = packet
+	sample := BinToJson(packet)
+	e.sample = &sample
 
 	//更新客户端运行数据
-	marshal1, err := json.MarshalIndent(packet, "", "   ")
+	marshal1, err := json.MarshalIndent(sample, "", "   ")
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -152,8 +109,8 @@ func (e *WsClient) init(vin string, vehicleType string, conn net.Conn) error {
 }
 
 func (e *WsClient) HandleUpdatePacket(data string) {
-	packet := immotors.Packet{}
-	err := json.Unmarshal([]byte(data), &packet)
+	sample := Json{}
+	err := json.Unmarshal([]byte(data), &sample)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 		err = e.response(OutMsg{
@@ -166,8 +123,7 @@ func (e *WsClient) HandleUpdatePacket(data string) {
 		}
 		return
 	}
-	packet.F_evt_D00A.F_VIN = e.vin
-	e.packet = &packet
+	e.sample = &sample
 	err = e.response(OutMsg{
 		Flag:    1,
 		Data:    "",
@@ -176,7 +132,7 @@ func (e *WsClient) HandleUpdatePacket(data string) {
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 	}
-	util.Log.Infof("HandleUpdatePacket vin[%s] vehicleType[%s]", e.vin, e.vehicleType)
+	util.Log.Infof("HandleUpdatePacket vin[%s]", e.vin)
 }
 
 func (e *WsClient) HandleStartSend(data string) {
@@ -209,13 +165,13 @@ func (e *WsClient) HandleStartSend(data string) {
 					case <-time.After(time.Duration(diff) * time.Millisecond):
 					}
 				}
-				err := e.send()
+				err := e.send(nextTs)
 				if err != nil {
 					util.Log.Errorf("%+v", err)
 					return
 				}
 				//sleep后设置下次发送时间
-				nextTs = nextTs + 10000
+				nextTs = nextTs + 30000
 			}
 		}()
 		err := e.response(OutMsg{
@@ -265,7 +221,7 @@ func start() {
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	engine.GET("/immotors", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/immotors/resource/index.html")
+		c.Redirect(http.StatusMovedPermanently, "/immotors_json/resource/index.html")
 	})
 
 	sub, err2 := fs.Sub(FS, "resource")
@@ -275,61 +231,7 @@ func start() {
 	}
 	engine.StaticFS("/immotors/resource", http.FS(sub))
 
-	//engine.Static("/immotors/resource", "cmd_simlator/immotors/resource")
-
-	engine.POST("/immotors/parse", func(ctx *gin.Context) {
-		res := make(map[string]any)
-		all, err := io.ReadAll(ctx.Request.Body)
-		if err != nil {
-			util.Log.Errorf("%+v", err)
-			return
-		}
-		ctx.Header("content-type", "application/json;charset=utf-8")
-
-		bytes, err := base64.StdEncoding.DecodeString(string(all))
-		if err != nil {
-			util.Log.Errorf("%+v", err)
-			res["msg"] = "解析失败、数据不是base64格式"
-			res["succeed"] = false
-			ctx.JSON(200, res)
-			return
-		}
-
-		unGzip, err := util.UnGzip(bytes)
-		if err != nil {
-			util.Log.Errorf("%+v", err)
-			res["msg"] = "解析失败、数据不是gzip格式"
-			res["succeed"] = false
-			ctx.JSON(200, res)
-			return
-		}
-
-		buf := parse.ToByteBuf(unGzip)
-
-		var packets []immotors.Packet
-		func() {
-			defer func() {
-				if err := recover(); err != nil {
-					util.Log.Errorf("%+v", err)
-					res["msg"] = "解析失败、报文不符合智己协议格式"
-					res["succeed"] = false
-					ctx.JSON(200, res)
-				}
-			}()
-			packets = immotors.To_Packets(buf)
-		}()
-
-		if packets != nil {
-			packetJson, err := json.Marshal(packets)
-			if err != nil {
-				util.Log.Errorf("%+v", err)
-				return
-			}
-			res["data"] = string(packetJson)
-			res["succeed"] = true
-			ctx.JSON(200, res)
-		}
-	})
+	//engine.Static("/immotors/resource", "cmd_simlator/immotors_json/resource")
 
 	engine.GET("/immotors/ws", func(ctx *gin.Context) {
 		//升级websocket
@@ -342,7 +244,6 @@ func start() {
 			defer conn.Close()
 			//获取参数
 			vin := ctx.Query("vin")
-			vehicleType := ctx.Query("vehicleType")
 			//定义ctx
 			cancelCtx, cancelFn := context.WithCancel(context.Background())
 			defer cancelFn()
@@ -354,7 +255,7 @@ func start() {
 				kafkaWriter: kafkaWriter,
 			}
 
-			err = client.init(vin, vehicleType, conn)
+			err = client.init(vin, conn)
 			if err != nil {
 				util.Log.Errorf("%+v", err)
 				return
@@ -402,44 +303,26 @@ func (e *WsClient) response(msg OutMsg) error {
 	return nil
 }
 
-func (e *WsClient) send() error {
-	now := time.Now()
-	ts := now.UnixMilli() / 1000
-	temp := e.packet
-	packets := make([]immotors.Packet, 10)
-	for i := 0; i < 10; i++ {
-		cur := *temp
-		cur.F_evt_0001 = &immotors.Evt_0001{
-			F_evtId:      0x0001,
-			F_TBOXSysTim: ts - int64(10-i),
-		}
-		packets[i] = cur
-	}
-	packets[9].F_evt_FFFF = &immotors.Evt_FFFF{
-		F_evtId:  0xFFF,
-		F_EvtCRC: 0,
-	}
-	dateStr := now.Format("20060102150405")
-
-	toJson, err := ToJson(e.vin, e.vehicleType, ts, packets)
+func (e *WsClient) send(ts int64) error {
+	temp := e.sample
+	toBytes, err := temp.ToBytes(ts, 30)
 	if err != nil {
 		return err
 	}
-	toBytes, err := toJson.ToBytes()
+	bytes, err := util.Gzip(toBytes)
 	if err != nil {
 		return err
 	}
 	msg := kafka.Message{
-		Key:   []byte(toJson.MessageId),
-		Value: toBytes,
+		Value: bytes,
 	}
-
 	err = e.kafkaWriter.WriteMessages(e.cancelCtx, msg)
 	if err != nil {
 		return errors.WithStack(err)
 	}
 
-	util.Log.Infof("send vin[%s] vehicleType[%s] time[%s] topic[%s] succeed", e.vin, e.vehicleType, dateStr, topic)
+	dateStr := time.UnixMilli(ts).Format("20060102150405")
+	util.Log.Infof("send vin[%s] time[%s] topic[%s] succeed", e.vin, dateStr, topic)
 
 	err = e.response(OutMsg{
 		Flag:    102,

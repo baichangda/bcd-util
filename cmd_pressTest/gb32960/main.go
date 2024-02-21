@@ -4,6 +4,7 @@ import (
 	"bcd-util/support_parse/gb32960"
 	"bcd-util/support_parse/parse"
 	"bcd-util/util"
+	"context"
 	"encoding/hex"
 	"github.com/spf13/cobra"
 	"net"
@@ -66,16 +67,23 @@ func Start() {
 	}
 	util.Log.Infof("load sample:\n%s", sample)
 
+	ctx, cancelFunc := context.WithCancel(context.Background())
+	defer cancelFunc()
+
 	go func() {
 		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-time.After(3 * time.Second):
+			}
 			util.Log.Infof("client[%d] sendSpeed[%d/s]", atomic.LoadUint32(&clientNum), atomic.SwapUint32(&sendNum, 0)/3)
-			time.Sleep(3 * time.Second)
 		}
 	}()
 	vins := getVins()
 	if num < period {
 		for _, e := range vins {
-			go startClient(e)
+			go startClient(ctx, e)
 			time.Sleep(1 * time.Second)
 		}
 	} else {
@@ -84,11 +92,11 @@ func Start() {
 		for i := 0; i < period; i++ {
 			if i == period-1 {
 				for _, e := range vins[i*batchNum:] {
-					go startClient(e)
+					go startClient(ctx, e)
 				}
 			} else {
 				for _, e := range vins[i*batchNum : (i+1)*batchNum] {
-					go startClient(e)
+					go startClient(ctx, e)
 				}
 			}
 			time.Sleep(1 * time.Second)
@@ -100,7 +108,7 @@ func Start() {
 	}
 }
 
-func startClient(vin string) {
+func startClient(ctx context.Context, vin string) {
 	//初始化报文
 	decodeString, err := hex.DecodeString(sample)
 	if err != nil {
@@ -134,10 +142,20 @@ func startClient(vin string) {
 
 	var sendTs = time.Now().UnixMilli()
 	var sendBuf = parse.ToByteBuf_empty()
+A:
 	for {
 		waitMills := sendTs - time.Now().UnixMilli()
 		if waitMills > 0 {
-			time.Sleep(time.Duration(waitMills) * time.Millisecond)
+			select {
+			case <-ctx.Done():
+				break A
+			case <-time.After(time.Duration(waitMills) * time.Millisecond):
+			}
+		} else {
+			select {
+			case <-ctx.Done():
+				break A
+			}
 		}
 		doBeforeSend(packet, sendTs)
 		sendBuf.Clear()
