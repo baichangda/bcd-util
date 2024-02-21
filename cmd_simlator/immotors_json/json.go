@@ -511,9 +511,7 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_000F != nil {
 		data_TC["TMInvtrCrntHiPre"] = p.F_evt_000F.F_TMInvtrCrntHiPre
 	}
-	if p.F_evt_D008 != nil {
-		data_TC["DTCInfomationTC"] = p.F_evt_D008.F_DTCInfomationTC
-	}
+
 	channels = append(channels, Channel{
 		ID:                  17,
 		Starttime:           ts / 1000,
@@ -852,6 +850,9 @@ func BinToJson(p *immotors.Packet) Json {
 	}
 	if p.F_evt_D019 != nil {
 		data_IMCU["HVEstbCond"] = p.F_evt_D019.F_HVEstbCond
+	}
+	if p.F_evt_D008 != nil {
+		data_IMCU["DTCInfomationTC"] = p.F_evt_D008.F_DTCInfomationTC
 	}
 	channels = append(channels, Channel{
 		ID:                  3,
