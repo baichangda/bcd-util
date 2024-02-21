@@ -1,11 +1,10 @@
-package immotors
+package immotors_json
 
 import (
 	"bcd-util/support_parse/immotors"
-	"bcd-util/support_parse/parse"
 	"bcd-util/util"
 	"context"
-	"encoding/base64"
+	"encoding/json"
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 	"os"
@@ -26,8 +25,8 @@ var filePath string
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "immotors_bin",
-		Short: "智己飞凡、车辆vin以TEST000000开头、后面按照顺序生成序号",
+		Use:   "immotors_json",
+		Short: "智己飞凡压测模拟器(json)、车辆vin以TEST000000开头、后面按照顺序生成序号",
 		Run: func(cmd *cobra.Command, args []string) {
 			Start()
 		},
@@ -67,23 +66,14 @@ func Start() {
 		util.Log.Errorf("sample file[%s] content is empty", filePath)
 		return
 	}
-	util.Log.Infof("load sample:\n%s", content)
 
-	bytes, err := base64.StdEncoding.DecodeString(content)
+	util.Log.Infof("load sample:\n%s", content)
+	sample = []byte(content)
+
+	jsonObj := immotors.Json{}
+	err = json.Unmarshal(sample, &jsonObj)
 	if err != nil {
-		util.Log.Errorf("%+v", err)
-		return
-	}
-	unGzip, err := util.UnGzip(bytes)
-	if err != nil {
-		util.Log.Errorf("%+v", err)
-		return
-	}
-	sample = unGzip
-	byteBuf := parse.ToByteBuf(unGzip)
-	packets := immotors.To_Packets(byteBuf)
-	if len(packets) != 10 {
-		util.Log.Infof("sample packets len[%d],must be 10", len(packets))
+		util.Log.Errorf("sample Unmarshal error:\n%+v", err)
 		return
 	}
 
@@ -141,11 +131,20 @@ func Start() {
 }
 
 func startClient(ctx context.Context, vin string, w *kafka.Writer) {
-	byteBuf := parse.ToByteBuf(sample)
-	packets := immotors.To_Packets(byteBuf)
-	for _, packet := range packets {
-		packet.F_evt_D00A.F_VIN = vin
+	jsonObj := immotors.Json{}
+	_ = json.Unmarshal(sample, &jsonObj)
+
+	jsonObj.Tboxinfo.VIN = vin
+	for _, channel := range jsonObj.Channels {
+		if channel.ID == 1 {
+			data := channel.Data
+			for _, e := range data {
+				e["VIN"] = vin
+			}
+			break
+		}
 	}
+
 	atomic.AddUint32(&clientNum, 1)
 
 	var sendTs = time.Now().UnixMilli()
@@ -162,21 +161,29 @@ A:
 			select {
 			case <-ctx.Done():
 				break A
+			default:
 			}
 		}
-		res, err := immotors.ToBin(vin, "EP33", sendTs, packets)
-		if err != nil {
-			util.Log.Errorf("%+v", err)
-			return
+		sendTss := sendTs / 1000
+		startTss := sendTss - 29
+		jsonObj.FileCreationTime = startTss
+		for i, channel := range jsonObj.Channels {
+			jsonObj.Channels[i].Starttime = startTss
+			if channel.ID == 1 {
+				data := channel.Data
+				for j, e := range data {
+					e["TBOXSysTim"] = startTss + int64(j)
+				}
+			}
 		}
-		bytes, err := res.ToBytes()
+		marshal, err := json.Marshal(jsonObj)
 		if err != nil {
 			util.Log.Errorf("%+v", err)
 			return
 		}
 		atomic.AddUint32(&sendNum, 1)
 		err = w.WriteMessages(ctx, kafka.Message{
-			Value: bytes,
+			Value: marshal,
 		})
 		if err != nil {
 			util.Log.Errorf("%+v", err)
