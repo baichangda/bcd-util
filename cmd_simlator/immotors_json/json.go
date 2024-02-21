@@ -154,48 +154,56 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D016 != nil {
 		data_RHCMS["DTCInfomationRHCMS"] = p.F_evt_D016.F_DTCInfomationRHCMS
 	}
-	channels = append(channels, Channel{
-		ID:                  49,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RHCMS},
-	})
+	if len(data_RHCMS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  49,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RHCMS},
+		})
+	}
 
 	//group WLC
 	data_WLC := make(map[string]any)
 	if p.F_evt_D011 != nil {
 		data_WLC["DTCInfomationWLC"] = p.F_evt_D011.F_DTCInfomationWLC
 	}
-	channels = append(channels, Channel{
-		ID:                  56,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_WLC},
-	})
+	if len(data_WLC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  56,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_WLC},
+		})
+	}
 
 	//group SDM
 	data_SDM := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_SDM["DTCInfomationSDM"] = p.F_evt_D012.F_DTCInfomationSDM
 	}
-	channels = append(channels, Channel{
-		ID:                  61,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SDM},
-	})
+	if len(data_SDM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  61,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SDM},
+		})
+	}
 
 	//group BPEPS
 	data_BPEPS := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_BPEPS["DTCInfomationBPEPS"] = p.F_evt_D013.F_DTCInfomationBPEPS
 	}
-	channels = append(channels, Channel{
-		ID:                  21,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_BPEPS},
-	})
+	if len(data_BPEPS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  21,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_BPEPS},
+		})
+	}
 
 	//group IBS
 	data_IBS := make(map[string]any)
@@ -241,108 +249,126 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D012 != nil {
 		data_IBS["DTCInfomationIBS"] = p.F_evt_D012.F_DTCInfomationIBS
 	}
-	channels = append(channels, Channel{
-		ID:                  4,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IBS},
-	})
+	if len(data_IBS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  4,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IBS},
+		})
+	}
 
 	//group FLDCM
 	data_FLDCM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_FLDCM["DTCInfomationDCM_FL"] = p.F_evt_D013.F_DTCInfomationDCM_FL
 	}
-	channels = append(channels, Channel{
-		ID:                  28,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FLDCM},
-	})
+	if len(data_FLDCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  28,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FLDCM},
+		})
+	}
 
 	//group AMR
 	data_AMR := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_AMR["DTCInfomationAMR"] = p.F_evt_D013.F_DTCInfomationAMR
 	}
-	channels = append(channels, Channel{
-		ID:                  19,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_AMR},
-	})
+	if len(data_AMR) > 0 {
+		channels = append(channels, Channel{
+			ID:                  19,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_AMR},
+		})
+	}
 
 	//group FRSM
 	data_FRSM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_FRSM["DTCInfomationMSM_Psng"] = p.F_evt_D013.F_DTCInfomationMSM_Psng
 	}
-	channels = append(channels, Channel{
-		ID:                  32,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FRSM},
-	})
+	if len(data_FRSM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  32,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FRSM},
+		})
+	}
 
 	//group PMA
 	data_PMA := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_PMA["DTCInfomationPMA"] = p.F_evt_D016.F_DTCInfomationPMA
 	}
-	channels = append(channels, Channel{
-		ID:                  45,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_PMA},
-	})
+	if len(data_PMA) > 0 {
+		channels = append(channels, Channel{
+			ID:                  45,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_PMA},
+		})
+	}
 
 	//group IECU
 	data_IECU := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_IECU["DTCInfomationIECU"] = p.F_evt_D010.F_DTCInfomationIECU
 	}
-	channels = append(channels, Channel{
-		ID:                  35,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IECU},
-	})
+	if len(data_IECU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  35,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IECU},
+		})
+	}
 
 	//group RBM
 	data_RBM := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_RBM["DTCInfomationRBM"] = p.F_evt_D012.F_DTCInfomationRBM
 	}
-	channels = append(channels, Channel{
-		ID:                  46,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RBM},
-	})
+	if len(data_RBM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  46,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RBM},
+		})
+	}
 
 	//group FLSM
 	data_FLSM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_FLSM["DTCInfomationMSM_Drv"] = p.F_evt_D013.F_DTCInfomationMSM_Drv
 	}
-	channels = append(channels, Channel{
-		ID:                  30,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FLSM},
-	})
+	if len(data_FLSM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  30,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FLSM},
+		})
+	}
 
 	//group SPD
 	data_SPD := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_SPD["DTCInfomationSPD"] = p.F_evt_D017.F_DTCInfomationSPD
 	}
-	channels = append(channels, Channel{
-		ID:                  62,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SPD},
-	})
+	if len(data_SPD) > 0 {
+		channels = append(channels, Channel{
+			ID:                  62,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SPD},
+		})
+	}
 
 	//group ICC
 	data_ICC := make(map[string]any)
@@ -397,24 +423,28 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D019 != nil {
 		data_ICC["VehEnrgRdyLvlV"] = p.F_evt_D019.F_VehEnrgRdyLvlV
 	}
-	channels = append(channels, Channel{
-		ID:                  2,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ICC},
-	})
+	if len(data_ICC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  2,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ICC},
+		})
+	}
 
 	//group SAS
 	data_SAS := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_SAS["DTCInfomationSAS"] = p.F_evt_D012.F_DTCInfomationSAS
 	}
-	channels = append(channels, Channel{
-		ID:                  58,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SAS},
-	})
+	if len(data_SAS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  58,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SAS},
+		})
+	}
 
 	//group RWSGW
 	data_RWSGW := make(map[string]any)
@@ -424,84 +454,98 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D012 != nil {
 		data_RWSGW["DTCInfomationRWS"] = p.F_evt_D012.F_DTCInfomationRWS
 	}
-	channels = append(channels, Channel{
-		ID:                  55,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RWSGW},
-	})
+	if len(data_RWSGW) > 0 {
+		channels = append(channels, Channel{
+			ID:                  55,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RWSGW},
+		})
+	}
 
 	//group IMU
 	data_IMU := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_IMU["DTCInfomationIMU"] = p.F_evt_D016.F_DTCInfomationIMU
 	}
-	channels = append(channels, Channel{
-		ID:                  37,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IMU},
-	})
+	if len(data_IMU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  37,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IMU},
+		})
+	}
 
 	//group HUD
 	data_HUD := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_HUD["DTCInfomationHUD"] = p.F_evt_D017.F_DTCInfomationHUD
 	}
-	channels = append(channels, Channel{
-		ID:                  34,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_HUD},
-	})
+	if len(data_HUD) > 0 {
+		channels = append(channels, Channel{
+			ID:                  34,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_HUD},
+		})
+	}
 
 	//group FDR
 	data_FDR := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_FDR["DTCInfomationFDR"] = p.F_evt_D010.F_DTCInfomationFDR
 	}
-	channels = append(channels, Channel{
-		ID:                  57,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FDR},
-	})
+	if len(data_FDR) > 0 {
+		channels = append(channels, Channel{
+			ID:                  57,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FDR},
+		})
+	}
 
 	//group SCM
 	data_SCM := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_SCM["DTCInfomationSCM"] = p.F_evt_D012.F_DTCInfomationSCM
 	}
-	channels = append(channels, Channel{
-		ID:                  59,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SCM},
-	})
+	if len(data_SCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  59,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SCM},
+		})
+	}
 
 	//group RLDCM
 	data_RLDCM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_RLDCM["DTCInfomationDCM_RL"] = p.F_evt_D013.F_DTCInfomationDCM_RL
 	}
-	channels = append(channels, Channel{
-		ID:                  51,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RLDCM},
-	})
+	if len(data_RLDCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  51,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RLDCM},
+		})
+	}
 
 	//group AMP
 	data_AMP := make(map[string]any)
 	if p.F_evt_D014 != nil {
 		data_AMP["DTCInfomationAMP"] = p.F_evt_D014.F_DTCInfomationAMP
 	}
-	channels = append(channels, Channel{
-		ID:                  18,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_AMP},
-	})
+	if len(data_AMP) > 0 {
+		channels = append(channels, Channel{
+			ID:                  18,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_AMP},
+		})
+	}
 
 	//group TC
 	data_TC := make(map[string]any)
@@ -512,24 +556,28 @@ func BinToJson(p *immotors.Packet) Json {
 		data_TC["TMInvtrCrntHiPre"] = p.F_evt_000F.F_TMInvtrCrntHiPre
 	}
 
-	channels = append(channels, Channel{
-		ID:                  17,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_TC},
-	})
+	if len(data_TC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  17,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_TC},
+		})
+	}
 
 	//group PLCM
 	data_PLCM := make(map[string]any)
 	if p.F_evt_D008 != nil {
 		data_PLCM["DTCInfomationPLCM"] = p.F_evt_D008.F_DTCInfomationPLCM
 	}
-	channels = append(channels, Channel{
-		ID:                  12,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_PLCM},
-	})
+	if len(data_PLCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  12,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_PLCM},
+		})
+	}
 
 	//group VCU
 	data_VCU := make(map[string]any)
@@ -539,108 +587,126 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D00F != nil {
 		data_VCU["VCUBatPrsAlrmV"] = p.F_evt_D00F.F_VCUBatPrsAlrmV
 	}
-	channels = append(channels, Channel{
-		ID:                  16,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_VCU},
-	})
+	if len(data_VCU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  16,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_VCU},
+		})
+	}
 
 	//group RDR
 	data_RDR := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_RDR["DTCInfomationRrDetnRdr"] = p.F_evt_D017.F_DTCInfomationRrDetnRdr
 	}
-	channels = append(channels, Channel{
-		ID:                  47,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RDR},
-	})
+	if len(data_RDR) > 0 {
+		channels = append(channels, Channel{
+			ID:                  47,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RDR},
+		})
+	}
 
 	//group EHBS
 	data_EHBS := make(map[string]any)
 	if p.F_evt_D006 != nil {
 		data_EHBS["IbstrWrnngIO"] = p.F_evt_D006.F_IbstrWrnngIO
 	}
-	channels = append(channels, Channel{
-		ID:                  10,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_EHBS},
-	})
+	if len(data_EHBS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  10,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_EHBS},
+		})
+	}
 
 	//group EOPC
 	data_EOPC := make(map[string]any)
 	if p.F_evt_D011 != nil {
 		data_EOPC["DTCInfomationEOPC"] = p.F_evt_D011.F_DTCInfomationEOPC
 	}
-	channels = append(channels, Channel{
-		ID:                  24,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_EOPC},
-	})
+	if len(data_EOPC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  24,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_EOPC},
+		})
+	}
 
 	//group RLSM
 	data_RLSM := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_RLSM["DTCInfomationRLSM"] = p.F_evt_D016.F_DTCInfomationRLSM
 	}
-	channels = append(channels, Channel{
-		ID:                  52,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RLSM},
-	})
+	if len(data_RLSM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  52,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RLSM},
+		})
+	}
 
 	//group LHCMS
 	data_LHCMS := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_LHCMS["DTCInfomationLHCMS"] = p.F_evt_D016.F_DTCInfomationLHCMS
 	}
-	channels = append(channels, Channel{
-		ID:                  41,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_LHCMS},
-	})
+	if len(data_LHCMS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  41,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_LHCMS},
+		})
+	}
 
 	//group DLP
 	data_DLP := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_DLP["DTCInfomationDLP"] = p.F_evt_D013.F_DTCInfomationDLP
 	}
-	channels = append(channels, Channel{
-		ID:                  23,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_DLP},
-	})
+	if len(data_DLP) > 0 {
+		channels = append(channels, Channel{
+			ID:                  23,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_DLP},
+		})
+	}
 
 	//group FLIDAR
 	data_FLIDAR := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_FLIDAR["DTCInfomationFLIDAR"] = p.F_evt_D017.F_DTCInfomationFLIDAR
 	}
-	channels = append(channels, Channel{
-		ID:                  29,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FLIDAR},
-	})
+	if len(data_FLIDAR) > 0 {
+		channels = append(channels, Channel{
+			ID:                  29,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FLIDAR},
+		})
+	}
 
 	//group FVCM
 	data_FVCM := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_FVCM["DTCInfomationFVCM"] = p.F_evt_D017.F_DTCInfomationFVCM
 	}
-	channels = append(channels, Channel{
-		ID:                  33,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FVCM},
-	})
+	if len(data_FVCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  33,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FVCM},
+		})
+	}
 
 	//group CCU
 	data_CCU := make(map[string]any)
@@ -662,84 +728,98 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D019 != nil {
 		data_CCU["HVDCDCLVSideVol"] = p.F_evt_D019.F_HVDCDCLVSideVol
 	}
-	channels = append(channels, Channel{
-		ID:                  6,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_CCU},
-	})
+	if len(data_CCU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  6,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_CCU},
+		})
+	}
 
 	//group EPMCU
 	data_EPMCU := make(map[string]any)
 	if p.F_evt_D011 != nil {
 		data_EPMCU["DTCInfomationEPMCU"] = p.F_evt_D011.F_DTCInfomationEPMCU
 	}
-	channels = append(channels, Channel{
-		ID:                  25,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_EPMCU},
-	})
+	if len(data_EPMCU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  25,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_EPMCU},
+		})
+	}
 
 	//group SCU
 	data_SCU := make(map[string]any)
 	if p.F_evt_D011 != nil {
 		data_SCU["DTCInfomationSCU"] = p.F_evt_D011.F_DTCInfomationSCU
 	}
-	channels = append(channels, Channel{
-		ID:                  60,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SCU},
-	})
+	if len(data_SCU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  60,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SCU},
+		})
+	}
 
 	//group LFSDA
 	data_LFSDA := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_LFSDA["DTCInfomationLFSDA"] = p.F_evt_D010.F_DTCInfomationLFSDA
 	}
-	channels = append(channels, Channel{
-		ID:                  40,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_LFSDA},
-	})
+	if len(data_LFSDA) > 0 {
+		channels = append(channels, Channel{
+			ID:                  40,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_LFSDA},
+		})
+	}
 
 	//group RRSM
 	data_RRSM := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_RRSM["DTCInfomationRRSM"] = p.F_evt_D016.F_DTCInfomationRRSM
 	}
-	channels = append(channels, Channel{
-		ID:                  54,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RRSM},
-	})
+	if len(data_RRSM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  54,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RRSM},
+		})
+	}
 
 	//group IPD
 	data_IPD := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_IPD["DTCInfomationIPD"] = p.F_evt_D010.F_DTCInfomationIPD
 	}
-	channels = append(channels, Channel{
-		ID:                  38,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IPD},
-	})
+	if len(data_IPD) > 0 {
+		channels = append(channels, Channel{
+			ID:                  38,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IPD},
+		})
+	}
 
 	//group PGM
 	data_PGM := make(map[string]any)
 	if p.F_evt_D014 != nil {
 		data_PGM["DTCInfomationPGM"] = p.F_evt_D014.F_DTCInfomationPGM
 	}
-	channels = append(channels, Channel{
-		ID:                  44,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_PGM},
-	})
+	if len(data_PGM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  44,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_PGM},
+		})
+	}
 
 	//group IMCU
 	data_IMCU := make(map[string]any)
@@ -854,12 +934,14 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D008 != nil {
 		data_IMCU["DTCInfomationTC"] = p.F_evt_D008.F_DTCInfomationTC
 	}
-	channels = append(channels, Channel{
-		ID:                  3,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IMCU},
-	})
+	if len(data_IMCU) > 0 {
+		channels = append(channels, Channel{
+			ID:                  3,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IMCU},
+		})
+	}
 
 	//group ICM
 	data_ICM := make(map[string]any)
@@ -869,12 +951,14 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D014 != nil {
 		data_ICM["DTCInfomationICM"] = p.F_evt_D014.F_DTCInfomationICM
 	}
-	channels = append(channels, Channel{
-		ID:                  9,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ICM},
-	})
+	if len(data_ICM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  9,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ICM},
+		})
+	}
 
 	//group ECM
 	data_ECM := make(map[string]any)
@@ -890,72 +974,84 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D008 != nil {
 		data_ECM["DTCInfomationECM"] = p.F_evt_D008.F_DTCInfomationECM
 	}
-	channels = append(channels, Channel{
-		ID:                  11,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ECM},
-	})
+	if len(data_ECM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  11,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ECM},
+		})
+	}
 
 	//group RHRDA
 	data_RHRDA := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_RHRDA["DTCInfomationRHRDA"] = p.F_evt_D010.F_DTCInfomationRHRDA
 	}
-	channels = append(channels, Channel{
-		ID:                  50,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RHRDA},
-	})
+	if len(data_RHRDA) > 0 {
+		channels = append(channels, Channel{
+			ID:                  50,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RHRDA},
+		})
+	}
 
 	//group EPS
 	data_EPS := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_EPS["DTCInfomationEPS"] = p.F_evt_D012.F_DTCInfomationEPS
 	}
-	channels = append(channels, Channel{
-		ID:                  26,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_EPS},
-	})
+	if len(data_EPS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  26,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_EPS},
+		})
+	}
 
 	//group FRDCM
 	data_FRDCM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_FRDCM["DTCInfomationDCM_FR"] = p.F_evt_D013.F_DTCInfomationDCM_FR
 	}
-	channels = append(channels, Channel{
-		ID:                  31,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_FRDCM},
-	})
+	if len(data_FRDCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  31,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_FRDCM},
+		})
+	}
 
 	//group ATC
 	data_ATC := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_ATC["DTCInfomationATC"] = p.F_evt_D013.F_DTCInfomationATC
 	}
-	channels = append(channels, Channel{
-		ID:                  20,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ATC},
-	})
+	if len(data_ATC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  20,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ATC},
+		})
+	}
 
 	//group IMATE
 	data_IMATE := make(map[string]any)
 	if p.F_evt_D014 != nil {
 		data_IMATE["DTCInfomationIMATE"] = p.F_evt_D014.F_DTCInfomationIMATE
 	}
-	channels = append(channels, Channel{
-		ID:                  36,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IMATE},
-	})
+	if len(data_IMATE) > 0 {
+		channels = append(channels, Channel{
+			ID:                  36,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IMATE},
+		})
+	}
 
 	//group ESS
 	data_ESS := make(map[string]any)
@@ -1210,12 +1306,14 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D00F != nil {
 		data_ESS["BMSWrnngInfoCRCBkup"] = p.F_evt_D00F.F_BMSWrnngInfoCRCBkup
 	}
-	channels = append(channels, Channel{
-		ID:                  5,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ESS},
-	})
+	if len(data_ESS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  5,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ESS},
+		})
+	}
 
 	//group BCM
 	data_BCM := make(map[string]any)
@@ -1225,12 +1323,14 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D013 != nil {
 		data_BCM["DTCInfomationBCM"] = p.F_evt_D013.F_DTCInfomationBCM
 	}
-	channels = append(channels, Channel{
-		ID:                  14,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_BCM},
-	})
+	if len(data_BCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  14,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_BCM},
+		})
+	}
 
 	//group CCP
 	data_CCP := make(map[string]any)
@@ -1240,24 +1340,28 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D00F != nil {
 		data_CCP["OtsdAirTemCrValV"] = p.F_evt_D00F.F_OtsdAirTemCrValV
 	}
-	channels = append(channels, Channel{
-		ID:                  15,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_CCP},
-	})
+	if len(data_CCP) > 0 {
+		channels = append(channels, Channel{
+			ID:                  15,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_CCP},
+		})
+	}
 
 	//group LVBM
 	data_LVBM := make(map[string]any)
 	if p.F_evt_D016 != nil {
 		data_LVBM["DTCInfomationLVBM"] = p.F_evt_D016.F_DTCInfomationLVBM
 	}
-	channels = append(channels, Channel{
-		ID:                  43,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_LVBM},
-	})
+	if len(data_LVBM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  43,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_LVBM},
+		})
+	}
 
 	//group SAC
 	data_SAC := make(map[string]any)
@@ -1305,60 +1409,70 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D009 != nil {
 		data_SAC["SAMInvtrOvTempAlrm"] = p.F_evt_D009.F_SAMInvtrOvTempAlrm
 	}
-	channels = append(channels, Channel{
-		ID:                  8,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_SAC},
-	})
+	if len(data_SAC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  8,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_SAC},
+		})
+	}
 
 	//group LHRDA
 	data_LHRDA := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_LHRDA["DTCInfomationLHRDA"] = p.F_evt_D010.F_DTCInfomationLHRDA
 	}
-	channels = append(channels, Channel{
-		ID:                  42,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_LHRDA},
-	})
+	if len(data_LHRDA) > 0 {
+		channels = append(channels, Channel{
+			ID:                  42,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_LHRDA},
+		})
+	}
 
 	//group TCM
 	data_TCM := make(map[string]any)
 	if p.F_evt_D008 != nil {
 		data_TCM["DTCInfomationTCM"] = p.F_evt_D008.F_DTCInfomationTCM
 	}
-	channels = append(channels, Channel{
-		ID:                  13,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_TCM},
-	})
+	if len(data_TCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  13,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_TCM},
+		})
+	}
 
 	//group EPS_SFCANFD
 	data_EPS_SFCANFD := make(map[string]any)
 	if p.F_evt_D012 != nil {
 		data_EPS_SFCANFD["DTCInfomationEPS_S"] = p.F_evt_D012.F_DTCInfomationEPS_S
 	}
-	channels = append(channels, Channel{
-		ID:                  27,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_EPS_SFCANFD},
-	})
+	if len(data_EPS_SFCANFD) > 0 {
+		channels = append(channels, Channel{
+			ID:                  27,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_EPS_SFCANFD},
+		})
+	}
 
 	//group IPS
 	data_IPS := make(map[string]any)
 	if p.F_evt_D017 != nil {
 		data_IPS["DTCInfomationIPS"] = p.F_evt_D017.F_DTCInfomationIPS
 	}
-	channels = append(channels, Channel{
-		ID:                  39,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IPS},
-	})
+	if len(data_IPS) > 0 {
+		channels = append(channels, Channel{
+			ID:                  39,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IPS},
+		})
+	}
 
 	//group IAM
 	data_IAM := make(map[string]any)
@@ -1641,36 +1755,42 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_FFFF != nil {
 		data_IAM["CRC32"] = p.F_evt_FFFF.F_CRC32
 	}
-	channels = append(channels, Channel{
-		ID:                  1,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_IAM},
-	})
+	if len(data_IAM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  1,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_IAM},
+		})
+	}
 
 	//group RFSDA
 	data_RFSDA := make(map[string]any)
 	if p.F_evt_D010 != nil {
 		data_RFSDA["DTCInfomationRFSDA"] = p.F_evt_D010.F_DTCInfomationRFSDA
 	}
-	channels = append(channels, Channel{
-		ID:                  48,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RFSDA},
-	})
+	if len(data_RFSDA) > 0 {
+		channels = append(channels, Channel{
+			ID:                  48,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RFSDA},
+		})
+	}
 
 	//group RRDCM
 	data_RRDCM := make(map[string]any)
 	if p.F_evt_D013 != nil {
 		data_RRDCM["DTCInfomationDCM_RR"] = p.F_evt_D013.F_DTCInfomationDCM_RR
 	}
-	channels = append(channels, Channel{
-		ID:                  53,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_RRDCM},
-	})
+	if len(data_RRDCM) > 0 {
+		channels = append(channels, Channel{
+			ID:                  53,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_RRDCM},
+		})
+	}
 
 	//group ISC
 	data_ISC := make(map[string]any)
@@ -1716,24 +1836,28 @@ func BinToJson(p *immotors.Packet) Json {
 	if p.F_evt_D009 != nil {
 		data_ISC["ISCInvtrOvTempAlrm"] = p.F_evt_D009.F_ISCInvtrOvTempAlrm
 	}
-	channels = append(channels, Channel{
-		ID:                  7,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_ISC},
-	})
+	if len(data_ISC) > 0 {
+		channels = append(channels, Channel{
+			ID:                  7,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_ISC},
+		})
+	}
 
 	//group CARLog
 	data_CARLog := make(map[string]any)
 	if p.F_evt_D014 != nil {
 		data_CARLog["DTCInfomationCARLog"] = p.F_evt_D014.F_DTCInfomationCARLog
 	}
-	channels = append(channels, Channel{
-		ID:                  22,
-		Starttime:           ts / 1000,
-		CollectiofrequecyHz: 1,
-		Data:                []map[string]any{data_CARLog},
-	})
+	if len(data_CARLog) > 0 {
+		channels = append(channels, Channel{
+			ID:                  22,
+			Starttime:           ts / 1000,
+			CollectiofrequecyHz: 1,
+			Data:                []map[string]any{data_CARLog},
+		})
+	}
 
 	sort.Slice(channels, func(i, j int) bool {
 		return channels[i].ID < channels[j].ID
