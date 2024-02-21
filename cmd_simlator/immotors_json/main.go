@@ -67,7 +67,7 @@ type OutMsg struct {
 type WsClient struct {
 	kafkaWriter  *kafka.Writer
 	vin          string
-	sample       *Json
+	sample       *immotors.Json
 	conn         net.Conn
 	cancelCtx    context.Context
 	cancelFn     context.CancelFunc
@@ -89,11 +89,10 @@ func (e *WsClient) init(vin string, conn net.Conn) error {
 
 	packet := immotors.To_Packet(byteBuf)
 	packet.F_evt_D00A.F_VIN = vin
-	sample := BinToJson(packet)
-	e.sample = &sample
+	e.sample = packet.ToJson()
 
 	//更新客户端运行数据
-	marshal1, err := json.MarshalIndent(sample, "", "   ")
+	marshal1, err := json.MarshalIndent(e.sample, "", "   ")
 	if err != nil {
 		return errors.WithStack(err)
 	}
@@ -109,7 +108,7 @@ func (e *WsClient) init(vin string, conn net.Conn) error {
 }
 
 func (e *WsClient) HandleUpdatePacket(data string) {
-	sample := Json{}
+	sample := immotors.Json{}
 	err := json.Unmarshal([]byte(data), &sample)
 	if err != nil {
 		util.Log.Errorf("%+v", err)

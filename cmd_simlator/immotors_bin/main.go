@@ -25,46 +25,6 @@ import (
 	"time"
 )
 
-type Json struct {
-	FileName    string  `json:"fileName"`
-	FileContent string  `json:"fileContent"`
-	Timestamp   int64   `json:"timestamp"`
-	MessageId   string  `json:"messageId"`
-	Ext         JsonExt `json:"ext"`
-}
-
-func ToJson(vin string, vehicleType string, ts int64, packets []immotors.Packet) (*Json, error) {
-	ts = ts - 9
-	dateStr := time.Unix(ts, 0).Format("20060102150405")
-	buf_empty := parse.ToByteBuf_empty()
-	immotors.Write_Packets(packets, buf_empty)
-	toBytes := buf_empty.ToBytes()
-	//util.Log.Infof("--------------\n%s", hex.EncodeToString(toBytes))
-	r, err := util.Gzip(toBytes)
-	if err != nil {
-		return nil, err
-	}
-	return &Json{
-		FileName:    vin + "_" + dateStr[0:8] + "_" + dateStr[8:] + "_E_V2.0.6.8.bl.gz",
-		FileContent: base64.StdEncoding.EncodeToString(r),
-		Timestamp:   ts,
-		MessageId:   vin + strconv.FormatInt(ts, 10),
-		Ext:         JsonExt{VehicleModel: vehicleType},
-	}, nil
-}
-
-func (e *Json) ToBytes() ([]byte, error) {
-	marshal, err := json.Marshal(e)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	return marshal, nil
-}
-
-type JsonExt struct {
-	VehicleModel string `json:"vehicleModel"`
-}
-
 var kafkaAddress []string
 var topic string
 var port int
@@ -419,16 +379,16 @@ func (e *WsClient) send(ts int64) error {
 		F_CRC32: 0,
 	}
 
-	toJson, err := ToJson(e.vin, e.vehicleType, tss, packets)
+	toBin, err := immotors.ToBin(e.vin, e.vehicleType, tss, packets)
 	if err != nil {
 		return err
 	}
-	toBytes, err := toJson.ToBytes()
+	toBytes, err := toBin.ToBytes()
 	if err != nil {
 		return err
 	}
 	msg := kafka.Message{
-		Key:   []byte(toJson.MessageId),
+		Key:   []byte(toBin.MessageId),
 		Value: toBytes,
 	}
 

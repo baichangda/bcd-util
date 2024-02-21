@@ -1,7 +1,6 @@
-package immotors_json
+package immotors
 
 import (
-	"bcd-util/support_parse/immotors"
 	"encoding/json"
 	"github.com/pkg/errors"
 	"sort"
@@ -13,6 +12,23 @@ type Json struct {
 	Tboxinfo         Tboxinfo  `json:"tboxinfo"`
 	Journey          Journey   `json:"journey"`
 	Channels         []Channel `json:"channels"`
+}
+
+type Tboxinfo struct {
+	ID         string `json:"ID"`
+	VIN        string `json:"VIN"`
+	PartNumber string `json:"PartNumber"`
+}
+
+type Journey struct {
+	JourneyID int `json:"JourneyID"`
+}
+
+type Channel struct {
+	ID                  int              `json:"ID"`
+	Starttime           int64            `json:"starttime"`
+	CollectiofrequecyHz int              `json:"collectiofrequecyHz"`
+	Data                []map[string]any `json:"data"`
 }
 
 func (e *Json) ToBytes(ts int64, count int) ([]byte, error) {
@@ -54,23 +70,6 @@ func (e *Json) ToBytes(ts int64, count int) ([]byte, error) {
 		return nil, errors.WithStack(err)
 	}
 	return marshal, nil
-}
-
-type Tboxinfo struct {
-	ID         string `json:"ID"`
-	VIN        string `json:"VIN"`
-	PartNumber string `json:"PartNumber"`
-}
-
-type Journey struct {
-	JourneyID int `json:"JourneyID"`
-}
-
-type Channel struct {
-	ID                  int              `json:"ID"`
-	Starttime           int64            `json:"starttime"`
-	CollectiofrequecyHz int              `json:"collectiofrequecyHz"`
-	Data                []map[string]any `json:"data"`
 }
 
 var GroupId_groupName = make(map[int]string)
@@ -145,7 +144,7 @@ func init() {
 	}
 }
 
-func BinToJson(p *immotors.Packet) Json {
+func (p *Packet) ToJson() *Json {
 	ts := p.F_evt_0001.F_TBOXSysTim * 1000
 	vin := p.F_evt_D00A.F_VIN
 	var channels []Channel
@@ -1863,7 +1862,7 @@ func BinToJson(p *immotors.Packet) Json {
 		return channels[i].ID < channels[j].ID
 	})
 
-	return Json{
+	return &Json{
 		SAIC_FileVersion: "0.0.1.2",
 		FileCreationTime: ts / 1000,
 		Tboxinfo: Tboxinfo{
