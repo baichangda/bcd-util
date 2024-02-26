@@ -47,8 +47,9 @@ var sendNum uint32 = 0
 func getVins() []string {
 	vinPrefix := "TEST000000"
 	vins := make([]string, num)
-	for i := startIndex; i < startIndex+num; i++ {
-		itoa := strconv.Itoa(i)
+	for i := 0; i < num; i++ {
+		no := i + startIndex
+		itoa := strconv.Itoa(no)
 		vins[i] = vinPrefix + strings.Repeat("0", 7-len(itoa)) + itoa
 	}
 	return vins
