@@ -78,12 +78,12 @@ func Start() {
 	}
 
 	w := &kafka.Writer{
-		Addr:         kafka.TCP(kafkaAddress...),
-		Topic:        topic,
-		Balancer:     &kafka.LeastBytes{},
-		BatchTimeout: 100 * time.Millisecond,
-		BatchSize:    1000,
-		//Async:                  true,
+		Addr:                   kafka.TCP(kafkaAddress...),
+		Topic:                  topic,
+		Balancer:               &kafka.LeastBytes{},
+		BatchTimeout:           100 * time.Millisecond,
+		BatchSize:              1000,
+		Async:                  true,
 		AllowAutoTopicCreation: true,
 	}
 	defer w.Close()

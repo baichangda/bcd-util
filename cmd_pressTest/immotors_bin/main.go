@@ -88,12 +88,12 @@ func Start() {
 	}
 
 	w := &kafka.Writer{
-		Addr:         kafka.TCP(kafkaAddress...),
-		Topic:        topic,
-		Balancer:     &kafka.LeastBytes{},
-		BatchTimeout: 100 * time.Millisecond,
-		BatchSize:    1000,
-		//Async:                  true,
+		Addr:                   kafka.TCP(kafkaAddress...),
+		Topic:                  topic,
+		Balancer:               &kafka.LeastBytes{},
+		BatchTimeout:           100 * time.Millisecond,
+		BatchSize:              1000,
+		Async:                  true,
 		AllowAutoTopicCreation: true,
 	}
 	defer w.Close()
@@ -144,7 +144,9 @@ func startClient(ctx context.Context, vin string, w *kafka.Writer) {
 	byteBuf := parse.ToByteBuf(sample)
 	packets := immotors.To_Packets(byteBuf)
 	for _, packet := range packets {
-		packet.F_evt_D00A.F_VIN = vin
+		if packet.F_evt_D00A != nil {
+			packet.F_evt_D00A.F_VIN = vin
+		}
 	}
 	atomic.AddUint32(&clientNum, 1)
 
@@ -162,6 +164,7 @@ A:
 			select {
 			case <-ctx.Done():
 				break A
+			default:
 			}
 		}
 		res, err := immotors.ToBin(vin, "EP33", sendTs, packets)
