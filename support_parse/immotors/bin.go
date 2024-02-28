@@ -22,9 +22,9 @@ type Ext struct {
 	VehicleModel string `json:"vehicleModel"`
 }
 
-func ToBin(vin string, vehicleType string, ts int64, packets []Packet) (*Bin, error) {
-	ts = ts - 9
-	dateStr := time.Unix(ts, 0).Format("20060102150405")
+func ToBin(vin string, vehicleType string, tss int64, packets []Packet) (*Bin, error) {
+	startTss := tss - 9
+	dateStr := time.Unix(startTss, 0).Format("20060102150405")
 	buf_empty := parse.ToByteBuf_empty()
 	Write_Packets(packets, buf_empty)
 	toBytes := buf_empty.ToBytes()
@@ -36,8 +36,8 @@ func ToBin(vin string, vehicleType string, ts int64, packets []Packet) (*Bin, er
 	return &Bin{
 		FileName:    vin + "_" + dateStr[0:8] + "_" + dateStr[8:] + "_E_V2.0.6.8.bl.gz",
 		FileContent: base64.StdEncoding.EncodeToString(r),
-		Timestamp:   ts,
-		MessageId:   vin + strconv.FormatInt(ts, 10),
+		Timestamp:   startTss,
+		MessageId:   vin + strconv.FormatInt(startTss, 10),
 		Ext:         Ext{VehicleModel: vehicleType},
 	}, nil
 }

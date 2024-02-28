@@ -44,7 +44,7 @@ func Cmd() *cobra.Command {
 var clientNum uint32 = 0
 var sendNum uint32 = 0
 
-func getVins() []string {
+func GetVins(num int, startIndex int) []string {
 	vinPrefix := "TEST000000"
 	vins := make([]string, num)
 	for i := 0; i < num; i++ {
@@ -103,7 +103,7 @@ func Start() {
 		}
 	}()
 
-	vins := getVins()
+	vins := GetVins(num, startIndex)
 	if num < period {
 		for _, e := range vins {
 			go startClient(ctx, e, w)

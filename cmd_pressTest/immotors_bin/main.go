@@ -45,7 +45,7 @@ func Cmd() *cobra.Command {
 var clientNum uint32 = 0
 var sendNum uint32 = 0
 
-func getVins() []string {
+func GetVins(num int, startIndex int) []string {
 	vinPrefix := "TEST000000"
 	vins := make([]string, num)
 	for i := 0; i < num; i++ {
@@ -113,7 +113,7 @@ func Start() {
 		}
 	}()
 
-	vins := getVins()
+	vins := GetVins(num, startIndex)
 	if num < period {
 		for _, e := range vins {
 			go startClient(ctx, e, w)
@@ -168,7 +168,15 @@ A:
 			default:
 			}
 		}
-		res, err := immotors.ToBin(vin, "EP33", sendTs, packets)
+
+		sendTss := sendTs / 1000
+		for i, packet := range packets {
+			if packet.F_evt_0001 != nil {
+				packet.F_evt_0001.F_TBOXSysTim = sendTss - int64(10-i)
+			}
+		}
+		res, err := immotors.ToBin(vin, "EP33", sendTss, packets)
+
 		if err != nil {
 			util.Log.Errorf("%+v", err)
 			return
