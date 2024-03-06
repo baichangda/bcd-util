@@ -21,9 +21,11 @@ import (
 )
 
 type Param struct {
-	KafkaAddrs []string `json:"kafkaAddrs"`
-	KafkaTopic string   `json:"kafkaTopic"`
-	Data       string   `json:"data"`
+	KafkaAddrs   []string `json:"kafkaAddrs"`
+	KafkaTopic   string   `json:"kafkaTopic"`
+	Data         string   `json:"data"`
+	MsgSplit     string   `json:"msgSplit"`
+	MsgSplitType string   `json:"msgSplitType"`
 }
 
 var port int
@@ -111,9 +113,31 @@ func Cmd() *cobra.Command {
 					AllowAutoTopicCreation: true,
 				}
 
-				err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
-					Value: []byte(param.Data),
-				})
+				var messages []kafka.Message
+				switch param.MsgSplitType {
+				case "":
+					messages = []kafka.Message{{Value: []byte(param.Data)}}
+				case "1":
+
+				}
+				if param.MsgSplitType == "" {
+					messages = []kafka.Message{{Value: []byte(param.Data)}}
+				} else {
+					var split []string
+					if param.MsgSplitType == "1" {
+						split = strings.Split(param.Data, "\n")
+					} else {
+						split = strings.Split(param.Data, param.MsgSplit)
+					}
+					messages = make([]kafka.Message, len(split))
+					for i := range len(split) {
+						messages[i] = kafka.Message{
+							Value: []byte(split[i]),
+						}
+					}
+				}
+
+				err = kafkaWriter.WriteMessages(context.Background(), messages...)
 
 				if err != nil {
 					util.Log.Errorf("%+v", err)
@@ -123,11 +147,11 @@ func Cmd() *cobra.Command {
 					return
 				}
 
-				res["msg"] = "发送成功"
+				res["msg"] = "发送" + strconv.Itoa(len(messages)) + "条数据到kafka成功"
 				res["succeed"] = true
 				ctx.JSON(200, res)
 
-				util.Log.Infof("send to kafka[%s] topic[%s] succeed", strings.Join(param.KafkaAddrs, ","), param.KafkaTopic)
+				util.Log.Infof("send to kafka[%s] topic[%s] num[%d] succeed", strings.Join(param.KafkaAddrs, ","), param.KafkaTopic, len(messages))
 			})
 
 			err := engine.Run(":" + strconv.Itoa(port))

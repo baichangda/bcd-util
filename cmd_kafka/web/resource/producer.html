@@ -7,7 +7,7 @@
         <td style="width:80%;border: solid 1px">
             <table style="width: 100%;height: 100%;">
                 <tr style="height: 20px">
-                    <td style="width: 100px;border: solid 1px">kafka地址</td>
+                    <td style="width: 120px;border: solid 1px">kafka地址</td>
                     <td style="border: solid 1px">
                         <input style="width: 100%;height: 25px" id="kafkaAddrs_input" value="10.0.11.50:39003"></input>
                     </td>
@@ -16,6 +16,17 @@
                     <td style="border: solid 1px">kafka topic</td>
                     <td style="border: solid 1px">
                         <input style="width: 100%;height: 25px" id="kafkaTopic_input" value="gw-test"></input>
+                    </td>
+                </tr>
+                <tr style="height: 20px">
+                    <td style="border: solid 1px">
+                        是否发送多条<input type="checkbox" id="msgSplit_checkbox"/></td>
+                    <td style="border: solid 1px">
+                        <select style="height: 25px" id="msgSplit_select">
+                            <option value="1">换行符</option>
+                            <option value="2">其他</option>
+                        </select>
+                        <input style="width: 200px;height: 25px" id="msgSplit_input" value=""/>
                     </td>
                 </tr>
                 <tr>
@@ -59,10 +70,23 @@
             appendToOutput("kafka地址不能为空", 1)
             return
         }
-        let kafkaTopic = $("#kafkaTopic_input").val().trim();
+        let kafkaTopic = $("#kafkaTopic_input").val();
         if (kafkaTopic === "") {
             appendToOutput("kafka topic不能为空", 1)
             return
+        }
+        let isMsgSplit = $("#msgSplit_checkbox").prop("checked");
+        let msgSplit = "";
+        let msgSplitType = "";
+        if (isMsgSplit) {
+            msgSplitType = $("#msgSplit_select").val().trim();
+            if(msgSplitType === "2"){
+                msgSplit = $("#msgSplit_input").val().trim();
+                if (msgSplit === "") {
+                    appendToOutput("其他分隔符不能为空", 1)
+                    return
+                }
+            }
         }
         let data = $("#data_textarea").val().trim();
         if (data === "") {
@@ -76,14 +100,12 @@
             data: JSON.stringify({
                 kafkaAddrs: kafkaAddrs.split(","),
                 kafkaTopic: kafkaTopic,
-                data: data
+                data: data,
+                msgSplit: msgSplit,
+                msgSplitType: msgSplitType
             }),
             success: function (res) {
-                if (res.succeed) {
-                    appendToOutput("发送数据到kafka成功", 2)
-                } else {
-                    appendToOutput(res.msg, 2)
-                }
+                appendToOutput(res.msg, 2)
             }
         })
         appendToOutput("发送数据到web成功", 1)
