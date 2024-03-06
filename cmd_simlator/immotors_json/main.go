@@ -89,7 +89,7 @@ func (e *WsClient) init(vin string, conn net.Conn) error {
 
 	packet := immotors.To_Packet(byteBuf)
 	packet.F_evt_D00A.F_VIN = vin
-	e.sample = packet.ToJson()
+	e.sample = packet.ToJson(vin)
 
 	//更新客户端运行数据
 	marshal1, err := json.MarshalIndent(e.sample, "", "   ")

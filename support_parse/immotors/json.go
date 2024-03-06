@@ -144,9 +144,8 @@ func init() {
 	}
 }
 
-func (p *Packet) ToJson() *Json {
+func (p *Packet) ToJson(vin string) *Json {
 	ts := p.F_evt_0001.F_TBOXSysTim * 1000
-	vin := p.F_evt_D00A.F_VIN
 	var channels []Channel
 	//group RHCMS
 	data_RHCMS := make(map[string]any)
@@ -1575,7 +1574,7 @@ func (p *Packet) ToJson() *Json {
 		data_IAM["CellFrequency"] = p.F_evt_000D.F_CellFrequency
 	}
 	if p.F_evt_D00A != nil {
-		data_IAM["VIN"] = p.F_evt_D00A.F_VIN
+		data_IAM["VIN"] = vin
 	}
 	if p.F_evt_D00A != nil {
 		data_IAM["IAMSN"] = p.F_evt_D00A.F_IAMSN

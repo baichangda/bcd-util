@@ -36,7 +36,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().IntVarP(&num, "num", "n", 1, "压测车辆数")
 	cmd.Flags().StringSliceVarP(&kafkaAddress, "kafkaAddress", "a", []string{"127.0.0.1:9092"}, "kafka地址")
 	cmd.Flags().StringVarP(&topic, "topic", "t", "gw-test", "kafka topic")
-	cmd.Flags().StringVarP(&filePath, "filePath", "f", "sample.txt", "存储样例报文的路径(必须且仅存储一条报文在文件中、格式为包含10条的原始报文base64的)")
+	cmd.Flags().StringVarP(&filePath, "filePath", "f", "sample.txt", "存储样例报文的路径(必须且仅存储一条报文在文件中、格式为包含至少10条json报文)")
 	_ = cmd.MarkFlagRequired("address")
 	return &cmd
 }
