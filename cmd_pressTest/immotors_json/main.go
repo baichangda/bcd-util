@@ -31,7 +31,7 @@ func Cmd() *cobra.Command {
 			Start()
 		},
 	}
-	cmd.Flags().IntVarP(&period, "period", "p", 10, "报文上报间隔(秒)")
+	cmd.Flags().IntVarP(&period, "period", "p", 30, "报文上报间隔(秒)")
 	cmd.Flags().IntVarP(&startIndex, "startIndex", "s", 0, "车辆开始索引(从0开始)")
 	cmd.Flags().IntVarP(&num, "num", "n", 1, "压测车辆数")
 	cmd.Flags().StringSliceVarP(&kafkaAddress, "kafkaAddress", "a", []string{"127.0.0.1:9092"}, "kafka地址")
@@ -104,7 +104,7 @@ func Start() {
 	}()
 
 	vins := GetVins(num, startIndex)
-	if num < period {
+	if num <= period {
 		for _, e := range vins {
 			go startClient(ctx, e, w)
 			time.Sleep(1 * time.Second)
@@ -182,9 +182,14 @@ A:
 			util.Log.Errorf("%+v", err)
 			return
 		}
+		gzip, err := util.Gzip(marshal)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
 		atomic.AddUint32(&sendNum, 1)
 		err = w.WriteMessages(ctx, kafka.Message{
-			Value: marshal,
+			Value: gzip,
 		})
 		if err != nil {
 			util.Log.Errorf("%+v", err)

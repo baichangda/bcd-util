@@ -114,7 +114,7 @@ func Start() {
 	}()
 
 	vins := GetVins(num, startIndex)
-	if num < period {
+	if num <= period {
 		for _, e := range vins {
 			go startClient(ctx, e, w)
 			time.Sleep(1 * time.Second)
