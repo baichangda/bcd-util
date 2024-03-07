@@ -12,6 +12,7 @@ import (
 	"github.com/segmentio/kafka-go"
 	"github.com/spf13/cobra"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -41,14 +42,14 @@ func Cmd() *cobra.Command {
 			//gin.SetMode(gin.ReleaseMode)
 			engine := gin.New()
 
-			//sub, err2 := fs.Sub(FS, "resource")
-			//if err2 != nil {
-			//	util.Log.Errorf("%+v", err2)
-			//	return
-			//}
-			//engine.StaticFS("/resource", http.FS(sub))
+			sub, err2 := fs.Sub(FS, "resource")
+			if err2 != nil {
+				util.Log.Errorf("%+v", err2)
+				return
+			}
+			engine.StaticFS("/resource", http.FS(sub))
 
-			engine.Static("/resource", "cmd_kafka/web/resource")
+			//engine.Static("/resource", "cmd_kafka/web/resource")
 
 			engine.GET("/", func(c *gin.Context) {
 				c.Redirect(http.StatusMovedPermanently, "/resource/producer.html")
