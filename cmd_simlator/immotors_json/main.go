@@ -26,6 +26,7 @@ import (
 var kafkaAddress []string
 var topic string
 var port int
+var period int
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -38,6 +39,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().StringSliceVarP(&kafkaAddress, "kafkaAddress", "a", []string{"10.0.11.50:39003"}, "kafka地址")
 	cmd.Flags().StringVarP(&topic, "topic", "t", "gw-test", "发送的topic")
 	cmd.Flags().IntVarP(&port, "port", "p", 13579, "http端口")
+	cmd.Flags().IntVarP(&period, "period", "r", 10, "上报频率")
 	return &cmd
 }
 
@@ -170,7 +172,7 @@ func (e *WsClient) HandleStartSend(data string) {
 					return
 				}
 				//sleep后设置下次发送时间
-				nextTs = nextTs + 30000
+				nextTs = nextTs + int64(period*1000)
 			}
 		}()
 		err := e.response(OutMsg{
@@ -304,7 +306,7 @@ func (e *WsClient) response(msg OutMsg) error {
 
 func (e *WsClient) send(ts int64) error {
 	temp := e.sample
-	toBytes, err := temp.ToBytes(ts, 30)
+	toBytes, err := temp.ToBytes(ts, period)
 	if err != nil {
 		return err
 	}

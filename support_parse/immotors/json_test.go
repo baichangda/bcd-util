@@ -146,7 +146,7 @@ func TestJson_ToBytes_fromBase64(t *testing.T) {
 	//	t.Fatalf("%+v", err)
 	//}
 	//t.Log(string(marshal))
-	bytes, err := jsonObj.ToBytes(time.Now().UnixMilli(), 30)
+	bytes, err := jsonObj.ToBytes(time.Now().UnixMilli(), 10)
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}

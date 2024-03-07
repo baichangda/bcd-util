@@ -31,7 +31,7 @@ func Cmd() *cobra.Command {
 			Start()
 		},
 	}
-	cmd.Flags().IntVarP(&period, "period", "p", 30, "报文上报间隔(秒)")
+	cmd.Flags().IntVarP(&period, "period", "p", 10, "报文上报间隔(秒)")
 	cmd.Flags().IntVarP(&startIndex, "startIndex", "s", 0, "车辆开始索引(从0开始)")
 	cmd.Flags().IntVarP(&num, "num", "n", 1, "压测车辆数")
 	cmd.Flags().StringSliceVarP(&kafkaAddress, "kafkaAddress", "a", []string{"127.0.0.1:9092"}, "kafka地址")
@@ -166,7 +166,7 @@ A:
 			}
 		}
 		sendTss := sendTs / 1000
-		startTss := sendTss - 29
+		startTss := sendTss - int64(period-1)
 		jsonObj.FileCreationTime = startTss
 		for i, channel := range jsonObj.Channels {
 			jsonObj.Channels[i].Starttime = startTss

@@ -170,9 +170,10 @@ A:
 		}
 
 		sendTss := sendTs / 1000
+		startTss := sendTss - int64(period-1)
 		for i, packet := range packets {
 			if packet.F_evt_0001 != nil {
-				packet.F_evt_0001.F_TBOXSysTim = sendTss - int64(10-i)
+				packet.F_evt_0001.F_TBOXSysTim = startTss + int64(i)
 			}
 		}
 		res, err := immotors.ToBin(vin, "EP33", sendTss, packets)
