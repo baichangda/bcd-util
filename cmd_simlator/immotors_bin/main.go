@@ -226,8 +226,8 @@ func start() {
 	engine := gin.Default()
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	engine.GET("/immotors", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/immotors_bin/resource/index.html")
+	engine.GET("/", func(c *gin.Context) {
+		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
 	})
 
 	sub, err2 := fs.Sub(FS, "resource")
@@ -235,11 +235,11 @@ func start() {
 		util.Log.Errorf("%+v", err2)
 		return
 	}
-	engine.StaticFS("/immotors/resource", http.FS(sub))
+	engine.StaticFS("/resource", http.FS(sub))
 
-	//engine.Static("/immotors/resource", "cmd_simlator/immotors_bin/resource")
+	//engine.Static("/resource", "cmd_simlator/immotors_bin/resource")
 
-	engine.POST("/immotors/parse", func(ctx *gin.Context) {
+	engine.POST("/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
 		all, err := io.ReadAll(ctx.Request.Body)
 		if err != nil {
@@ -293,7 +293,7 @@ func start() {
 		}
 	})
 
-	engine.GET("/immotors/ws", func(ctx *gin.Context) {
+	engine.GET("/ws", func(ctx *gin.Context) {
 		//升级websocket
 		conn, _, _, err := ws.UpgradeHTTP(ctx.Request, ctx.Writer)
 		if err != nil {
