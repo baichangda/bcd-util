@@ -18,14 +18,16 @@ import (
 //go:embed resource
 var FS embed.FS
 
+var https bool
 var port int
+var certFile string
+var keyFile string
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "ocr",
-		Short: `启动ocr web服务`,
+		Short: `启动ocr https服务`,
 		Run: func(cmd *cobra.Command, args []string) {
-			gin.SetMode(gin.ReleaseMode)
 			engine := gin.New()
 			engine.GET("/", func(c *gin.Context) {
 				c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
@@ -69,13 +71,30 @@ func Cmd() *cobra.Command {
 					}
 				}
 			})
-			err := engine.Run(":" + strconv.Itoa(port))
-			if err != nil {
-				util.Log.Errorf("%+v", err)
+			if https {
+				err := engine.RunTLS(":"+strconv.Itoa(port), certFile, keyFile)
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+				}
+			} else {
+				if port == 443 {
+					err := engine.Run(":" + strconv.Itoa(80))
+					if err != nil {
+						util.Log.Errorf("%+v", err)
+					}
+				} else {
+					err := engine.Run(":" + strconv.Itoa(port))
+					if err != nil {
+						util.Log.Errorf("%+v", err)
+					}
+				}
 			}
 		},
 	}
-	cmd.Flags().IntVarP(&port, "port", "p", 23456, "端口")
+	cmd.Flags().BoolVarP(&https, "https", "t", true, "是否https服务")
+	cmd.Flags().IntVarP(&port, "port", "p", 443, "https默认443、http默认是80、如果手动指定了其他端口则以参数为准")
+	cmd.Flags().StringVarP(&certFile, "certFile", "c", "./crt.pem", "证书crt文件地址")
+	cmd.Flags().StringVarP(&keyFile, "keyFile", "k", "./key.pem", "证书key文件地址")
 
 	return &cmd
 }
