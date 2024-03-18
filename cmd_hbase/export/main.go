@@ -108,9 +108,9 @@ func Cmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringVarP(&addr, "addr", "a", "incar-dn-1,incar-nn-1,incar-nn-2", "hbase地址")
-	cmd.Flags().StringVarP(&table, "table", "t", "risingauto:delivery_message_2024", "hbase表名")
-	cmd.Flags().StringVarP(&startRowKey, "startRowKey", "s", "0004b20TEST00000000531551709029510000TEST1###############003", "开始rowKey(包含)")
-	cmd.Flags().StringVarP(&endRowKey, "endRowKey", "e", "0004b20TEST00000000531551709085146000TEST1###############003", "结束rowKey(包含)")
+	cmd.Flags().StringVarP(&table, "table", "t", "immotors:json_12m", "hbase表名")
+	cmd.Flags().StringVarP(&startRowKey, "startRowKey", "s", "2312000LS5A33LR3FB35697620231219163903####", "开始rowKey(包含)")
+	cmd.Flags().StringVarP(&endRowKey, "endRowKey", "e", "2312000LS5A33LR3FB35697620231219164044####", "结束rowKey(不包含)")
 	cmd.Flags().StringVarP(&filePath, "filePath", "f", "res.txt", "结果输出文件路径")
 	cmd.Flags().BoolVarP(&needRowKey, "needRowKey", "r", false, "导出结果是否需要rowKey")
 	return &cmd
