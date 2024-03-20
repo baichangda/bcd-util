@@ -35,8 +35,8 @@ func Test1(t *testing.T) {
 	bs := gb32960.ToPacketBytes(0x05, 0xFE, "TEST0000000000000", &gb32960.PlatformLoginData{
 		F_collectTime: time.Now(),
 		F_sn:          1,
-		F_username:    "RisingAuto_7",
-		F_password:    "FeiFanEVCar_20220815",
+		F_username:    "xxx",
+		F_password:    "xxx",
 		F_encode:      1,
 	})
 	_, err = dial.Write(bs)
