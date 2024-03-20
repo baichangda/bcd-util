@@ -15,7 +15,6 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"io"
-	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -250,17 +249,17 @@ func start() {
 	engine.Use(gzip.Gzip(gzip.DefaultCompression))
 
 	engine.GET("/", func(c *gin.Context) {
-		c.Redirect(http.StatusMovedPermanently, "/gb32960/resource/index.html")
+		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
 	})
 
-	sub, err2 := fs.Sub(FS, "resource")
-	if err2 != nil {
-		util.Log.Errorf("%+v", err2)
-		return
-	}
-	engine.StaticFS("/resource", http.FS(sub))
+	//sub, err2 := fs.Sub(FS, "resource")
+	//if err2 != nil {
+	//	util.Log.Errorf("%+v", err2)
+	//	return
+	//}
+	//engine.StaticFS("/resource", http.FS(sub))
 
-	//engine.Static("/resource", "cmd_simlator/gb32960/resource")
+	engine.Static("/resource", "cmd_simlator/gb32960/resource")
 
 	engine.POST("/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
@@ -300,6 +299,43 @@ func start() {
 				return
 			}
 			res["data"] = string(packetJson)
+			res["succeed"] = true
+			ctx.JSON(200, res)
+		}
+	})
+
+	engine.POST("/deParse", func(ctx *gin.Context) {
+		res := make(map[string]any)
+		all, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
+		ctx.Header("content-type", "application/json;charset=utf-8")
+		p := gb32960.Packet_runData{}
+		err = json.Unmarshal(all, &p)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			res["msg"] = "反解析失败、数据不是国标报文的json格式"
+			res["succeed"] = false
+			ctx.JSON(200, res)
+			return
+		}
+		var bs []byte
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					util.Log.Errorf("%+v", err)
+					res["msg"] = "解析失败、报文不符合32960协议格式"
+					res["succeed"] = false
+					ctx.JSON(200, res)
+				}
+			}()
+			bs = p.ToBytes()
+		}()
+
+		if bs != nil {
+			res["data"] = hex.EncodeToString(bs)
 			res["succeed"] = true
 			ctx.JSON(200, res)
 		}

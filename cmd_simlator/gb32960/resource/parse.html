@@ -15,9 +15,12 @@
                     </td>
                 </tr>
                 <tr style="height: 20px">
-                    <td>
+                    <td style="text-align: center;border: 1px solid">
                         <button id="parse_btn" onclick="parse()"
-                                style="width: 100%;font-size: 18px;color: green">解析
+                                style="width: 200px;font-size: 18px;color: green">解析
+                        </button>
+                        <button id="deParse_btn" onclick="deParse()"
+                                style="width: 200px;font-size: 18px;color: green">反解析
                         </button>
                     </td>
                 </tr>
@@ -72,6 +75,30 @@
             appendToOutput("发送http解析请求成功",1)
         }
     }
+
+    function deParse() {
+        $("#hex_textarea").val("")
+        let val = JSON.stringify(editor.get())
+        if (val === "") {
+            appendToOutput("json数据不能为空",1)
+        } else {
+            $.ajax({
+                url: "/deParse",
+                method: "post",
+                data: val,
+                success:function (res){
+                    if(res.succeed){
+                        $("#hex_textarea").val(res.data)
+                        appendToOutput("反解析成功",2)
+                    }else{
+                        appendToOutput(res.msg,2)
+                    }
+                }
+            })
+            appendToOutput("发送http反解析请求成功",1)
+        }
+    }
+
     let outputCount = 0
     const maxOutputCount = 20
 

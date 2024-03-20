@@ -785,49 +785,75 @@ func (__instance *VehicleRunData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 func To_F_data(_byteBuf *parse.ByteBuf, packet Packet) any {
-	if packet.F_replyFlag == 0xfe {
-		switch packet.F_flag {
-		case 1:
-			return To_VehicleLoginData(_byteBuf)
-		case 2, 3:
-			return To_VehicleRunData(_byteBuf, int(packet.F_contentLength))
-		case 4:
-			return To_VehicleLogoutData(_byteBuf)
-		case 5:
-			return To_PlatformLoginData(_byteBuf)
-		case 6:
-			return To_PlatformLogoutData(_byteBuf)
-		default:
-			util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
-			return nil
-		}
-	} else {
-		return ResponseData{content: _byteBuf.Read_slice_uint8(int(packet.F_contentLength))}
+	//if packet.F_replyFlag == 0xfe {
+	switch packet.F_flag {
+	case 1:
+		return To_VehicleLoginData(_byteBuf)
+	case 2, 3:
+		return To_VehicleRunData(_byteBuf, int(packet.F_contentLength))
+	case 4:
+		return To_VehicleLogoutData(_byteBuf)
+	case 5:
+		return To_PlatformLoginData(_byteBuf)
+	case 6:
+		return To_PlatformLogoutData(_byteBuf)
+	default:
+		util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
+		return nil
 	}
+	//} else {
+	//	return ResponseData{content: _byteBuf.Read_slice_uint8(int(packet.F_contentLength))}
+	//}
 }
 
 func Write_F_data(_byteBuf *parse.ByteBuf, packet Packet) {
 	f_data := packet.F_data
-	if packet.F_replyFlag == 0xfe {
-		switch packet.F_flag {
-		case 1:
-			f_data.(*VehicleLoginData).Write(_byteBuf)
-		case 2, 3:
-			f_data.(*VehicleRunData).Write(_byteBuf)
-		case 4:
-			f_data.(*VehicleLogoutData).Write(_byteBuf)
-		case 5:
-			f_data.(*PlatformLoginData).Write(_byteBuf)
-		case 6:
-			f_data.(*PlatformLogoutData).Write(_byteBuf)
-		default:
-			util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
-		}
-	} else {
-		_byteBuf.Write_slice_uint8(f_data.(ResponseData).content)
+	//if packet.F_replyFlag == 0xfe {
+	switch packet.F_flag {
+	case 1:
+		f_data.(*VehicleLoginData).Write(_byteBuf)
+	case 2, 3:
+		f_data.(*VehicleRunData).Write(_byteBuf)
+	case 4:
+		f_data.(*VehicleLogoutData).Write(_byteBuf)
+	case 5:
+		f_data.(*PlatformLoginData).Write(_byteBuf)
+	case 6:
+		f_data.(*PlatformLogoutData).Write(_byteBuf)
+	default:
+		util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
 	}
+	//} else {
+	//	_byteBuf.Write_slice_uint8(f_data.(ResponseData).content)
+	//}
 }
 
 type ResponseData struct {
 	content []byte
+}
+
+type Packet_runData struct {
+	F_header        [2]uint8        `json:"header"`
+	F_flag          uint8           `json:"flag"`
+	F_replyFlag     uint8           `json:"replyFlag"`
+	F_vin           string          `json:"vin"`
+	F_encodeWay     uint8           `json:"encodeWay"`
+	F_contentLength uint16          `json:"contentLength"`
+	F_data          *VehicleRunData `json:"data"`
+	F_code          uint8           `json:"code"`
+}
+
+func (e *Packet_runData) ToBytes() []byte {
+	p := Packet{}
+	p.F_header = e.F_header
+	p.F_flag = e.F_flag
+	p.F_replyFlag = e.F_replyFlag
+	p.F_vin = e.F_vin
+	p.F_encodeWay = e.F_encodeWay
+	p.F_contentLength = e.F_contentLength
+	p.F_data = e.F_data
+	p.F_code = e.F_code
+	buf := parse.ToByteBuf_empty()
+	p.Write(buf)
+	return buf.ToBytes()
 }
