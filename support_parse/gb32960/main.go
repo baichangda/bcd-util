@@ -592,7 +592,7 @@ func (__instance *VehicleLogoutData) Write(_byteBuf *parse.ByteBuf) {
 
 type VehicleMotorData struct {
 	F_num     uint8       `json:"num"`
-	F_content []MotorData `json:"content"`
+	F_content []MotorData `json:"Content"`
 }
 
 func To_VehicleMotorData(_byteBuf *parse.ByteBuf) *VehicleMotorData {
@@ -641,7 +641,7 @@ func (__instance *VehiclePositionData) Write(_byteBuf *parse.ByteBuf) {
 
 type VehicleStorageTemperatureData struct {
 	F_num     uint8                     `json:"num"`
-	F_content []*StorageTemperatureData `json:"content"`
+	F_content []*StorageTemperatureData `json:"Content"`
 }
 
 func To_VehicleStorageTemperatureData(_byteBuf *parse.ByteBuf) *VehicleStorageTemperatureData {
@@ -669,7 +669,7 @@ func (__instance *VehicleStorageTemperatureData) Write(_byteBuf *parse.ByteBuf) 
 
 type VehicleStorageVoltageData struct {
 	F_num     uint8                `json:"num"`
-	F_content []StorageVoltageData `json:"content"`
+	F_content []StorageVoltageData `json:"Content"`
 }
 
 func To_VehicleStorageVoltageData(_byteBuf *parse.ByteBuf) *VehicleStorageVoltageData {
@@ -789,51 +789,51 @@ func (__instance *VehicleRunData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 func To_F_data(_byteBuf *parse.ByteBuf, packet Packet) any {
-	//if packet.F_replyFlag == 0xfe {
-	switch packet.F_flag {
-	case 1:
-		return To_VehicleLoginData(_byteBuf)
-	case 2, 3:
-		return To_VehicleRunData(_byteBuf, int(packet.F_contentLength))
-	case 4:
-		return To_VehicleLogoutData(_byteBuf)
-	case 5:
-		return To_PlatformLoginData(_byteBuf)
-	case 6:
-		return To_PlatformLogoutData(_byteBuf)
-	default:
-		util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
-		return nil
+	if packet.F_replyFlag == 0xfe {
+		switch packet.F_flag {
+		case 1:
+			return To_VehicleLoginData(_byteBuf)
+		case 2, 3:
+			return To_VehicleRunData(_byteBuf, int(packet.F_contentLength))
+		case 4:
+			return To_VehicleLogoutData(_byteBuf)
+		case 5:
+			return To_PlatformLoginData(_byteBuf)
+		case 6:
+			return To_PlatformLogoutData(_byteBuf)
+		default:
+			util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
+			return nil
+		}
+	} else {
+		return &ResponseData{Content: _byteBuf.Read_slice_uint8(int(packet.F_contentLength))}
 	}
-	//} else {
-	//	return ResponseData{content: _byteBuf.Read_slice_uint8(int(packet.F_contentLength))}
-	//}
 }
 
 func Write_F_data(_byteBuf *parse.ByteBuf, packet Packet) {
 	f_data := packet.F_data
-	//if packet.F_replyFlag == 0xfe {
-	switch packet.F_flag {
-	case 1:
-		f_data.(*VehicleLoginData).Write(_byteBuf)
-	case 2, 3:
-		f_data.(*VehicleRunData).Write(_byteBuf)
-	case 4:
-		f_data.(*VehicleLogoutData).Write(_byteBuf)
-	case 5:
-		f_data.(*PlatformLoginData).Write(_byteBuf)
-	case 6:
-		f_data.(*PlatformLogoutData).Write(_byteBuf)
-	default:
-		util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
+	if packet.F_replyFlag == 0xfe {
+		switch packet.F_flag {
+		case 1:
+			f_data.(*VehicleLoginData).Write(_byteBuf)
+		case 2, 3:
+			f_data.(*VehicleRunData).Write(_byteBuf)
+		case 4:
+			f_data.(*VehicleLogoutData).Write(_byteBuf)
+		case 5:
+			f_data.(*PlatformLoginData).Write(_byteBuf)
+		case 6:
+			f_data.(*PlatformLogoutData).Write(_byteBuf)
+		default:
+			util.Log.Warnf("Parse PacketData Interrupted,Unknown Flag[%d]", packet.F_flag)
+		}
+	} else {
+		_byteBuf.Write_slice_uint8(f_data.(*ResponseData).Content)
 	}
-	//} else {
-	//	_byteBuf.Write_slice_uint8(f_data.(ResponseData).content)
-	//}
 }
 
 type ResponseData struct {
-	content []byte
+	Content util.ByteSlice `json:"content"`
 }
 
 type Packet_vehicleLoginData struct {
@@ -891,6 +891,17 @@ type Packet_platformLogoutData struct {
 	F_code          uint8               `json:"code"`
 }
 
+type Packet_responseData struct {
+	F_header        [2]uint8      `json:"header"`
+	F_flag          uint8         `json:"flag"`
+	F_replyFlag     uint8         `json:"replyFlag"`
+	F_vin           string        `json:"vin"`
+	F_encodeWay     uint8         `json:"encodeWay"`
+	F_contentLength uint16        `json:"contentLength"`
+	F_data          *ResponseData `json:"data"`
+	F_code          uint8         `json:"code"`
+}
+
 func JsonToPacket(str string) (*Packet, error) {
 	//找出flag
 	i1 := strings.Index(str, "flag")
@@ -912,10 +923,104 @@ func JsonToPacket(str string) (*Packet, error) {
 	if err != nil {
 		return nil, errors.WithStack(err)
 	}
+
+	i1 = strings.Index(str, "replyFlag")
+	if i1 == -1 {
+		return nil, nil
+	}
+	s1 = str[i1:]
+	i2 = strings.Index(s1, ":")
+	if i2 == -1 {
+		return nil, nil
+	}
+	s2 = s1[i2+1:]
+	i3 = strings.Index(s2, ",")
+	if i3 == -1 {
+		return nil, nil
+	}
+	replyFlagStr := strings.TrimSpace(s2[:i3])
+	replyFlag, err := strconv.Atoi(replyFlagStr)
+	if err != nil {
+		return nil, errors.WithStack(err)
+	}
 	p := Packet{}
-	switch flag {
-	case 1:
-		e := Packet_vehicleLoginData{}
+	if replyFlag == 0xFE {
+		switch flag {
+		case 1:
+			e := Packet_vehicleLoginData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return nil, err
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 2, 3:
+			e := Packet_vehicleRunData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return nil, err
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 4:
+			e := Packet_vehicleLogoutData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return nil, err
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 5:
+			e := Packet_platformLoginData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return nil, err
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 6:
+			e := Packet_platformLogoutData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return nil, err
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		default:
+			return nil, errors.Errorf("flag[%d] not support", flag)
+		}
+	} else {
+		e := Packet_responseData{}
 		err := json.Unmarshal([]byte(str), &e)
 		if err != nil {
 			return nil, err
@@ -928,64 +1033,51 @@ func JsonToPacket(str string) (*Packet, error) {
 		p.F_contentLength = e.F_contentLength
 		p.F_data = e.F_data
 		p.F_code = e.F_code
-	case 2, 3:
-		e := Packet_vehicleRunData{}
-		err := json.Unmarshal([]byte(str), &e)
-		if err != nil {
-			return nil, err
-		}
-		p.F_header = e.F_header
-		p.F_flag = e.F_flag
-		p.F_replyFlag = e.F_replyFlag
-		p.F_vin = e.F_vin
-		p.F_encodeWay = e.F_encodeWay
-		p.F_contentLength = e.F_contentLength
-		p.F_data = e.F_data
-		p.F_code = e.F_code
-	case 4:
-		e := Packet_vehicleLogoutData{}
-		err := json.Unmarshal([]byte(str), &e)
-		if err != nil {
-			return nil, err
-		}
-		p.F_header = e.F_header
-		p.F_flag = e.F_flag
-		p.F_replyFlag = e.F_replyFlag
-		p.F_vin = e.F_vin
-		p.F_encodeWay = e.F_encodeWay
-		p.F_contentLength = e.F_contentLength
-		p.F_data = e.F_data
-		p.F_code = e.F_code
-	case 5:
-		e := Packet_platformLoginData{}
-		err := json.Unmarshal([]byte(str), &e)
-		if err != nil {
-			return nil, err
-		}
-		p.F_header = e.F_header
-		p.F_flag = e.F_flag
-		p.F_replyFlag = e.F_replyFlag
-		p.F_vin = e.F_vin
-		p.F_encodeWay = e.F_encodeWay
-		p.F_contentLength = e.F_contentLength
-		p.F_data = e.F_data
-		p.F_code = e.F_code
-	case 6:
-		e := Packet_platformLogoutData{}
-		err := json.Unmarshal([]byte(str), &e)
-		if err != nil {
-			return nil, err
-		}
-		p.F_header = e.F_header
-		p.F_flag = e.F_flag
-		p.F_replyFlag = e.F_replyFlag
-		p.F_vin = e.F_vin
-		p.F_encodeWay = e.F_encodeWay
-		p.F_contentLength = e.F_contentLength
-		p.F_data = e.F_data
-		p.F_code = e.F_code
-	default:
-		return nil, errors.Errorf("flag[%d] not support", flag)
 	}
 	return &p, nil
+}
+
+func ToPacketBytes(flag uint8, replyFlag uint8, vin string, data any) []byte {
+	buf := parse.ToByteBuf_empty()
+	buf.Write_slice_uint8([]uint8{0x23, 0x23})
+	buf.Write_uint8(flag)
+	buf.Write_uint8(replyFlag)
+	buf.Write_string_utf8(vin)
+	buf.Write_zero(17 - len(vin))
+	buf.Write_uint8(0x01)
+	if replyFlag == 0xFE {
+		switch flag {
+		case 1:
+			vehicleLoginData := data.(*VehicleLoginData)
+			buf.Write_uint16(uint16(30 + vehicleLoginData.F_subSystemNum*vehicleLoginData.F_systemCodeLen))
+			vehicleLoginData.Write(buf)
+		case 2, 3:
+			i1 := buf.WriterIndex()
+			buf.Write_zero(2)
+			data.(*VehicleRunData).Write(buf)
+			i2 := buf.WriterIndex()
+			buf.Set_uint16(uint16(i2-i1), i1-2)
+		case 4:
+			buf.Write_uint16(8)
+			data.(*VehicleLogoutData).Write(buf)
+		case 5:
+			buf.Write_uint16(41)
+			data.(*PlatformLoginData).Write(buf)
+		case 6:
+			buf.Write_uint16(8)
+			data.(*PlatformLogoutData).Write(buf)
+		}
+	} else {
+		content := data.(ResponseData).Content
+		buf.Write_uint16(uint16(len(content)))
+		buf.Write_slice_uint8(content)
+	}
+	buf.Write_zero(1)
+	bs := buf.ToBytes()
+	var xor byte = 0
+	for _, b := range bs {
+		xor = xor ^ b
+	}
+	bs[len(bs)-1] = xor
+	return bs
 }

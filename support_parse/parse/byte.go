@@ -786,6 +786,247 @@ func (b *ByteBuf) Write_string_utf8(v string) {
 	b.Write_slice_uint8(bytes)
 }
 
+func (b *ByteBuf) Set_uint8(v uint8, pos int) {
+	b.bytes[pos] = v
+}
+
+func (b *ByteBuf) Set_int8(v int8, pos int) {
+	b.bytes[pos] = byte(v)
+}
+
+func (b *ByteBuf) Set_uint16(v uint16, pos int) {
+	b.bytes[pos] = uint8(v >> 8)
+	b.bytes[pos+1] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint16_le(v uint16, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+}
+
+func (b *ByteBuf) Set_int16(v int16, pos int) {
+	b.bytes[pos] = uint8(v >> 8)
+	b.bytes[pos+1] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int16_le(v int16, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+}
+
+func (b *ByteBuf) Set_uint32(v uint32, pos int) {
+	b.bytes[pos] = uint8(v >> 24)
+	b.bytes[pos+1] = uint8(v >> 16)
+	b.bytes[pos+2] = uint8(v >> 8)
+	b.bytes[pos+3] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint32_le(v uint32, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+}
+
+func (b *ByteBuf) Set_int32(v int32, pos int) {
+	b.bytes[pos] = uint8(v >> 24)
+	b.bytes[pos+1] = uint8(v >> 16)
+	b.bytes[pos+2] = uint8(v >> 8)
+	b.bytes[pos+3] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int32_le(v int32, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+}
+
+func (b *ByteBuf) Set_uint40(v uint64, pos int) {
+	b.bytes[pos] = uint8(v >> 32)
+	b.bytes[pos+1] = uint8(v >> 24)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 8)
+	b.bytes[pos+4] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint40_le(v uint64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+}
+
+func (b *ByteBuf) Set_int40(v int64, pos int) {
+	b.bytes[pos] = uint8(v >> 32)
+	b.bytes[pos+1] = uint8(v >> 24)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 8)
+	b.bytes[pos+4] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int40_le(v int64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+}
+
+func (b *ByteBuf) Set_uint48(v uint64, pos int) {
+	b.bytes[pos] = uint8(v >> 40)
+	b.bytes[pos+1] = uint8(v >> 32)
+	b.bytes[pos+2] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 16)
+	b.bytes[pos+5] = uint8(v >> 8)
+	b.bytes[pos+6] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint48_le(v uint64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+}
+
+func (b *ByteBuf) Set_int48(v int64, pos int) {
+	b.bytes[pos] = uint8(v >> 40)
+	b.bytes[pos+1] = uint8(v >> 32)
+	b.bytes[pos+2] = uint8(v >> 24)
+	b.bytes[pos+3] = uint8(v >> 16)
+	b.bytes[pos+4] = uint8(v >> 8)
+	b.bytes[pos+5] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int48_le(v int64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+}
+
+func (b *ByteBuf) Set_uint56(v uint64, pos int) {
+	b.bytes[pos] = uint8(v >> 48)
+	b.bytes[pos+1] = uint8(v >> 40)
+	b.bytes[pos+2] = uint8(v >> 32)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 16)
+	b.bytes[pos+5] = uint8(v >> 8)
+	b.bytes[pos+6] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint56_le(v uint64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+	b.bytes[pos+6] = uint8(v >> 48)
+}
+
+func (b *ByteBuf) Set_int56(v int64, pos int) {
+	b.bytes[pos] = uint8(v >> 48)
+	b.bytes[pos+1] = uint8(v >> 40)
+	b.bytes[pos+2] = uint8(v >> 32)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 16)
+	b.bytes[pos+5] = uint8(v >> 8)
+	b.bytes[pos+6] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int56_le(v int64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+	b.bytes[pos+6] = uint8(v >> 48)
+	b.bytes[pos+7] = uint8(v >> 56)
+}
+
+func (b *ByteBuf) Set_uint64(v uint64, pos int) {
+	b.bytes[pos] = uint8(v >> 56)
+	b.bytes[pos+1] = uint8(v >> 48)
+	b.bytes[pos+2] = uint8(v >> 40)
+	b.bytes[pos+3] = uint8(v >> 32)
+	b.bytes[pos+4] = uint8(v >> 24)
+	b.bytes[pos+5] = uint8(v >> 16)
+	b.bytes[pos+6] = uint8(v >> 8)
+	b.bytes[pos+7] = uint8(v)
+}
+
+func (b *ByteBuf) Set_uint64_le(v uint64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+	b.bytes[pos+6] = uint8(v >> 48)
+	b.bytes[pos+7] = uint8(v >> 56)
+}
+
+func (b *ByteBuf) Set_int64(v int64, pos int) {
+	b.bytes[pos] = uint8(v >> 56)
+	b.bytes[pos+1] = uint8(v >> 48)
+	b.bytes[pos+2] = uint8(v >> 40)
+	b.bytes[pos+3] = uint8(v >> 32)
+	b.bytes[pos+4] = uint8(v >> 24)
+	b.bytes[pos+5] = uint8(v >> 16)
+	b.bytes[pos+6] = uint8(v >> 8)
+	b.bytes[pos+7] = uint8(v)
+}
+
+func (b *ByteBuf) Set_int64_le(v int64, pos int) {
+	b.bytes[pos] = uint8(v)
+	b.bytes[pos+1] = uint8(v >> 8)
+	b.bytes[pos+2] = uint8(v >> 16)
+	b.bytes[pos+3] = uint8(v >> 24)
+	b.bytes[pos+4] = uint8(v >> 32)
+	b.bytes[pos+5] = uint8(v >> 40)
+	b.bytes[pos+6] = uint8(v >> 48)
+	b.bytes[pos+7] = uint8(v >> 56)
+}
+
+func (b *ByteBuf) Set_float32(v float32, pos int) {
+	b.Set_uint32(math.Float32bits(v), pos)
+}
+func (b *ByteBuf) Set_float32_le(v float32, pos int) {
+	b.Set_uint32_le(math.Float32bits(v), pos)
+}
+func (b *ByteBuf) Set_float64(v float64, pos int) {
+	b.Set_uint64(math.Float64bits(v), pos)
+}
+func (b *ByteBuf) Set_float64_le(v float64, pos int) {
+	b.Set_uint64_le(math.Float64bits(v), pos)
+}
+
+func (b *ByteBuf) Set_slice_uint8(slice []uint8, pos int) {
+	copy(b.bytes[pos:], slice)
+}
+
+func (b *ByteBuf) Set_slice_int8(slice []int8, pos int) {
+	n := len(slice)
+	bytes := *(*[]uint8)(unsafe.Pointer(&reflect.SliceHeader{
+		Data: uintptr(unsafe.Pointer(unsafe.SliceData(slice))),
+		Len:  n,
+		Cap:  n,
+	}))
+	copy(b.bytes[pos:], bytes)
+}
+
+func (b *ByteBuf) Set_string_utf8(v string, pos int) {
+	bytes := util.String2Bytes(v)
+	b.Set_slice_uint8(bytes, pos)
+}
+
 func (b *ByteBuf) Skip(n int) {
 	b.rIndex += n
 }

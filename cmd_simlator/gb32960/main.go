@@ -19,6 +19,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -338,7 +339,7 @@ func start() {
 		}()
 
 		if bs != nil {
-			res["data"] = hex.EncodeToString(bs)
+			res["data"] = strings.ToUpper(hex.EncodeToString(bs))
 			res["succeed"] = true
 			ctx.JSON(200, res)
 		}
