@@ -312,7 +312,8 @@ func start() {
 			return
 		}
 		ctx.Header("content-type", "application/json;charset=utf-8")
-		p := gb32960.Packet_runData{}
+
+		p, err := gb32960.JsonToPacket(string(all))
 		err = json.Unmarshal(all, &p)
 		if err != nil {
 			util.Log.Errorf("%+v", err)
@@ -331,7 +332,9 @@ func start() {
 					ctx.JSON(200, res)
 				}
 			}()
-			bs = p.ToBytes()
+			buf := parse.ToByteBuf_empty()
+			p.Write(buf)
+			bs = buf.ToBytes()
 		}()
 
 		if bs != nil {

@@ -131,16 +131,41 @@ func (e *WsClient) HandleUpdatePacket(data string) {
 	if packet.F_evt_D00A != nil {
 		packet.F_evt_D00A.F_VIN = e.vin
 	}
-	e.packet = &packet
-	err = e.response(OutMsg{
-		Flag:    1,
-		Data:    "",
-		Succeed: true,
-	})
-	if err != nil {
-		util.Log.Errorf("%+v", err)
+
+	//校验是否能解析
+	ok := true
+	func() {
+		defer func() {
+			if err := recover(); err != nil {
+				util.Log.Errorf("%+v", err)
+				util.Log.Infof("%s", data)
+				ok = false
+			}
+		}()
+		empty := parse.ToByteBuf_empty()
+		packet.Write(empty)
+	}()
+	if ok {
+		e.packet = &packet
+		err = e.response(OutMsg{
+			Flag:    1,
+			Data:    "",
+			Succeed: true,
+		})
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+		}
+		util.Log.Infof("HandleUpdatePacket vin[%s] vehicleType[%s]", e.vin, e.vehicleType)
+	} else {
+		err = e.response(OutMsg{
+			Flag:    1,
+			Data:    "json数据错误、无法反解析为二进制",
+			Succeed: false,
+		})
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+		}
 	}
-	util.Log.Infof("HandleUpdatePacket vin[%s] vehicleType[%s]", e.vin, e.vehicleType)
 }
 
 func (e *WsClient) HandleStartSend(data string) {
