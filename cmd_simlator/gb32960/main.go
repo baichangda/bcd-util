@@ -15,6 +15,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"io"
+	"io/fs"
 	"net"
 	"net/http"
 	"os"
@@ -253,14 +254,14 @@ func start() {
 		c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
 	})
 
-	//sub, err2 := fs.Sub(FS, "resource")
-	//if err2 != nil {
-	//	util.Log.Errorf("%+v", err2)
-	//	return
-	//}
-	//engine.StaticFS("/resource", http.FS(sub))
+	sub, err2 := fs.Sub(FS, "resource")
+	if err2 != nil {
+		util.Log.Errorf("%+v", err2)
+		return
+	}
+	engine.StaticFS("/resource", http.FS(sub))
 
-	engine.Static("/resource", "cmd_simlator/gb32960/resource")
+	//engine.Static("/resource", "cmd_simlator/gb32960/resource")
 
 	engine.POST("/parse", func(ctx *gin.Context) {
 		res := make(map[string]any)
