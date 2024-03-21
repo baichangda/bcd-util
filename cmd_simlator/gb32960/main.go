@@ -314,11 +314,11 @@ func start() {
 		}
 		ctx.Header("content-type", "application/json;charset=utf-8")
 
-		p, err := gb32960.JsonToPacket(string(all))
+		var p gb32960.Packet
 		err = json.Unmarshal(all, &p)
 		if err != nil {
 			util.Log.Errorf("%+v", err)
-			res["msg"] = "反解析失败、数据不是国标报文的json格式"
+			res["msg"] = "反解析失败、数据不是国标报文的json格式、错误原因:\n" + err.Error()
 			res["succeed"] = false
 			ctx.JSON(200, res)
 			return

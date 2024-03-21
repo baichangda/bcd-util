@@ -59,6 +59,142 @@ type Packet struct {
 	F_code          uint8    `json:"code"`
 }
 
+func (p *Packet) UnmarshalJSON(data []byte) error {
+	str := string(data)
+	//找出flag
+	i1 := strings.Index(str, "flag")
+	if i1 == -1 {
+		return errors.Errorf("key[flag] not exist")
+	}
+	s1 := str[i1:]
+	i2 := strings.Index(s1, ":")
+	if i2 == -1 {
+		return errors.Errorf("key[flag][:] not exist")
+	}
+	s2 := s1[i2+1:]
+	i3 := strings.Index(s2, ",")
+	if i3 == -1 {
+		return errors.Errorf("key[flag][,] not exist")
+	}
+	flagStr := strings.TrimSpace(s2[:i3])
+	flag, err := strconv.Atoi(flagStr)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	i1 = strings.Index(str, "replyFlag")
+	if i1 == -1 {
+		return errors.Errorf("key[replyFlag] not exist")
+	}
+	s1 = str[i1:]
+	i2 = strings.Index(s1, ":")
+	if i2 == -1 {
+		return errors.Errorf("key[replyFlag][:] not exist")
+	}
+	s2 = s1[i2+1:]
+	i3 = strings.Index(s2, ",")
+	if i3 == -1 {
+		return errors.Errorf("key[replyFlag][,] not exist")
+	}
+	replyFlagStr := strings.TrimSpace(s2[:i3])
+	replyFlag, err := strconv.Atoi(replyFlagStr)
+	if err != nil {
+		return errors.WithStack(err)
+	}
+
+	if replyFlag == 0xFE {
+		switch flag {
+		case 1:
+			e := Packet_vehicleLoginData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 2, 3:
+			e := Packet_vehicleRunData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 4:
+			e := Packet_vehicleLogoutData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 5:
+			e := Packet_platformLoginData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		case 6:
+			e := Packet_platformLogoutData{}
+			err := json.Unmarshal([]byte(str), &e)
+			if err != nil {
+				return errors.WithStack(err)
+			}
+			p.F_header = e.F_header
+			p.F_flag = e.F_flag
+			p.F_replyFlag = e.F_replyFlag
+			p.F_vin = e.F_vin
+			p.F_encodeWay = e.F_encodeWay
+			p.F_contentLength = e.F_contentLength
+			p.F_data = e.F_data
+			p.F_code = e.F_code
+		default:
+			return errors.Errorf("flag[%d] not support", flag)
+		}
+	} else {
+		e := Packet_responseData{}
+		err := json.Unmarshal([]byte(str), &e)
+		if err != nil {
+			return errors.WithStack(err)
+		}
+		p.F_header = e.F_header
+		p.F_flag = e.F_flag
+		p.F_replyFlag = e.F_replyFlag
+		p.F_vin = e.F_vin
+		p.F_encodeWay = e.F_encodeWay
+		p.F_contentLength = e.F_contentLength
+		p.F_data = e.F_data
+		p.F_code = e.F_code
+	}
+	return nil
+}
+
 func To_Packet(_byteBuf *parse.ByteBuf) *Packet {
 	_instance := Packet{}
 	_instance.F_header = [2]uint8(_byteBuf.Read_slice_uint8(2))
@@ -900,141 +1036,6 @@ type Packet_responseData struct {
 	F_contentLength uint16        `json:"contentLength"`
 	F_data          *ResponseData `json:"data"`
 	F_code          uint8         `json:"code"`
-}
-
-func JsonToPacket(str string) (*Packet, error) {
-	//找出flag
-	i1 := strings.Index(str, "flag")
-	if i1 == -1 {
-		return nil, nil
-	}
-	s1 := str[i1:]
-	i2 := strings.Index(s1, ":")
-	if i2 == -1 {
-		return nil, nil
-	}
-	s2 := s1[i2+1:]
-	i3 := strings.Index(s2, ",")
-	if i3 == -1 {
-		return nil, nil
-	}
-	flagStr := strings.TrimSpace(s2[:i3])
-	flag, err := strconv.Atoi(flagStr)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-
-	i1 = strings.Index(str, "replyFlag")
-	if i1 == -1 {
-		return nil, nil
-	}
-	s1 = str[i1:]
-	i2 = strings.Index(s1, ":")
-	if i2 == -1 {
-		return nil, nil
-	}
-	s2 = s1[i2+1:]
-	i3 = strings.Index(s2, ",")
-	if i3 == -1 {
-		return nil, nil
-	}
-	replyFlagStr := strings.TrimSpace(s2[:i3])
-	replyFlag, err := strconv.Atoi(replyFlagStr)
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	p := Packet{}
-	if replyFlag == 0xFE {
-		switch flag {
-		case 1:
-			e := Packet_vehicleLoginData{}
-			err := json.Unmarshal([]byte(str), &e)
-			if err != nil {
-				return nil, err
-			}
-			p.F_header = e.F_header
-			p.F_flag = e.F_flag
-			p.F_replyFlag = e.F_replyFlag
-			p.F_vin = e.F_vin
-			p.F_encodeWay = e.F_encodeWay
-			p.F_contentLength = e.F_contentLength
-			p.F_data = e.F_data
-			p.F_code = e.F_code
-		case 2, 3:
-			e := Packet_vehicleRunData{}
-			err := json.Unmarshal([]byte(str), &e)
-			if err != nil {
-				return nil, err
-			}
-			p.F_header = e.F_header
-			p.F_flag = e.F_flag
-			p.F_replyFlag = e.F_replyFlag
-			p.F_vin = e.F_vin
-			p.F_encodeWay = e.F_encodeWay
-			p.F_contentLength = e.F_contentLength
-			p.F_data = e.F_data
-			p.F_code = e.F_code
-		case 4:
-			e := Packet_vehicleLogoutData{}
-			err := json.Unmarshal([]byte(str), &e)
-			if err != nil {
-				return nil, err
-			}
-			p.F_header = e.F_header
-			p.F_flag = e.F_flag
-			p.F_replyFlag = e.F_replyFlag
-			p.F_vin = e.F_vin
-			p.F_encodeWay = e.F_encodeWay
-			p.F_contentLength = e.F_contentLength
-			p.F_data = e.F_data
-			p.F_code = e.F_code
-		case 5:
-			e := Packet_platformLoginData{}
-			err := json.Unmarshal([]byte(str), &e)
-			if err != nil {
-				return nil, err
-			}
-			p.F_header = e.F_header
-			p.F_flag = e.F_flag
-			p.F_replyFlag = e.F_replyFlag
-			p.F_vin = e.F_vin
-			p.F_encodeWay = e.F_encodeWay
-			p.F_contentLength = e.F_contentLength
-			p.F_data = e.F_data
-			p.F_code = e.F_code
-		case 6:
-			e := Packet_platformLogoutData{}
-			err := json.Unmarshal([]byte(str), &e)
-			if err != nil {
-				return nil, err
-			}
-			p.F_header = e.F_header
-			p.F_flag = e.F_flag
-			p.F_replyFlag = e.F_replyFlag
-			p.F_vin = e.F_vin
-			p.F_encodeWay = e.F_encodeWay
-			p.F_contentLength = e.F_contentLength
-			p.F_data = e.F_data
-			p.F_code = e.F_code
-		default:
-			return nil, errors.Errorf("flag[%d] not support", flag)
-		}
-	} else {
-		e := Packet_responseData{}
-		err := json.Unmarshal([]byte(str), &e)
-		if err != nil {
-			return nil, err
-		}
-		p.F_header = e.F_header
-		p.F_flag = e.F_flag
-		p.F_replyFlag = e.F_replyFlag
-		p.F_vin = e.F_vin
-		p.F_encodeWay = e.F_encodeWay
-		p.F_contentLength = e.F_contentLength
-		p.F_data = e.F_data
-		p.F_code = e.F_code
-	}
-	return &p, nil
 }
 
 func ToPacketBytes(flag uint8, replyFlag uint8, vin string, data any) []byte {
