@@ -82,6 +82,9 @@
                             } else {
                                 appendToOutput("识别失败、错误信息为:\n" + res.substring(1))
                             }
+                        },
+                        error:function (xhr,textStatus,errorThrown){
+                            appendToOutput("请求失败:"+textStatus)
                         }
                     })
                 } else {

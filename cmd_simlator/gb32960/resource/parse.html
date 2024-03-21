@@ -70,6 +70,9 @@
                     }else{
                         appendToOutput(res.msg,2)
                     }
+                },
+                error:function (xhr,textStatus,errorThrown){
+                    appendToOutput("请求失败:"+textStatus,2)
                 }
             })
             appendToOutput("发送http解析请求成功",1)
@@ -93,6 +96,9 @@
                     }else{
                         appendToOutput(res.msg,2)
                     }
+                },
+                error:function (xhr,textStatus,errorThrown){
+                    appendToOutput("请求失败:"+textStatus,2)
                 }
             })
             appendToOutput("发送http反解析请求成功",1)

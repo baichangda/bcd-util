@@ -106,6 +106,9 @@
             }),
             success: function (res) {
                 appendToOutput(res.msg, 2)
+            },
+            error:function (xhr,textStatus,errorThrown){
+                appendToOutput("请求失败:"+textStatus,2)
             }
         })
         appendToOutput("发送数据到web成功", 1)
