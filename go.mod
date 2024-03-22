@@ -15,6 +15,7 @@ require (
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/shirou/gopsutil/v3 v3.24.2
 	github.com/spf13/cobra v1.8.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ocr v1.0.883
 	github.com/tidwall/gjson v1.17.1
 	github.com/tsuna/gohbase v0.0.0-20240313220547-1676ef7e233d
 	github.com/xuri/excelize/v2 v2.8.1
@@ -69,6 +70,7 @@ require (
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.883 // indirect
 	github.com/tidwall/match v1.1.1 // indirect
 	github.com/tidwall/pretty v1.2.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.12 // indirect
