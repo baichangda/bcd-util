@@ -14,7 +14,7 @@ import (
 var Client_ocr *ocr.Client
 
 func init() {
-	credential := common.NewCredential("AKIDIPFo79uObYDbiY76oFQKwHMAhwuc3C4g", "NTIr9AuNZT6SYNuAAtY5NQEm47uRikX4")
+	credential := common.NewCredential("xxx", "xxx")
 	clientProfile := profile.NewClientProfile()
 	clientProfile.HttpProfile.ReqTimeout = 30
 	var err error
