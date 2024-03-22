@@ -1,4 +1,4 @@
-package cmd_ocr
+package cmd_monitor
 
 import (
 	"bcd-util/cmd_ocr/table"
