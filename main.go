@@ -1,8 +1,7 @@
 package main
 
 import (
-	"bcd-util/cmd_kafka"
-	"bcd-util/cmd_simlator"
+	"bcd-util/cmd_ocr/table"
 	"github.com/spf13/cobra"
 )
 
@@ -11,13 +10,14 @@ var rootCmd = &cobra.Command{}
 func main() {
 	//util.StartWeb_pprof()
 	//rootCmd.AddCommand(cmd_redis.Cmd())
-	rootCmd.AddCommand(cmd_kafka.Cmd())
+	//rootCmd.AddCommand(cmd_kafka.Cmd())
 	//rootCmd.AddCommand(cmd_monitor.Cmd())
 	//rootCmd.AddCommand(cmd_pressTest.Cmd())
-	rootCmd.AddCommand(cmd_simlator.Cmd())
+	//rootCmd.AddCommand(cmd_simlator.Cmd())
 	//rootCmd.AddCommand(cmd_ocr.Cmd())
 	//rootCmd.AddCommand(cmd_hbase.Cmd())
-	_ = rootCmd.Execute()
-	//cmd_ocr.Main()
+	//_ = rootCmd.Execute()
+	table.Main()
+	//web.Main()
 	//gb32960.Main()
 }

@@ -15,6 +15,8 @@ require (
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/shirou/gopsutil/v3 v3.24.2
 	github.com/spf13/cobra v1.8.0
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.883
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ocr v1.0.883
 	github.com/tidwall/gjson v1.17.1
 	github.com/tsuna/gohbase v0.0.0-20240313220547-1676ef7e233d
 	github.com/xuri/excelize/v2 v2.8.1
