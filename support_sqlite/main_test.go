@@ -7,8 +7,8 @@ import (
 )
 
 func Test(t *testing.T) {
-	//open, err := sql.Open("sqlite", ":memory:")
-	open, err := sql.Open("sqlite", "test.db")
+	open, err := sql.Open("sqlite", ":memory:")
+	//open, err := sql.Open("sqlite", "test.db")
 	if err != nil {
 		t.Errorf("%+v", err)
 		return
