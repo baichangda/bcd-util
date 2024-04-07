@@ -42,6 +42,10 @@ func TestRound(t *testing.T) {
 	if round3 != -1015 {
 		t.Fail()
 	}
+
+	round4 := Round((13.5 - 3) / 0.1)
+	t.Log(round4)
+	t.Log(round4*0.1 + 3)
 }
 
 type A struct {
