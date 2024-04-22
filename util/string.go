@@ -7,7 +7,7 @@ import (
 )
 
 // String2Bytes
-// 注意此方法转换的[]byte不能只读、如果修改会导致错误
+// 注意此方法转换的[]byte只读、如果修改会导致错误
 func String2Bytes(s string) []byte {
 	return *(*[]byte)(unsafe.Pointer(&s))
 }
