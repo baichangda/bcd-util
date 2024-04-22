@@ -1,4 +1,4 @@
-package support_sqlite
+package support_sql
 
 import (
 	"database/sql"

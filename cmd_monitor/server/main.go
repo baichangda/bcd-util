@@ -1,7 +1,7 @@
 package server
 
 import (
-	"bcd-util/support_mysql"
+	"bcd-util/support_sql"
 	"bcd-util/support_system"
 	"bcd-util/util"
 	"context"
@@ -185,7 +185,7 @@ type MonitorData struct {
 }
 
 func (data *MonitorData) Insert(db *sql.DB) error {
-	err := support_mysql.Insert(db,
+	err := support_sql.Insert(db,
 		"insert into t_monitor_data(server_id,server_type,server_name,server_status,batch,data)", []any{
 			data.ServerId, data.ServerType, data.ServerName, data.ServerStatus, data.Batch, data.Data,
 		})
@@ -219,7 +219,7 @@ type ServerData struct {
 }
 
 func (data *ServerData) Insert(db *sql.DB) error {
-	err := support_mysql.Insert(db,
+	err := support_sql.Insert(db,
 		"insert into t_server_data(id,name,flag,remark)", []any{
 			data.Id, data.Name, data.Flag, data.Remark,
 		})

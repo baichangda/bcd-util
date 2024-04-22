@@ -1,7 +1,7 @@
 package support_system
 
 import (
-	"bcd-util/support_mysql"
+	"bcd-util/support_sql"
 	"bcd-util/util"
 	"database/sql"
 	"github.com/pkg/errors"
@@ -44,7 +44,7 @@ type SystemData struct {
 }
 
 func (systemData *SystemData) Insert(db *sql.DB) error {
-	err := support_mysql.Insert(db,
+	err := support_sql.Insert(db,
 		"insert into t_monitor_system_data(collect_time,physical_processor_num,logical_processor_num,cpu_use_percent,memory_use_percent,memory_max,memory_use,disk_max,disk_use,disk_use_percent,disk_read_speed,disk_write_speed,net_recv_speed,net_sent_speed)", []any{
 			systemData.CollectTime,
 			systemData.PhysicalProcessorNum, systemData.LogicalProcessorNum, systemData.CpuUsePercent,
