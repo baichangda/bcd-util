@@ -112,7 +112,7 @@ func GenerateCode_InsertBatch(table string, data any, ignoreFields ...string) {
 	for i, e := range fields {
 		arr[i] = "data." + e.Name
 	}
-	sql := fmt.Sprintf(`func InsertBatch_%s(conn *sql.DB, datas []%s) (sql.Result, error) {
+	sql := fmt.Sprintf(`func InsertBatch_%s(conn *sql.DB, datas ...%s) (sql.Result, error) {
 	if len(datas) == 0 {
 		return nil, nil
 	}
@@ -146,7 +146,10 @@ func GenerateCode_UpdateBatch(table string, data any, ignoreFields ...string) {
 		arr2[i] = "data." + fields[i].Name
 	}
 	sql1 := fmt.Sprintf("update %s set %s where id=?;", table, strings.Join(arr1, ","))
-	sql := fmt.Sprintf(`func UpdateBatch_%s(conn *sql.DB, datas []%s) (sql.Result, error) {
+	sql := fmt.Sprintf(`func UpdateBatch_%s(conn *sql.DB, datas ...%s) (sql.Result, error) {
+	if len(datas) == 0 {
+		return nil, nil
+	}
 	sql := "%s"
 	prepare, err := conn.Prepare(strings.Repeat(sql, len(datas)))
 	if err != nil {
