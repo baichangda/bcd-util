@@ -58,6 +58,13 @@ func Test(t *testing.T) {
 	count := 0
 	for {
 		count++
+		//主动刷新验证码、避免验证码请求已经完成
+		locator = page.Locator("#validatecode ~ div")
+		err = locator.Click()
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
 		//等待获取验证码
 		response, err := page.ExpectResponse("http://oa.szsoling.com:8088/weaver/weaver.file.MakeValidateCode*", func() error {
 			return nil
