@@ -173,7 +173,7 @@ func Test(t *testing.T) {
 		return
 	}
 	//等待界面加载
-	err = page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{State: playwright.LoadStateLoad})
+	err = page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{State: playwright.LoadStateDomcontentloaded})
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 		return
@@ -346,6 +346,12 @@ func Test(t *testing.T) {
 	newPage = evt.(playwright.Page)
 	//等待所有网络请求结束
 	err = newPage.WaitForLoadState(playwright.PageWaitForLoadStateOptions{State: playwright.LoadStateNetworkidle})
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	//调整页面分辨率、为了截图全部页面
+	err = newPage.SetViewportSize(1440, 1080)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 		return
