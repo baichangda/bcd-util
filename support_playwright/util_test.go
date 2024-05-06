@@ -166,7 +166,7 @@ func Test(t *testing.T) {
 		return
 	}
 	//点击新建流程
-	locator = page.GetByText("新建流程")
+	locator = page.GetByTitle("新建流程")
 	err = locator.Click()
 	if err != nil {
 		util.Log.Errorf("%+v", err)
