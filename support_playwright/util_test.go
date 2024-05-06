@@ -8,6 +8,7 @@ import (
 	"github.com/tidwall/gjson"
 	"io"
 	"net/http"
+	"os"
 	"testing"
 	"time"
 )
@@ -171,6 +172,12 @@ func Test(t *testing.T) {
 		util.Log.Errorf("%+v", err)
 		return
 	}
+	//等待界面加载
+	err = page.WaitForLoadState(playwright.PageWaitForLoadStateOptions{State: playwright.LoadStateLoad})
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
 	//点击请假申请单
 	locator = page.GetByText("8.1.14 请假申请单")
 	err = locator.Click()
@@ -319,6 +326,33 @@ func Test(t *testing.T) {
 	//返回流程页面查看
 	locator = page.GetByTitle("我的请求")
 	err = locator.Click()
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	//点击进入详情页面
+	locator = page.Locator("div[class='ant-table-body'] > table > tbody > tr:first-child > td:nth-child(2) > span:nth-child(2) > a")
+	err = locator.Click()
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	//等待新页面打开
+	evt, err = page.WaitForEvent("popup")
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	newPage = evt.(playwright.Page)
+	//等待所有网络请求结束
+	err = newPage.WaitForLoadState(playwright.PageWaitForLoadStateOptions{State: playwright.LoadStateNetworkidle})
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		return
+	}
+	//截图
+	screenshot, err := newPage.Screenshot(playwright.PageScreenshotOptions{FullPage: playwright.Bool(true)})
+	err = os.WriteFile("res.png", screenshot, os.ModePerm)
 	if err != nil {
 		util.Log.Errorf("%+v", err)
 		return
