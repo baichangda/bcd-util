@@ -1,7 +1,7 @@
 package main
 
 import (
-	"bcd-util/cmd_ocr/table"
+	"bcd-util/cmd_ocr"
 	"github.com/spf13/cobra"
 )
 
@@ -14,10 +14,10 @@ func main() {
 	//rootCmd.AddCommand(cmd_monitor.Cmd())
 	//rootCmd.AddCommand(cmd_pressTest.Cmd())
 	//rootCmd.AddCommand(cmd_simlator.Cmd())
-	//rootCmd.AddCommand(cmd_ocr.Cmd())
+	rootCmd.AddCommand(cmd_ocr.Cmd())
 	//rootCmd.AddCommand(cmd_hbase.Cmd())
-	//_ = rootCmd.Execute()
-	table.Main()
+	_ = rootCmd.Execute()
+	//table.Main()
 	//web.Main()
 	//gb32960.Main()
 }
