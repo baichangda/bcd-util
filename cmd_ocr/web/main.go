@@ -22,6 +22,7 @@ var https bool
 var port int
 var certFile string
 var keyFile string
+var accounts string
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -29,9 +30,14 @@ func Cmd() *cobra.Command {
 		Short: `启动ocr https服务`,
 		Run: func(cmd *cobra.Command, args []string) {
 			engine := gin.New()
-			authorized := engine.Group("/", gin.BasicAuth(gin.Accounts{
-				"bcd": "bcd",
-			}))
+			accountsMap := gin.Accounts{}
+			split1 := strings.Split(accounts, ",")
+			for _, e1 := range split1 {
+				split2 := strings.Split(e1, "/")
+				accountsMap[split2[0]] = split2[1]
+			}
+			util.Log.Infof("accounts:%+v", accountsMap)
+			authorized := engine.Group("/", gin.BasicAuth(accountsMap))
 			authorized.GET("/", func(c *gin.Context) {
 				c.Redirect(http.StatusMovedPermanently, "/resource/index.html")
 			})
@@ -93,6 +99,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().IntVarP(&port, "port", "p", 80, "https默认443、http默认是80、如果手动指定了其他端口则以参数为准")
 	cmd.Flags().StringVarP(&certFile, "certFile", "c", "./crt.pem", "证书crt文件地址")
 	cmd.Flags().StringVarP(&keyFile, "keyFile", "k", "./key.pem", "证书key文件地址")
+	cmd.Flags().StringVarP(&accounts, "accounts", "a", "bcd/bcd,cyy/cyy", "web服务basic auth的账号信息、可以是多个、例如a/a,b/b")
 
 	return &cmd
 }
