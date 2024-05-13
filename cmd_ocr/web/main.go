@@ -23,10 +23,6 @@ var port int
 var certFile string
 var keyFile string
 
-var secrets = gin.H{
-	"bcd": gin.H{"email": "471267877@qq.com.com", "phone": "13720278557"},
-}
-
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "web",
