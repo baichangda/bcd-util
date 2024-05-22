@@ -300,7 +300,7 @@ type StorageTemperatureData struct {
 	F_temperatures []int16 `json:"temperatures"`
 }
 
-func To_StorageTemperatureData(_byteBuf *parse.ByteBuf) *StorageTemperatureData {
+func To_StorageTemperatureData(_byteBuf *parse.ByteBuf) StorageTemperatureData {
 	_instance := StorageTemperatureData{}
 	_instance.F_no = _byteBuf.Read_uint8()
 
@@ -314,7 +314,7 @@ func To_StorageTemperatureData(_byteBuf *parse.ByteBuf) *StorageTemperatureData 
 		F_temperatures_arr[i] = int16(e) - 40
 	}
 	_instance.F_temperatures = F_temperatures_arr
-	return &_instance
+	return _instance
 }
 
 func (__instance *StorageTemperatureData) Write(_byteBuf *parse.ByteBuf) {
@@ -776,8 +776,8 @@ func (__instance *VehiclePositionData) Write(_byteBuf *parse.ByteBuf) {
 }
 
 type VehicleStorageTemperatureData struct {
-	F_num     uint8                     `json:"num"`
-	F_content []*StorageTemperatureData `json:"Content"`
+	F_num     uint8                    `json:"num"`
+	F_content []StorageTemperatureData `json:"Content"`
 }
 
 func To_VehicleStorageTemperatureData(_byteBuf *parse.ByteBuf) *VehicleStorageTemperatureData {
@@ -786,7 +786,7 @@ func To_VehicleStorageTemperatureData(_byteBuf *parse.ByteBuf) *VehicleStorageTe
 	_instance.F_num = F_num_v
 
 	F_content_len := (int)(F_num_v)
-	F_content_arr := make([]*StorageTemperatureData, F_content_len)
+	F_content_arr := make([]StorageTemperatureData, F_content_len)
 	for i := 0; i < F_content_len; i++ {
 		F_content_arr[i] = To_StorageTemperatureData(_byteBuf)
 	}
