@@ -86,7 +86,7 @@ func TestPerformance_parse(t *testing.T) {
 	if err != nil {
 		t.Fatalf("%+v", err)
 	}
-	parse.TestMultiThreadPerformance_parse(decodeString, 5, 1000000000, func(byteBuf *parse.ByteBuf) {
+	parse.TestMultiThreadPerformance_parse(decodeString, 1, 1000000000, func(byteBuf *parse.ByteBuf) {
 		To_Packet(byteBuf)
 		//util.Log.Infof("%d", byteBuf.ReaderIndex())
 	})
