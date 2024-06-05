@@ -1,6 +1,8 @@
 package util
 
-import "math"
+import (
+	"math"
+)
 
 var pows_positive [11]float64
 var pows_negative [11]float64
@@ -40,6 +42,35 @@ func Format(d float64, i int) float64 {
 		} else {
 			return math.Ceil(d*pows_positive[i]) / pows_positive[i]
 		}
+	} else {
+		return 0
+	}
+}
+
+func Round[V ~float32 | float64](v V) V {
+	if v > 0 {
+		if (int64(v*10) % 10) >= 5 {
+			return V(int64(v) + 1)
+		} else {
+			return V(int64(v))
+		}
+	} else if v < 0 {
+		if (int64(-v*10) % 10) >= 5 {
+			return V(int64(v) - 1)
+		} else {
+			return V(int64(v))
+		}
+
+	} else {
+		return 0
+	}
+}
+
+func Round_slow(v float64) float64 {
+	if v > 0 {
+		return math.Round(v)
+	} else if v < 0 {
+		return -math.Round(-v)
 	} else {
 		return 0
 	}
