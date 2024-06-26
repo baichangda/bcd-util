@@ -30,6 +30,8 @@ func getValTemplate(sqlPre string) string {
 	return valTemplate
 }
 
+// BatchInsert 批量插入、支持mysql、sqlite、不支持oracle
+// sqlPre 格式为insert into table(column1,column2,...)
 func BatchInsert[T any](db *sql.DB, sqlPre string, datas []T, batch int, getParamFn func(T) []any) error {
 	valTemplate := getValTemplate(sqlPre)
 	dataLen := len(datas)
@@ -65,16 +67,21 @@ func BatchInsert[T any](db *sql.DB, sqlPre string, datas []T, batch int, getPara
 	return nil
 }
 
-func Insert(db *sql.DB, sqlPre string, args []any) error {
+// Insert 逐条插入、支持mysql、sqlite、不支持oracle
+// sqlPre 格式为insert into table(column1,column2,...)
+func Insert(db *sql.DB, sqlPre string, args ...[]any) error {
 	valTemplate := getValTemplate(sqlPre)
 	s := sqlPre + " values " + valTemplate
 	prepare, err := db.Prepare(s)
 	if err != nil {
 		return errors.WithStack(err)
 	}
-	_, err = prepare.Exec(args...)
-	if err != nil {
-		return errors.WithStack(err)
+	defer prepare.Close()
+	for _, e := range args {
+		_, err = prepare.Exec(e...)
+		if err != nil {
+			return errors.WithStack(err)
+		}
 	}
 	return nil
 }
