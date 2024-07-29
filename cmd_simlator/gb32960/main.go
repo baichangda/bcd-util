@@ -446,6 +446,16 @@ func (e *WsClient) HandleUpdateRunData(data string) {
 		})
 	}
 	e.packet.F_data = &vehicleRunData
+
+	buf := parse.ToByteBuf_empty()
+	e.packet.Write(buf)
+
+	actualLen := uint16(buf.ReadableBytes() - 25)
+	exceptLen := e.packet.F_contentLength
+	if actualLen != exceptLen {
+		e.packet.F_contentLength = actualLen
+	}
+
 	e.send(&OutMsg{
 		Flag:    2,
 		Data:    "",

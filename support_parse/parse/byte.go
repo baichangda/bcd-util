@@ -106,8 +106,17 @@ func (b *ByteBuf) ReadableBytes() int {
 func (b *ByteBuf) Get_uint8() uint8 {
 	return b.bytes[b.rIndex]
 }
+
+func (b *ByteBuf) Get_uint8_offset(offset int) uint8 {
+	return b.bytes[b.rIndex+offset]
+}
+
 func (b *ByteBuf) Get_int8() int8 {
 	return int8(b.bytes[b.rIndex])
+}
+
+func (b *ByteBuf) Get_int8_offset(offset int) int8 {
+	return int8(b.bytes[b.rIndex+offset])
 }
 
 func (b *ByteBuf) Read_uint8() uint8 {
@@ -125,8 +134,16 @@ func (b *ByteBuf) Get_uint16() uint16 {
 	return (uint16(b.bytes[b.rIndex]) << 8) | uint16(b.bytes[b.rIndex+1])
 }
 
+func (b *ByteBuf) Get_uint16_offset(offset int) uint16 {
+	return (uint16(b.bytes[b.rIndex+offset]) << 8) | uint16(b.bytes[b.rIndex+offset+1])
+}
+
 func (b *ByteBuf) Get_uint16_le() uint16 {
 	return *((*uint16)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+2]))))
+}
+
+func (b *ByteBuf) Get_uint16_le_offset(offset int) uint16 {
+	return *((*uint16)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+2]))))
 }
 
 func (b *ByteBuf) Read_uint16() uint16 {
@@ -145,8 +162,16 @@ func (b *ByteBuf) Get_int16() int16 {
 	return (int16(b.bytes[b.rIndex]) << 8) | int16(b.bytes[b.rIndex+1])
 }
 
+func (b *ByteBuf) Get_int16_offset(offset int) int16 {
+	return (int16(b.bytes[b.rIndex+offset]) << 8) | int16(b.bytes[b.rIndex+offset+1])
+}
+
 func (b *ByteBuf) Get_int16_le() int16 {
 	return *((*int16)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+2]))))
+}
+
+func (b *ByteBuf) Get_int16_le_offset(offset int) int16 {
+	return *((*int16)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+2]))))
 }
 
 func (b *ByteBuf) Read_int16() int16 {
@@ -162,11 +187,19 @@ func (b *ByteBuf) Read_int16_le() int16 {
 }
 
 func (b *ByteBuf) Get_uint24() uint32 {
-	return (uint32(b.bytes[b.rIndex+1]) << 16) | (uint32(b.bytes[b.rIndex+2]) << 8) | uint32(b.bytes[b.rIndex+3])
+	return (uint32(b.bytes[b.rIndex]) << 16) | (uint32(b.bytes[b.rIndex+1]) << 8) | uint32(b.bytes[b.rIndex+2])
 }
 
 func (b *ByteBuf) Get_uint24_le() uint32 {
 	return *((*uint32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+3]))))
+}
+
+func (b *ByteBuf) Get_uint24_offset(offset int) uint32 {
+	return (uint32(b.bytes[b.rIndex+offset]) << 16) | (uint32(b.bytes[b.rIndex+offset+1]) << 8) | uint32(b.bytes[b.rIndex+offset+2])
+}
+
+func (b *ByteBuf) Get_uint24_le_offset(offset int) uint32 {
+	return *((*uint32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+3]))))
 }
 
 func (b *ByteBuf) Read_uint24() uint32 {
@@ -182,11 +215,19 @@ func (b *ByteBuf) Read_uint24_le() uint32 {
 }
 
 func (b *ByteBuf) Get_int24() int32 {
-	return (int32(b.bytes[b.rIndex+1]) << 16) | (int32(b.bytes[b.rIndex+2]) << 8) | int32(b.bytes[b.rIndex+3])
+	return (int32(b.bytes[b.rIndex]) << 16) | (int32(b.bytes[b.rIndex+1]) << 8) | int32(b.bytes[b.rIndex+2])
 }
 
 func (b *ByteBuf) Get_int24_le() int32 {
 	return *((*int32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+3]))))
+}
+
+func (b *ByteBuf) Get_int24_offset(offset int) int32 {
+	return (int32(b.bytes[b.rIndex+offset]) << 16) | (int32(b.bytes[b.rIndex+offset+1]) << 8) | int32(b.bytes[b.rIndex+offset+2])
+}
+
+func (b *ByteBuf) Get_int24_le_offset(offset int) int32 {
+	return *((*int32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+3]))))
 }
 
 func (b *ByteBuf) Read_int24() int32 {
@@ -209,6 +250,14 @@ func (b *ByteBuf) Get_uint32_le() uint32 {
 	return *((*uint32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+4]))))
 }
 
+func (b *ByteBuf) Get_uint32_offset(offset int) uint32 {
+	return (uint32(b.bytes[b.rIndex+offset]) << 24) | (uint32(b.bytes[b.rIndex+offset+1]) << 16) | (uint32(b.bytes[b.rIndex+offset+2]) << 8) | uint32(b.bytes[b.rIndex+offset+3])
+}
+
+func (b *ByteBuf) Get_uint32_le_offset(offset int) uint32 {
+	return *((*uint32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+4]))))
+}
+
 func (b *ByteBuf) Read_uint32() uint32 {
 	res := b.Get_uint32()
 	b.rIndex += 4
@@ -229,6 +278,14 @@ func (b *ByteBuf) Get_int32_le() int32 {
 	return *((*int32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+4]))))
 }
 
+func (b *ByteBuf) Get_int32_offset(offset int) int32 {
+	return (int32(b.bytes[b.rIndex+offset]) << 24) | (int32(b.bytes[b.rIndex+offset+1]) << 16) | (int32(b.bytes[b.rIndex+offset+2]) << 8) | int32(b.bytes[b.rIndex+offset+3])
+}
+
+func (b *ByteBuf) Get_int32_le_offset(offset int) int32 {
+	return *((*int32)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+4]))))
+}
+
 func (b *ByteBuf) Read_int32() int32 {
 	res := b.Get_int32()
 	b.rIndex += 4
@@ -242,11 +299,19 @@ func (b *ByteBuf) Read_int32_le() int32 {
 }
 
 func (b *ByteBuf) Get_uint40() uint64 {
-	return (uint64(b.bytes[b.rIndex]) << 32) | (uint64(b.bytes[b.rIndex]) << 24) | (uint64(b.bytes[b.rIndex+1]) << 16) | (uint64(b.bytes[b.rIndex+2]) << 8) | uint64(b.bytes[b.rIndex+3])
+	return (uint64(b.bytes[b.rIndex]) << 32) | (uint64(b.bytes[b.rIndex+1]) << 24) | (uint64(b.bytes[b.rIndex+2]) << 16) | (uint64(b.bytes[b.rIndex+3]) << 8) | uint64(b.bytes[b.rIndex+4])
 }
 
 func (b *ByteBuf) Get_uint40_le() uint64 {
 	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+5]))))
+}
+
+func (b *ByteBuf) Get_uint40_offset(offset int) uint64 {
+	return (uint64(b.bytes[b.rIndex+offset]) << 32) | (uint64(b.bytes[b.rIndex+offset+1]) << 24) | (uint64(b.bytes[b.rIndex+offset+2]) << 16) | (uint64(b.bytes[b.rIndex+offset+3]) << 8) | uint64(b.bytes[b.rIndex+offset+4])
+}
+
+func (b *ByteBuf) Get_uint40_le_offset(offset int) uint64 {
+	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+5]))))
 }
 
 func (b *ByteBuf) Read_uint40() uint64 {
@@ -262,11 +327,19 @@ func (b *ByteBuf) Read_uint40_le() uint64 {
 }
 
 func (b *ByteBuf) Get_int40() int64 {
-	return (int64(b.bytes[b.rIndex]) << 32) | (int64(b.bytes[b.rIndex]) << 24) | (int64(b.bytes[b.rIndex+1]) << 16) | (int64(b.bytes[b.rIndex+2]) << 8) | int64(b.bytes[b.rIndex+3])
+	return (int64(b.bytes[b.rIndex]) << 32) | (int64(b.bytes[b.rIndex+1]) << 24) | (int64(b.bytes[b.rIndex+2]) << 16) | (int64(b.bytes[b.rIndex+3]) << 8) | int64(b.bytes[b.rIndex+4])
 }
 
 func (b *ByteBuf) Get_int40_le() int64 {
 	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+5]))))
+}
+
+func (b *ByteBuf) Get_int40_offset(offset int) int64 {
+	return (int64(b.bytes[b.rIndex+offset]) << 32) | (int64(b.bytes[b.rIndex+offset+1]) << 24) | (int64(b.bytes[b.rIndex+offset+2]) << 16) | (int64(b.bytes[b.rIndex+offset+3]) << 8) | int64(b.bytes[b.rIndex+offset+4])
+}
+
+func (b *ByteBuf) Get_int40_le_offset(offset int) int64 {
+	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+5]))))
 }
 
 func (b *ByteBuf) Read_int40() int64 {
@@ -282,12 +355,22 @@ func (b *ByteBuf) Read_int40_le() int64 {
 }
 
 func (b *ByteBuf) Get_uint48() uint64 {
-	return (uint64(b.bytes[b.rIndex]) << 40) | (uint64(b.bytes[b.rIndex]) << 32) |
-		(uint64(b.bytes[b.rIndex]) << 24) | (uint64(b.bytes[b.rIndex+1]) << 16) | (uint64(b.bytes[b.rIndex+2]) << 8) | uint64(b.bytes[b.rIndex+3])
+	return (uint64(b.bytes[b.rIndex]) << 40) | (uint64(b.bytes[b.rIndex+1]) << 32) |
+		(uint64(b.bytes[b.rIndex+2]) << 24) | (uint64(b.bytes[b.rIndex+3]) << 16) | (uint64(b.bytes[b.rIndex+4]) << 8) | uint64(b.bytes[b.rIndex+5])
 }
 
 func (b *ByteBuf) Get_uint48_le() uint64 {
 	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+6]))))
+}
+
+func (b *ByteBuf) Get_uint48_offset(offset int) uint64 {
+	return (uint64(b.bytes[b.rIndex+offset]) << 40) | (uint64(b.bytes[b.rIndex+offset+1]) << 32) |
+		(uint64(b.bytes[b.rIndex+offset+2]) << 24) | (uint64(b.bytes[b.rIndex+offset+3]) << 16) |
+		(uint64(b.bytes[b.rIndex+offset+4]) << 8) | uint64(b.bytes[b.rIndex+offset+5])
+}
+
+func (b *ByteBuf) Get_uint48_le_offset(offset int) uint64 {
+	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+6]))))
 }
 
 func (b *ByteBuf) Read_uint48() uint64 {
@@ -303,12 +386,21 @@ func (b *ByteBuf) Read_uint48_le() uint64 {
 }
 
 func (b *ByteBuf) Get_int48() int64 {
-	return (int64(b.bytes[b.rIndex]) << 40) | (int64(b.bytes[b.rIndex]) << 32) |
-		(int64(b.bytes[b.rIndex]) << 24) | (int64(b.bytes[b.rIndex+1]) << 16) | (int64(b.bytes[b.rIndex+2]) << 8) | int64(b.bytes[b.rIndex+3])
+	return (int64(b.bytes[b.rIndex]) << 40) | (int64(b.bytes[b.rIndex+1]) << 32) |
+		(int64(b.bytes[b.rIndex+2]) << 24) | (int64(b.bytes[b.rIndex+3]) << 16) | (int64(b.bytes[b.rIndex+4]) << 8) | int64(b.bytes[b.rIndex+5])
 }
 
 func (b *ByteBuf) Get_int48_le() int64 {
 	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+6]))))
+}
+
+func (b *ByteBuf) Get_int48_offset(offset int) int64 {
+	return (int64(b.bytes[b.rIndex+offset]) << 40) | (int64(b.bytes[b.rIndex+offset+1]) << 32) |
+		(int64(b.bytes[b.rIndex+offset+2]) << 24) | (int64(b.bytes[b.rIndex+offset+3]) << 16) | (int64(b.bytes[b.rIndex+offset+4]) << 8) | int64(b.bytes[b.rIndex+offset+5])
+}
+
+func (b *ByteBuf) Get_int48_le_offset(offset int) int64 {
+	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+6]))))
 }
 
 func (b *ByteBuf) Read_int48() int64 {
@@ -324,12 +416,22 @@ func (b *ByteBuf) Read_int48_le() int64 {
 }
 
 func (b *ByteBuf) Get_uint56() uint64 {
-	return (uint64(b.bytes[b.rIndex]) << 48) | (uint64(b.bytes[b.rIndex]) << 40) | (uint64(b.bytes[b.rIndex]) << 32) |
-		(uint64(b.bytes[b.rIndex]) << 24) | (uint64(b.bytes[b.rIndex+1]) << 16) | (uint64(b.bytes[b.rIndex+2]) << 8) | uint64(b.bytes[b.rIndex+3])
+	return (uint64(b.bytes[b.rIndex]) << 48) | (uint64(b.bytes[b.rIndex+1]) << 40) | (uint64(b.bytes[b.rIndex+2]) << 32) |
+		(uint64(b.bytes[b.rIndex+3]) << 24) | (uint64(b.bytes[b.rIndex+4]) << 16) | (uint64(b.bytes[b.rIndex+5]) << 8) | uint64(b.bytes[b.rIndex+6])
 }
 
 func (b *ByteBuf) Get_uint56_le() uint64 {
 	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+7]))))
+}
+
+func (b *ByteBuf) Get_uint56_offset(offset int) uint64 {
+	return (uint64(b.bytes[b.rIndex+offset]) << 48) | (uint64(b.bytes[b.rIndex+offset+1]) << 40) | (uint64(b.bytes[b.rIndex+offset+2]) << 32) |
+		(uint64(b.bytes[b.rIndex+offset+3]) << 24) | (uint64(b.bytes[b.rIndex+offset+4]) << 16) | (uint64(b.bytes[b.rIndex+offset+5]) << 8) |
+		uint64(b.bytes[b.rIndex+offset+6])
+}
+
+func (b *ByteBuf) Get_uint56_le_offset(offset int) uint64 {
+	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+7]))))
 }
 
 func (b *ByteBuf) Read_uint56() uint64 {
@@ -345,12 +447,22 @@ func (b *ByteBuf) Read_uint56_le() uint64 {
 }
 
 func (b *ByteBuf) Get_int56() int64 {
-	return (int64(b.bytes[b.rIndex]) << 48) | (int64(b.bytes[b.rIndex]) << 40) | (int64(b.bytes[b.rIndex]) << 32) |
-		(int64(b.bytes[b.rIndex]) << 24) | (int64(b.bytes[b.rIndex+1]) << 16) | (int64(b.bytes[b.rIndex+2]) << 8) | int64(b.bytes[b.rIndex+3])
+	return (int64(b.bytes[b.rIndex]) << 48) | (int64(b.bytes[b.rIndex+1]) << 40) | (int64(b.bytes[b.rIndex+2]) << 32) |
+		(int64(b.bytes[b.rIndex+3]) << 24) | (int64(b.bytes[b.rIndex+4]) << 16) | (int64(b.bytes[b.rIndex+5]) << 8) | int64(b.bytes[b.rIndex+6])
 }
 
 func (b *ByteBuf) Get_int56_le() int64 {
 	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+7]))))
+}
+
+func (b *ByteBuf) Get_int56_offset(offset int) int64 {
+	return (int64(b.bytes[b.rIndex+offset]) << 48) | (int64(b.bytes[b.rIndex+offset+1]) << 40) | (int64(b.bytes[b.rIndex+offset+2]) << 32) |
+		(int64(b.bytes[b.rIndex+offset+3]) << 24) | (int64(b.bytes[b.rIndex+offset+4]) << 16) | (int64(b.bytes[b.rIndex+offset+5]) << 8) |
+		int64(b.bytes[b.rIndex+offset+6])
+}
+
+func (b *ByteBuf) Get_int56_le_offset(offset int) int64 {
+	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+7]))))
 }
 
 func (b *ByteBuf) Read_int56() int64 {
@@ -366,12 +478,25 @@ func (b *ByteBuf) Read_int56_le() int64 {
 }
 
 func (b *ByteBuf) Get_uint64() uint64 {
-	return (uint64(b.bytes[b.rIndex]) << 56) | (uint64(b.bytes[b.rIndex]) << 48) | (uint64(b.bytes[b.rIndex]) << 40) | (uint64(b.bytes[b.rIndex]) << 32) |
-		(uint64(b.bytes[b.rIndex]) << 24) | (uint64(b.bytes[b.rIndex+1]) << 16) | (uint64(b.bytes[b.rIndex+2]) << 8) | uint64(b.bytes[b.rIndex+3])
+	return (uint64(b.bytes[b.rIndex]) << 56) | (uint64(b.bytes[b.rIndex+1]) << 48) |
+		(uint64(b.bytes[b.rIndex+2]) << 40) | (uint64(b.bytes[b.rIndex+3]) << 32) |
+		(uint64(b.bytes[b.rIndex+4]) << 24) | (uint64(b.bytes[b.rIndex+5]) << 16) |
+		(uint64(b.bytes[b.rIndex+6]) << 8) | uint64(b.bytes[b.rIndex+7])
 }
 
 func (b *ByteBuf) Get_uint64_le() uint64 {
 	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+8]))))
+}
+
+func (b *ByteBuf) Get_uint64_offset(offset int) uint64 {
+	return (uint64(b.bytes[b.rIndex+offset]) << 56) | (uint64(b.bytes[b.rIndex+offset+1]) << 48) |
+		(uint64(b.bytes[b.rIndex+offset+2]) << 40) | (uint64(b.bytes[b.rIndex+offset+3]) << 32) |
+		(uint64(b.bytes[b.rIndex+offset+4]) << 24) | (uint64(b.bytes[b.rIndex+offset+5]) << 16) |
+		(uint64(b.bytes[b.rIndex+offset+6]) << 8) | uint64(b.bytes[b.rIndex+offset+7])
+}
+
+func (b *ByteBuf) Get_uint64_le_offset(offset int) uint64 {
+	return *((*uint64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+8]))))
 }
 
 func (b *ByteBuf) Read_uint64() uint64 {
@@ -387,12 +512,25 @@ func (b *ByteBuf) Read_uint64_le() uint64 {
 }
 
 func (b *ByteBuf) Get_int64() int64 {
-	return (int64(b.bytes[b.rIndex]) << 56) | (int64(b.bytes[b.rIndex]) << 48) | (int64(b.bytes[b.rIndex]) << 40) | (int64(b.bytes[b.rIndex]) << 32) |
-		(int64(b.bytes[b.rIndex]) << 24) | (int64(b.bytes[b.rIndex+1]) << 16) | (int64(b.bytes[b.rIndex+2]) << 8) | int64(b.bytes[b.rIndex+3])
+	return (int64(b.bytes[b.rIndex]) << 56) | (int64(b.bytes[b.rIndex+1]) << 48) |
+		(int64(b.bytes[b.rIndex+2]) << 40) | (int64(b.bytes[b.rIndex+3]) << 32) |
+		(int64(b.bytes[b.rIndex+4]) << 24) | (int64(b.bytes[b.rIndex+5]) << 16) |
+		(int64(b.bytes[b.rIndex+6]) << 8) | int64(b.bytes[b.rIndex+7])
 }
 
 func (b *ByteBuf) Get_int64_le() int64 {
 	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex : b.rIndex+8]))))
+}
+
+func (b *ByteBuf) Get_int64_offset(offset int) int64 {
+	return (int64(b.bytes[b.rIndex+offset]) << 56) | (int64(b.bytes[b.rIndex+offset+1]) << 48) |
+		(int64(b.bytes[b.rIndex+offset+2]) << 40) | (int64(b.bytes[b.rIndex+offset+3]) << 32) |
+		(int64(b.bytes[b.rIndex+offset+4]) << 24) | (int64(b.bytes[b.rIndex+offset+5]) << 16) |
+		(int64(b.bytes[b.rIndex+offset+6]) << 8) | int64(b.bytes[b.rIndex+offset+7])
+}
+
+func (b *ByteBuf) Get_int64_le_offset(offset int) int64 {
+	return *((*int64)(unsafe.Pointer(unsafe.SliceData(b.bytes[b.rIndex+offset : b.rIndex+offset+8]))))
 }
 
 func (b *ByteBuf) Read_int64() int64 {
