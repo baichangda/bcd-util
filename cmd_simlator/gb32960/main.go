@@ -82,12 +82,13 @@ func (e *TcpClient) init(address string, wsClient *WsClient, onConnect func(erro
 		}
 		e.conn = conn
 		defer conn.Close()
-		onConnect(nil)
 
 		stopCtx, stopFn := context.WithCancel(wsClient.stopCtx)
 		e.stopCtx = stopCtx
 		e.stopFn = stopFn
 		defer stopFn()
+
+		onConnect(nil)
 
 		buf := make([]byte, 8192)
 		for {
