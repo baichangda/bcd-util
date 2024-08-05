@@ -1,9 +1,7 @@
 package support_system
 
 import (
-	"bcd-util/support_sql"
 	"bcd-util/util"
-	"database/sql"
 	"github.com/pkg/errors"
 	"github.com/shirou/gopsutil/v3/cpu"
 	"github.com/shirou/gopsutil/v3/disk"
@@ -14,69 +12,34 @@ import (
 
 type SystemData struct {
 	//cpu物理核心
-	PhysicalProcessorNum int `json:"physicalProcessorNum"`
+	PhysicalProcessorNum int `json:"physicalProcessorNum" gorm:"not null;comment:cpu物理核心"`
 	//cpu逻辑核心
-	LogicalProcessorNum int `json:"logicalProcessorNum"`
+	LogicalProcessorNum int `json:"logicalProcessorNum" gorm:"not null;comment:cpu逻辑核心"`
 	//cpu使用百分比
-	CpuUsePercent float64 `json:"cpuUsePercent"`
+	CpuUsePercent float64 `json:"cpuUsePercent" gorm:"not null;comment:cpu使用百分比"`
 	//内存使用百分比
-	MemoryUsePercent float64 `json:"memoryUsePercent"`
+	MemoryUsePercent float64 `json:"memoryUsePercent" gorm:"not null;comment:内存使用百分比"`
 	//最大内存(GB)
-	MemoryMax float64 `json:"memoryMax"`
+	MemoryMax float64 `json:"memoryMax" gorm:"not null;comment:最大内存(GB)"`
 	//已使用内存(GB)
-	MemoryUse float64 `json:"memoryUse"`
+	MemoryUse float64 `json:"memoryUse" gorm:"not null;comment:已使用内存(GB)"`
 	//磁盘最大容量(GB)
-	DiskMax float64 `json:"diskMax"`
+	DiskMax float64 `json:"diskMax" gorm:"not null;comment:磁盘最大容量(GB)"`
 	//磁盘使用容量(GB)
-	DiskUse float64 `json:"diskUse"`
+	DiskUse float64 `json:"diskUse" gorm:"not null;comment:磁盘使用容量(GB)"`
 	//磁盘使用百分比
-	DiskUsePercent float64 `json:"diskUsePercent"`
+	DiskUsePercent float64 `json:"diskUsePercent" gorm:"not null;comment:磁盘使用百分比"`
 	//磁盘读取速度(KB/s)
-	DiskReadSpeed float64 `json:"diskReadSpeed"`
+	DiskReadSpeed float64 `json:"diskReadSpeed" gorm:"not null;comment:磁盘读取速度(KB/s)"`
 	//磁盘写入速度(KB/s)
-	DiskWriteSpeed float64 `json:"diskWriteSpeed"`
+	DiskWriteSpeed float64 `json:"diskWriteSpeed" gorm:"not null;comment:磁盘写入速度(KB/s)"`
 	//网络流入速度(KB/s)
-	NetRecvSpeed float64 `json:"netRecvSpeed"`
+	NetRecvSpeed float64 `json:"netRecvSpeed" gorm:"not null;comment:网络流入速度(KB/s)"`
 	//网络流出速度(KB/s)
-	NetSentSpeed float64 `json:"netSentSpeed"`
-	//采集实际
-	CollectTime time.Time `json:"collectTime"`
+	NetSentSpeed float64 `json:"netSentSpeed" gorm:"not null;comment:cpu物理核心"`
+	//采集时间
+	CollectTime time.Time `json:"collectTime" gorm:"not null;comment:采集时间"`
 }
-
-func (systemData *SystemData) Insert(db *sql.DB) error {
-	err := support_sql.Insert(db,
-		"insert into t_monitor_system_data(collect_time,physical_processor_num,logical_processor_num,cpu_use_percent,memory_use_percent,memory_max,memory_use,disk_max,disk_use,disk_use_percent,disk_read_speed,disk_write_speed,net_recv_speed,net_sent_speed)", []any{
-			systemData.CollectTime,
-			systemData.PhysicalProcessorNum, systemData.LogicalProcessorNum, systemData.CpuUsePercent,
-			systemData.MemoryUsePercent, systemData.MemoryMax, systemData.MemoryUse, systemData.DiskMax, systemData.DiskUse,
-			systemData.DiskUsePercent, systemData.DiskReadSpeed, systemData.DiskWriteSpeed, systemData.NetRecvSpeed, systemData.NetSentSpeed,
-		})
-	if err != nil {
-		return errors.WithStack(err)
-	} else {
-		return nil
-	}
-}
-
-const CreateTableSql = `
-create table if not exists t_monitor_system_data(
-    id bigint primary key not null auto_increment comment '主键',
-    physical_processor_num int not null comment 'cpu物理核心',
-    logical_processor_num int not null comment 'cpu逻辑核心',
-    cpu_use_percent float not null comment 'cpu使用百分比',
-    memory_use_percent float not null comment '内存使用百分比',
-    memory_max float not null comment '最大内存(GB)',
-    memory_use float not null comment '已使用内存(GB)',
-    disk_max float not null comment '磁盘最大容量(GB)',
-    disk_use float not null comment '磁盘使用容量(GB)',
-    disk_use_percent float not null comment '磁盘使用百分比',
-    disk_read_speed float not null comment '磁盘读取速度(KB/s)',
-    disk_write_speed float not null comment '磁盘写入速度(KB/s)',
-    net_recv_speed float not null comment '网络流入速度(KB/s)',
-    net_sent_speed float not null comment '网络流出速度(KB/s)',
-    collect_time timestamp not null comment '采集时间'
-)
-`
 
 const gb float64 = 1024 * 1024 * 1024
 

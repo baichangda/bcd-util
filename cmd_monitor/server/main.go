@@ -1,19 +1,20 @@
 package server
 
 import (
-	"bcd-util/support_sql"
-	"bcd-util/support_system"
 	"bcd-util/util"
 	"context"
 	"database/sql"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
-	"github.com/pkg/errors"
 	"github.com/redis/go-redis/v9"
 	_ "github.com/redis/go-redis/v9"
 	"github.com/robfig/cron/v3"
 	"github.com/spf13/cobra"
+	"gorm.io/driver/mysql"
+	"gorm.io/gorm"
+	"gorm.io/gorm/schema"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -23,6 +24,7 @@ var redisTopic string
 var redisListName string
 var mysqlUrl string
 var period int
+var check bool
 
 func Cmd() *cobra.Command {
 	cmd := cobra.Command{
@@ -33,31 +35,32 @@ func Cmd() *cobra.Command {
 需要预先创建服务静态信息表、服务监控信息采集表
 `,
 		Run: func(cmd *cobra.Command, args []string) {
-			//初始化mysql
-			open, err := sql.Open("mysql", mysqlUrl)
-			if err != nil {
-				util.Log.Errorf("%+v", err)
-				return
-			}
-			_, err = open.Exec(CreateTableSql_serverData)
-			if err != nil {
-				util.Log.Errorf("%+v", err)
-				return
-			}
-
-			_, err = open.Exec(CreateTableSql_monitorData)
+			db, err := gorm.Open(mysql.Open(mysqlUrl), &gorm.Config{
+				NamingStrategy: schema.NamingStrategy{
+					TablePrefix:   "t_",
+					SingularTable: true,
+				},
+				//Logger: logger.New(util.LogWriter, logger.Config{LogLevel: logger.Info}),
+			})
 			if err != nil {
 				util.Log.Errorf("%+v", err)
 				return
 			}
 
-			//加载全量服务信息
-			serverDatas, err := ListServerData(open)
+			db.Table("t_server_data").Assign()
+
+			err = db.AutoMigrate(&MonitorData{})
 			if err != nil {
 				util.Log.Errorf("%+v", err)
 				return
 			}
-
+			if check {
+				err = db.AutoMigrate(&ServerData{})
+				if err != nil {
+					util.Log.Errorf("%+v", err)
+					return
+				}
+			}
 			var client redis.Cmdable
 			if len(redisAddrs) == 1 {
 				client = redis.NewClient(&redis.Options{
@@ -81,6 +84,7 @@ func Cmd() *cobra.Command {
 			util.Log.Infof("start cron[%s]", cronExpr)
 			_, err = c.AddFunc(cronExpr, func() {
 				collectTime := time.Now()
+
 				//往前取最近一个整点时间
 				collectTime.Add(time.Duration(collectTime.Second()-(collectTime.Second()%period)) * time.Second)
 				//发送采集指令
@@ -112,47 +116,82 @@ func Cmd() *cobra.Command {
 						util.Log.Errorf("response data error:\n%s", e)
 						continue
 					}
-					responseDataMap[data.Id] = data
+					if data.Batch != batch {
+						util.Log.Warnf("response serverId[%s] batch[%d]!=except[%d]\n%s", data.ServerId, data.Batch, batch)
+						continue
+					}
+					_, ok := responseDataMap[data.ServerId]
+					if ok {
+						util.Log.Warnf("response serverId[%s] data repeat", data.ServerId)
+					}
+					responseDataMap[data.ServerId] = data
 				}
 
-				//监控信息
-				var ids1 []string
-				var ids2 []string
-				monitorDatas := make([]MonitorData, len(result))
-				for i, serverData := range serverDatas {
-					responseData, ok := responseDataMap[serverData.Id]
-					if ok {
-						if responseData.Batch != batch {
-
+				if check {
+					//查找所有服务器
+					var serverDatas []ServerData
+					db.Find(&serverDatas)
+					//监控信息
+					var ids1 []string
+					var ids2 []string
+					monitorDatas := make([]MonitorData, len(serverDatas))
+					for i, serverData := range serverDatas {
+						responseData, ok := responseDataMap[serverData.Id]
+						monitorData := MonitorData{
+							ServerId:   serverData.Id,
+							ServerType: serverData.Flag,
+							ServerName: serverData.Name,
+							Batch:      batch,
 						}
-						ids1 = append(ids1, serverData.Id)
-						marshal, err := json.Marshal(responseData)
-						if err != nil {
-							util.Log.Errorf("%+v", err)
-							continue
+						if ok {
+							ids1 = append(ids1, serverData.Id)
+							monitorData.ServerStatus = 0
+							if len(responseData.Data) == 0 {
+								monitorData.Data = sql.NullString{Valid: false}
+							} else {
+								monitorData.Data = sql.NullString{
+									String: responseData.Data,
+									Valid:  true,
+								}
+							}
+						} else {
+							ids2 = append(ids2, serverData.Id)
+							monitorData.ServerStatus = 1
+							monitorData.Data = sql.NullString{Valid: false}
 						}
-						monitorDatas[i] = MonitorData{
-							ServerId:     serverData.Id,
-							ServerType:   serverData.Flag,
-							ServerName:   serverData.Name,
+						monitorDatas[i] = monitorData
+					}
+					db.Create(monitorDatas)
+					util.Log.Infof("finish batch[%d] alive server[%s] dead server[%s]",
+						batch,
+						strings.Join(ids1, ","),
+						strings.Join(ids2, ","))
+				} else {
+					var monitorDatas []MonitorData
+					var ids1 []string
+					for _, v := range responseDataMap {
+						ids1 = append(ids1, v.ServerId)
+						monitorData := MonitorData{
+							ServerId:     v.ServerId,
+							ServerType:   v.ServerType,
+							ServerName:   v.ServerName,
 							ServerStatus: 0,
 							Batch:        batch,
-							Data:         string(marshal),
 						}
-					} else {
-						ids2 = append(ids2, serverData.Id)
-						monitorDatas[i] = MonitorData{
-							ServerId:     serverData.Id,
-							ServerType:   serverData.Flag,
-							ServerName:   serverData.Name,
-							ServerStatus: 1,
-							Batch:        batch,
-							Data:         "",
+						if len(v.Data) == 0 {
+							monitorData.Data = sql.NullString{Valid: false}
+						} else {
+							monitorData.Data = sql.NullString{
+								String: v.Data,
+								Valid:  true,
+							}
 						}
+						monitorDatas = append(monitorDatas, monitorData)
 					}
+					util.Log.Infof("finish batch[%d] alive server[%s]",
+						batch,
+						strings.Join(ids1, ","))
 				}
-
-				util.Log.Infof("finish batch[%d] alive server[%v] dead server[%v]", batch, ids1, ids2)
 			})
 			if err != nil {
 				util.Log.Errorf("%+v", err)
@@ -162,11 +201,12 @@ func Cmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().IntVarP(&period, "period", "p", 1, "定时任务采集周期(分钟)")
-	cmd.Flags().StringVarP(&mysqlUrl, "mysqlUrl", "u", "root:incar@2023@tcp(10.0.11.50:39005)/rvm3?multiStatements=true&charset=utf8", "mysql url连接")
+	cmd.Flags().StringVarP(&mysqlUrl, "mysqlUrl", "u", "root:incar@2023@tcp(10.0.11.50:39005)/rvm3?multiStatements=true&charset=utf8mb4&parseTime=True&loc=Local", "mysql url连接")
 	cmd.Flags().StringSliceVarP(&redisAddrs, "redisAddrs", "a", []string{"127.0.0.1:3306"}, "redis地址(如果只有1个元素、视为单机、否则为集群)")
 	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "w", "bcd", "redis密码")
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
+	cmd.Flags().BoolVarP(&check, "check", "c", false, "是否验证服务器信息")
 
 	_ = cmd.MarkFlagRequired("mysqlUrl")
 	_ = cmd.MarkFlagRequired("redisAddrs")
@@ -174,96 +214,36 @@ func Cmd() *cobra.Command {
 	return &cmd
 }
 
-type MonitorData struct {
-	ServerId   string
-	ServerType int
-	ServerName string
-	//服务状态0:正常,1:故障
-	ServerStatus int
-	Batch        int64
-	Data         string
+type ServerData struct {
+	Id         string         `gorm:"primaryKey;size:50;comment:服务id"`
+	Name       string         `gorm:"size:50;not null;comment:服务名称"`
+	Flag       int            `gorm:"not null;comment:服务类型"`
+	Remark     sql.NullString `gorm:"size:200;comment:服务描述"`
+	CreateTime time.Time      `gorm:"autoCreateTime"`
 }
 
-func (data *MonitorData) Insert(db *sql.DB) error {
-	err := support_sql.Insert(db,
-		"insert into t_monitor_data(server_id,server_type,server_name,server_status,batch,data)", []any{
-			data.ServerId, data.ServerType, data.ServerName, data.ServerStatus, data.Batch, data.Data,
-		})
-	if err != nil {
-		return errors.WithStack(err)
-	} else {
-		return nil
-	}
+type MonitorData struct {
+	Id           uint           `gorm:"primaryKey"`
+	ServerId     string         `gorm:"not null;comment:服务id;size:50"`
+	ServerType   int            `gorm:"not null;comment:服务类型"`
+	ServerName   string         `gorm:"not null;comment:服务名称;size:50"`
+	ServerStatus int            `gorm:"not null;comment:服务状态(0:正常;1:故障)"`
+	Batch        int64          `gorm:"not null;comment:批次"`
+	Data         sql.NullString `gorm:"size:1000;comment:服务监控数据(json格式)"`
+	CreateTime   time.Time      `gorm:"autoCreateTime"`
 }
 
 type ResponseData struct {
 	//服务id
-	Id string `json:"id"`
-	//系统信息
-	System support_system.SystemData `json:"system"`
-	//附加信息
-	Ext map[string]any `json:"ext"`
-	//采集时间
+	ServerId string `json:"serverId"`
+	//采集批次
 	Batch int64 `json:"batch"`
-}
+	//上报数据
+	Data string `json:"data"`
 
-type ServerData struct {
-	//服务id
-	Id string
+	//以下属性如果开启了服务器校验、则不需要
 	//服务名称
-	Name string
+	ServerName string `json:"serverName"`
 	//服务类型
-	Flag int
-	//服务描述
-	Remark string
+	ServerType int `json:"serverType"`
 }
-
-func (data *ServerData) Insert(db *sql.DB) error {
-	err := support_sql.Insert(db,
-		"insert into t_server_data(id,name,flag,remark)", []any{
-			data.Id, data.Name, data.Flag, data.Remark,
-		})
-	if err != nil {
-		return errors.WithStack(err)
-	} else {
-		return nil
-	}
-}
-
-func ListServerData(db *sql.DB) ([]ServerData, error) {
-	query, err := db.Query("select id,name,flag,remark from t_server_data")
-	if err != nil {
-		return nil, errors.WithStack(err)
-	}
-	var datas []ServerData
-	for query.Next() {
-		data := ServerData{}
-		err := query.Scan(&data.Id, &data.Name, &data.Flag, &data.Remark)
-		if err != nil {
-			return nil, errors.WithStack(err)
-		}
-		datas = append(datas, data)
-	}
-	return datas, err
-}
-
-const CreateTableSql_serverData = `
-create table if not exists t_server_data(
-    id varchar(20) primary key not null comment '服务id',
-    name varchar(50) not null comment '服务名称',
-    flag int not null comment '服务类型',
-    remark varchar(100) null comment '服务描述'
-)
-`
-
-const CreateTableSql_monitorData = `
-create table if not exists t_monitor_data(
-    id bigint primary key not null auto_increment comment '主键',
-    server_id varchar(20) comment '服务id',
-    server_name varchar(50) comment '服务名称',
-    server_type int comment '服务类型',
-    server_status int comment '服务状态(0:正常;1:故障)',
-    batch int comment '日期批次',
-    data text comment '监控数据'
-)
-`

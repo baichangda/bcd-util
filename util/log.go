@@ -10,6 +10,15 @@ import (
 const EnableLogFile = true
 
 var Log = initLog()
+var LogWriter = writerImpl{Log}
+
+type writerImpl struct {
+	l *zap.SugaredLogger
+}
+
+func (l writerImpl) Printf(s string, args ...interface{}) {
+	l.l.Infof(s, args)
+}
 
 func initLog() *zap.SugaredLogger {
 	// 获取日志写入位置
