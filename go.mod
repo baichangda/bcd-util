@@ -9,6 +9,7 @@ require (
 	github.com/go-resty/resty/v2 v2.13.1
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gobwas/ws v1.4.0
+	github.com/golang-module/carbon/v2 v2.3.12
 	github.com/panjf2000/gnet/v2 v2.5.7
 	github.com/pkg/errors v0.9.1
 	github.com/playwright-community/playwright-go v0.4501.1
