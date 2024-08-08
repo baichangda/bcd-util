@@ -26,7 +26,6 @@ require (
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gorm v1.25.11
-	modernc.org/sqlite v1.29.9
 )
 
 require (
