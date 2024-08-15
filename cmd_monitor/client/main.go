@@ -30,6 +30,9 @@ func Cmd() *cobra.Command {
 通过redis通知接收到监控服务的采集监控信息请求、采集本机的监控信息、然后放在redis list中、供监控服务获取存储
 `,
 		Run: func(cmd *cobra.Command, args []string) {
+			if len(serverName) == 0 {
+				serverName = serverId
+			}
 			var client redis.UniversalClient
 			if len(redisAddrs) == 1 {
 				client = redis.NewClient(&redis.Options{
@@ -47,7 +50,7 @@ func Cmd() *cobra.Command {
 				})
 			}
 			subscribe := client.Subscribe(context.Background(), redisTopic)
-			util.Log.Infof("start listen redis addrs[%s] topic[%s]", strings.Join(redisAddrs, ","), redisTopic)
+			util.Log.Infof("start listen redis addrs[%s] topic[%s] serverId[%s] serverName[%s]", strings.Join(redisAddrs, ","), redisTopic, serverId, serverName)
 			for message := range subscribe.Channel() {
 				util.Log.Infof("receive batch[%s]", message.Payload)
 				batch, err := strconv.ParseInt(message.Payload, 10, 64)
@@ -67,13 +70,16 @@ func Cmd() *cobra.Command {
 					return
 				}
 
-				bytes, err := json.Marshal(server.ResponseData{
+				responseData := server.ResponseData{
 					ServerId:   serverId,
 					Batch:      batch,
 					Data:       string(marshal),
 					ServerName: serverName,
 					ServerType: serverType,
-				})
+				}
+
+				bytes, err := json.Marshal(responseData)
+
 				if err != nil {
 					util.Log.Errorf("%+v", err)
 					return
@@ -92,13 +98,11 @@ func Cmd() *cobra.Command {
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
 	cmd.Flags().StringVarP(&serverId, "serverId", "i", "", "服务id")
-	cmd.Flags().StringVarP(&serverName, "serverName", "n", "", "服务名称")
+	cmd.Flags().StringVarP(&serverName, "serverName", "n", "", "服务名称(默认值为serverId)")
 	cmd.Flags().IntVarP(&serverType, "serverType", "y", 0, "服务类型(0:服务器)")
 
 	_ = cmd.MarkFlagRequired("redisAddrs")
 	_ = cmd.MarkFlagRequired("redisPassword")
 	_ = cmd.MarkFlagRequired("serverId")
-	_ = cmd.MarkFlagRequired("serverName")
-	_ = cmd.MarkFlagRequired("serverType")
 	return &cmd
 }

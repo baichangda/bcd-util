@@ -10,8 +10,6 @@ func TestCmd(t *testing.T) {
 		"-a192.168.23.129:6379",
 		"-wbcd",
 		"-itest",
-		"-n测试服务器",
-		"-y0",
 	})
 	if err != nil {
 		t.Errorf("%+v", err)

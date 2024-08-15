@@ -10,7 +10,7 @@ func TestCmd(t *testing.T) {
 		"-uroot:bcd@tcp(192.168.23.129:3306)/bcd?multiStatements=true&charset=utf8mb4&parseTime=True&loc=Local",
 		"-a192.168.23.129:6379",
 		"-wbcd",
-		"-c",
+		//"-c",
 	})
 	if err != nil {
 		t.Errorf("%+v", err)
