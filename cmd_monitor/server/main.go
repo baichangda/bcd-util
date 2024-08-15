@@ -99,7 +99,7 @@ func Cmd() *cobra.Command {
 				//等待10s
 				time.Sleep(10 * time.Second)
 				//获取结果、并清空结果集合
-				lRange := client.LRange(context.Background(), redisListName, 1, -1)
+				lRange := client.LRange(context.Background(), redisListName, 0, -1)
 				result, err := lRange.Result()
 				if err != nil {
 					util.Log.Errorf("%+v", err)
@@ -139,8 +139,8 @@ func Cmd() *cobra.Command {
 						responseData, ok := responseDataMap[serverData.Id]
 						monitorData := MonitorData{
 							ServerId:   serverData.Id,
-							ServerType: serverData.Flag,
-							ServerName: serverData.Name,
+							ServerType: serverData.ServerType,
+							ServerName: serverData.ServerName,
 							Batch:      batch,
 						}
 						if ok {
@@ -188,6 +188,7 @@ func Cmd() *cobra.Command {
 						}
 						monitorDatas = append(monitorDatas, monitorData)
 					}
+					db.Create(monitorDatas)
 					util.Log.Infof("finish batch[%d] alive server[%s]",
 						batch,
 						strings.Join(ids1, ","))
@@ -206,7 +207,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "w", "bcd", "redis密码")
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
-	cmd.Flags().BoolVarP(&check, "check", "c", false, "是否验证服务器信息")
+	cmd.Flags().BoolVarP(&check, "check", "c", false, "是否验证服务器信息(如果是、则需要t_server_data表)")
 
 	_ = cmd.MarkFlagRequired("mysqlUrl")
 	_ = cmd.MarkFlagRequired("redisAddrs")
@@ -216,8 +217,8 @@ func Cmd() *cobra.Command {
 
 type ServerData struct {
 	Id         string         `gorm:"primaryKey;size:50;comment:服务id"`
-	Name       string         `gorm:"size:50;not null;comment:服务名称"`
-	Flag       int            `gorm:"not null;comment:服务类型"`
+	ServerName string         `gorm:"size:50;not null;comment:服务名称"`
+	ServerType int            `gorm:"not null;comment:服务类型(0:服务器)"`
 	Remark     sql.NullString `gorm:"size:200;comment:服务描述"`
 	CreateTime time.Time      `gorm:"autoCreateTime"`
 }
