@@ -81,7 +81,7 @@ func Cmd() *cobra.Command {
 
 			c := cron.New(cron.WithSeconds())
 			cronExpr := "0 0/" + strconv.Itoa(period) + " * * * *"
-			util.Log.Infof("start cron[%s]", cronExpr)
+			util.Log.Infof("start cron[%s] on redis addr[%s] topic[%s] check[%v]", cronExpr, strings.Join(redisAddrs, ","), redisTopic, check)
 			_, err = c.AddFunc(cronExpr, func() {
 				collectTime := time.Now()
 
@@ -155,13 +155,24 @@ func Cmd() *cobra.Command {
 								}
 							}
 						} else {
+							delete(responseDataMap, serverData.Id)
 							ids2 = append(ids2, serverData.Id)
 							monitorData.ServerStatus = 1
 							monitorData.Data = sql.NullString{Valid: false}
 						}
 						monitorDatas[i] = monitorData
 					}
-					db.Create(monitorDatas)
+					if len(responseDataMap) > 0 {
+						var arr []string
+						for _, v := range responseDataMap {
+							arr = append(arr, v.ServerId)
+						}
+						util.Log.Infof("receive unknown server[%s]", strings.Join(arr, ","))
+					}
+
+					if len(monitorDatas) > 0 {
+						db.Create(monitorDatas)
+					}
 					util.Log.Infof("finish batch[%d] alive server[%s] dead server[%s]",
 						batch,
 						strings.Join(ids1, ","),
@@ -188,7 +199,9 @@ func Cmd() *cobra.Command {
 						}
 						monitorDatas = append(monitorDatas, monitorData)
 					}
-					db.Create(monitorDatas)
+					if len(monitorDatas) > 0 {
+						db.Create(monitorDatas)
+					}
 					util.Log.Infof("finish batch[%d] alive server[%s]",
 						batch,
 						strings.Join(ids1, ","))
@@ -207,7 +220,7 @@ func Cmd() *cobra.Command {
 	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "w", "bcd", "redis密码")
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
-	cmd.Flags().BoolVarP(&check, "check", "c", false, "是否验证服务器信息(如果是、则需要t_server_data表)")
+	cmd.Flags().BoolVarP(&check, "checkServer", "c", false, "是否验证监控信息的服务是否存在于服务器配置表(如果是、则需要t_server_data表)")
 
 	_ = cmd.MarkFlagRequired("mysqlUrl")
 	_ = cmd.MarkFlagRequired("redisAddrs")
