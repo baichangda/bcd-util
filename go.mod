@@ -1,15 +1,14 @@
 module bcd-util
 
-go 1.22
+go 1.23
 
 require (
-	github.com/dop251/goja v0.0.0-20240220182346-e401ed450204
+	github.com/dop251/goja v0.0.0-20240816181238-8130cadc5774
 	github.com/gin-contrib/gzip v1.0.1
 	github.com/gin-gonic/gin v1.10.0
-	github.com/go-resty/resty/v2 v2.13.1
+	github.com/go-resty/resty/v2 v2.14.0
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/gobwas/ws v1.4.0
-	github.com/golang-module/carbon/v2 v2.3.12
 	github.com/panjf2000/gnet/v2 v2.5.7
 	github.com/pkg/errors v0.9.1
 	github.com/playwright-community/playwright-go v0.4501.1
@@ -18,10 +17,10 @@ require (
 	github.com/segmentio/kafka-go v0.4.47
 	github.com/shirou/gopsutil/v4 v4.24.7
 	github.com/spf13/cobra v1.8.1
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.979
-	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ocr v1.0.979
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/common v1.0.986
+	github.com/tencentcloud/tencentcloud-sdk-go/tencentcloud/ocr v1.0.986
 	github.com/tidwall/gjson v1.17.3
-	github.com/tsuna/gohbase v0.0.0-20240715093250-731f0bdb6be5
+	github.com/tsuna/gohbase v0.0.0-20240815234309-9f5d859e6f2f
 	github.com/xuri/excelize/v2 v2.8.1
 	go.uber.org/zap v1.27.0
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
@@ -39,7 +38,7 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/deckarep/golang-set/v2 v2.6.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
-	github.com/dlclark/regexp2 v1.7.0 // indirect
+	github.com/dlclark/regexp2 v1.11.4 // indirect
 	github.com/gabriel-vasile/mimetype v1.4.3 // indirect
 	github.com/gin-contrib/sse v0.1.0 // indirect
 	github.com/go-jose/go-jose/v3 v3.0.3 // indirect
@@ -95,12 +94,12 @@ require (
 	go.opentelemetry.io/otel/trace v1.27.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	golang.org/x/arch v0.8.0 // indirect
-	golang.org/x/crypto v0.23.0 // indirect
+	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/exp v0.0.0-20240506185415-9bf2ced13842 // indirect
-	golang.org/x/net v0.25.0 // indirect
+	golang.org/x/net v0.27.0 // indirect
 	golang.org/x/sync v0.7.0 // indirect
 	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/text v0.15.0 // indirect
+	golang.org/x/text v0.16.0 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	modernc.org/b/v2 v2.1.0 // indirect
