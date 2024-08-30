@@ -3,7 +3,7 @@
 <script src="/resource/jquery.min.js"></script>
 <script src="/resource/jsoneditor.min.js"></script>
 <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+    <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
     <title>immotors-bin-parse</title>
 </head>
 <body>
@@ -19,8 +19,10 @@
                 </tr>
                 <tr style="height: 20px">
                     <td>
-                        <button id="parse_btn" onclick="parse()"
-                                style="width: 100%;font-size: 18px;color: green">解析
+                        <button id="parse_btn" onclick="parse()" style="width: 100%;font-size: 18px;color: green">解析
+                        </button>
+                        <button id="deParse_btn" onclick="deParse()" style="width: 100%;font-size: 18px;color: green">
+                            反解析
                         </button>
                     </td>
                 </tr>
@@ -50,7 +52,7 @@
     // create the editor
     const container = document.getElementById("jsoneditor")
     // const options = {mode: 'view'}
-    const options = {mode:'code'}
+    const options = {mode: 'code'}
     const editor = new JSONEditor(container, options)
 
     function parse() {
@@ -71,12 +73,41 @@
                         appendToOutput(res.msg, 2)
                     }
                 },
-                error:function (xhr,textStatus,errorThrown){
-                    appendToOutput("请求失败:"+textStatus,2)
+                error: function (xhr, textStatus, errorThrown) {
+                    appendToOutput("请求失败:" + textStatus, 2)
                 }
             })
             appendToOutput("发送http解析请求成功", 1)
         }
+    }
+
+    function deParse() {
+        let val = editor.get();
+        if (!Array.isArray(val)) {
+            appendToOutput("反解析的数据格式必须是json数组", 1)
+            return
+        }
+        if(val.length === 0){
+            appendToOutput("反解析json数组不能为空", 1)
+            return
+        }
+        $.ajax({
+            url: "/deParse",
+            method: "post",
+            data: JSON.stringify(val),
+            success: function (res) {
+                if (res.succeed) {
+                    $("#hex_textarea").val(res.data)
+                    appendToOutput("反解析成功", 2)
+                } else {
+                    appendToOutput(res.msg, 2)
+                }
+            },
+            error: function (xhr, textStatus, errorThrown) {
+                appendToOutput("请求失败:" + textStatus, 2)
+            }
+        })
+        appendToOutput("发送http反解析请求成功", 1)
     }
 
     let outputCount = 0

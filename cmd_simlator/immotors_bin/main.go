@@ -320,6 +320,56 @@ func start() {
 		}
 	})
 
+	engine.POST("/deParse", func(ctx *gin.Context) {
+		res := make(map[string]any)
+		all, err := io.ReadAll(ctx.Request.Body)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			return
+		}
+		ctx.Header("content-type", "application/json;charset=utf-8")
+
+		var ps []immotors.Packet
+		err = json.Unmarshal(all, &ps)
+		if err != nil {
+			util.Log.Errorf("%+v", err)
+			res["msg"] = "反解析失败、反序列化失败、原因:\n" + err.Error()
+			res["succeed"] = false
+			ctx.JSON(200, res)
+			return
+		}
+
+		buf := parse.ToByteBuf_empty()
+		deParseSucceed := true
+		func() {
+			defer func() {
+				if err := recover(); err != nil {
+					util.Log.Errorf("%+v", err)
+					res["msg"] = "反解析失败、报文不符合智己协议格式"
+					res["succeed"] = false
+					deParseSucceed = true
+					ctx.JSON(200, res)
+				}
+			}()
+			immotors.Write_Packets(ps, buf)
+		}()
+
+		if deParseSucceed {
+			bytes, err := util.Gzip(buf.ToBytes())
+			if err != nil {
+				util.Log.Errorf("%+v", err)
+				res["msg"] = "反解析失败、数据gzip失败"
+				res["succeed"] = false
+				ctx.JSON(200, res)
+				return
+			}
+
+			res["data"] = base64.StdEncoding.EncodeToString(bytes)
+			res["succeed"] = true
+			ctx.JSON(200, res)
+		}
+	})
+
 	engine.GET("/ws", func(ctx *gin.Context) {
 		//升级websocket
 		conn, _, _, err := ws.UpgradeHTTP(ctx.Request, ctx.Writer)
