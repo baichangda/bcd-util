@@ -23,7 +23,7 @@ var redisPassword string
 var redisTopic string
 var redisListName string
 var mysqlUrl string
-var period int
+var cronPrefixExpr string
 var check bool
 
 func Cmd() *cobra.Command {
@@ -80,13 +80,10 @@ func Cmd() *cobra.Command {
 			}
 
 			c := cron.New(cron.WithSeconds())
-			cronExpr := "0 0/" + strconv.Itoa(period) + " * * * *"
+			cronExpr := cronPrefixExpr + " * * * *"
 			util.Log.Infof("start cron[%s] on redis addr[%s] topic[%s] check[%v]", cronExpr, strings.Join(redisAddrs, ","), redisTopic, check)
 			_, err = c.AddFunc(cronExpr, func() {
 				collectTime := time.Now()
-
-				//往前取最近一个整点时间
-				collectTime.Add(time.Duration(collectTime.Second()-(collectTime.Second()%period)) * time.Second)
 				//发送采集指令
 				collectTimeStr := collectTime.Format("20060102150405")
 				batch, err := strconv.ParseInt(collectTimeStr, 10, 64)
@@ -97,7 +94,7 @@ func Cmd() *cobra.Command {
 				util.Log.Infof("start batch[%d]", batch)
 				client.Publish(context.Background(), redisTopic, collectTimeStr)
 				//等待10s
-				time.Sleep(10 * time.Second)
+				time.Sleep(5 * time.Second)
 				//获取结果、并清空结果集合
 				lRange := client.LRange(context.Background(), redisListName, 0, -1)
 				result, err := lRange.Result()
@@ -214,10 +211,10 @@ func Cmd() *cobra.Command {
 			c.Run()
 		},
 	}
-	cmd.Flags().IntVarP(&period, "period", "p", 1, "定时任务采集周期(分钟)")
+	cmd.Flags().StringVarP(&cronPrefixExpr, "cronExprPrefix", "e", "0 0/1", "cron表达式前缀、带秒分、最小周期为10s、例如(每15秒:0/15 *)、例如(每1分钟:0 0/1)")
 	cmd.Flags().StringVarP(&mysqlUrl, "mysqlUrl", "u", "root:incar@2023@tcp(10.0.11.50:39005)/rvm3?multiStatements=true&charset=utf8mb4&parseTime=True&loc=Local", "mysql url连接")
 	cmd.Flags().StringSliceVarP(&redisAddrs, "redisAddrs", "a", []string{"127.0.0.1:3306"}, "redis地址(如果只有1个元素、视为单机、否则为集群)")
-	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "w", "bcd", "redis密码")
+	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "p", "bcd", "redis密码")
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
 	cmd.Flags().BoolVarP(&check, "checkServer", "c", false, "是否验证监控信息的服务是否存在于服务器配置表(如果是、则需要t_server_data表)")

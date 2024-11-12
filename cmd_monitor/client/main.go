@@ -94,7 +94,7 @@ func Cmd() *cobra.Command {
 		},
 	}
 	cmd.Flags().StringSliceVarP(&redisAddrs, "redisAddrs", "a", []string{"127.0.0.1:3306"}, "redis地址(如果只有1个元素、视为单机、否则为集群)")
-	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "w", "bcd", "redis密码")
+	cmd.Flags().StringVarP(&redisPassword, "redisPassword", "p", "bcd", "redis密码")
 	cmd.Flags().StringVarP(&redisTopic, "redisTopic", "t", "topic_monitor", "redis下发采集指令集的topic")
 	cmd.Flags().StringVarP(&redisListName, "redisListName", "l", "list_monitor", "redis结果集合名称")
 	cmd.Flags().StringVarP(&serverId, "serverId", "i", "", "服务id")
