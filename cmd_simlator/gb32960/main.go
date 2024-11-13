@@ -44,7 +44,10 @@ const sample = "232302FE4C534A4533363039364D53313430343935010141170608100A100101
 
 type InMsg struct {
 	/**
-	1、更新运行数据
+	1、连接tcp网关
+	2、更新运行数据
+	3、发送登陆报文
+	4、发送登出报文
 	*/
 	Flag int    `json:"flag"`
 	Data string `json:"data"`
@@ -52,8 +55,10 @@ type InMsg struct {
 
 type OutMsg struct {
 	/**
-	1、连接tcp网关
+	1、连接tcp网关结果
 	2、更新运行数据结果
+	3、发送登陆报文结果
+	4、发送登出报文结果
 	101、同步服务器运行数据到客户端
 	102、发送数据到网关成功通知
 	103、接收到网关的响应数据
@@ -379,15 +384,14 @@ func start() {
 }
 
 func (e *WsClient) sendRunData(sendTs int64) {
-	sendTime := time.UnixMilli(sendTs)
 	vehicleRunData := e.packet.F_data.(*gb32960.VehicleRunData)
-	vehicleRunData.F_collectTime = sendTime
+	vehicleRunData.F_collectTime = sendTs
 	buf := parse.ToByteBuf_empty()
 
 	e.packet.Write(buf)
 	b := buf.ToBytes()
 	e.tcpClient.send(b)
-	util.Log.Infof("sendRunData vin[%s] time[%s] succeed", e.vin, sendTime.Format("20060102150405"))
+	util.Log.Infof("sendRunData vin[%s] time[%s] succeed", e.vin, time.UnixMilli(sendTs).Format("20060102150405"))
 	e.send(&OutMsg{
 		Flag:    102,
 		Data:    hex.EncodeToString(b),
@@ -409,6 +413,10 @@ func (e *WsClient) onWsMsg(msg *InMsg) {
 		e.HandleConnectTcp(msg.Data)
 	case 2:
 		e.HandleUpdateRunData(msg.Data)
+	case 3:
+		e.HandleSendLogin(msg.Data)
+	case 4:
+		e.HandleSendLogout(msg.Data)
 	default:
 		util.Log.Warnf("flag[%d] not support", msg.Flag)
 	}
@@ -445,6 +453,7 @@ func (e *WsClient) HandleUpdateRunData(data string) {
 			Data:    "",
 			Succeed: false,
 		})
+		return
 	}
 	e.packet.F_data = &vehicleRunData
 
@@ -463,6 +472,51 @@ func (e *WsClient) HandleUpdateRunData(data string) {
 		Succeed: true,
 	})
 	util.Log.Infof("HandleUpdateRunData vin[%s]", e.vin)
+}
+
+func (e *WsClient) HandleSendLogin(data string) {
+	vehicleLoginData := gb32960.VehicleLoginData{}
+	err := json.Unmarshal([]byte(data), &vehicleLoginData)
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		e.send(&OutMsg{
+			Flag:    3,
+			Data:    "",
+			Succeed: false,
+		})
+		return
+	}
+	bytes := gb32960.ToPacketBytes(1, 0xFE, e.vin, &vehicleLoginData)
+	e.tcpClient.send(bytes)
+
+	e.send(&OutMsg{
+		Flag:    3,
+		Data:    hex.EncodeToString(bytes),
+		Succeed: true,
+	})
+	util.Log.Infof("HandleSendLogin vin[%s]", e.vin)
+}
+
+func (e *WsClient) HandleSendLogout(data string) {
+	vehicleLogoutData := gb32960.VehicleLogoutData{}
+	err := json.Unmarshal([]byte(data), &vehicleLogoutData)
+	if err != nil {
+		util.Log.Errorf("%+v", err)
+		e.send(&OutMsg{
+			Flag:    4,
+			Data:    "",
+			Succeed: false,
+		})
+	}
+	bytes := gb32960.ToPacketBytes(4, 0xFE, e.vin, &vehicleLogoutData)
+	e.tcpClient.send(bytes)
+
+	e.send(&OutMsg{
+		Flag:    4,
+		Data:    hex.EncodeToString(bytes),
+		Succeed: true,
+	})
+	util.Log.Infof("HandleSendLogout vin[%s]", e.vin)
 }
 
 func Main() {
