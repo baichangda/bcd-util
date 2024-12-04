@@ -413,6 +413,88 @@ func (__instance *Evt_000F) Write(_byteBuf *parse.ByteBuf) {
 	_byteBuf.Write_zero(2)
 }
 
+type Evt_0010 struct {
+	F_evtId             uint16  `json:"evtId"`
+	F_SAMActuToqHiPre   float32 `json:"SAMActuToqHiPre"`
+	F_SAMInvtrCrntHiPre float32 `json:"SAMInvtrCrntHiPre"`
+	F_SAMInvtrOvTemAlrm uint8   `json:"SAMInvtrOvTemAlrm"`
+	F_SAMOvCrntAlrm     uint8   `json:"SAMOvCrntAlrm"`
+	F_SAMOvSpdAlrm      uint8   `json:"SAMOvSpdAlrm"`
+	F_SAMStrOvTemAlrm   uint8   `json:"SAMStrOvTemAlrm"`
+	F_TMInvtrOvTemAlrm  uint8   `json:"TMInvtrOvTemAlrm"`
+	F_TMOvCrntAlrm      uint8   `json:"TMOvCrntAlrm"`
+	F_TMOvSpdAlrm       uint8   `json:"TMOvSpdAlrm"`
+	F_TMStrOvTemAlrm    uint8   `json:"TMStrOvTemAlrm"`
+	F_UsgMd             uint8   `json:"UsgMd"`
+	F_UsgMdV            uint8   `json:"UsgMdV"`
+}
+
+func To_Evt_0010(_byteBuf *parse.ByteBuf) *Evt_0010 {
+	_instance := Evt_0010{}
+	_instance.F_evtId = _byteBuf.Read_uint16()
+	_instance.F_SAMActuToqHiPre = float32(_byteBuf.Read_uint16())*0.1 - 2000
+	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
+	_instance.F_SAMInvtrCrntHiPre = float32(_bitBuf.Read(15, true, true))*0.1 - 1000
+	_instance.F_SAMInvtrOvTemAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_SAMOvCrntAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_SAMOvSpdAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_SAMStrOvTemAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_TMInvtrOvTemAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_TMOvCrntAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_TMOvSpdAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_TMStrOvTemAlrm = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_UsgMd = uint8(_bitBuf.Read(4, true, true))
+	_instance.F_UsgMdV = uint8(_bitBuf.Read(1, true, true))
+	_bitBuf.Finish()
+	return &_instance
+}
+
+func (__instance *Evt_0010) Write(_byteBuf *parse.ByteBuf) {
+	_instance := *__instance
+	_byteBuf.Write_uint16(_instance.F_evtId)
+	_byteBuf.Write_uint16(uint16(_instance.F_SAMActuToqHiPre*10 + 20000))
+	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
+	_bitBuf.Write(int64(_instance.F_SAMInvtrCrntHiPre*10+10000), 15, true, true)
+	_bitBuf.Write(int64(_instance.F_SAMInvtrOvTemAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_SAMOvCrntAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_SAMOvSpdAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_SAMStrOvTemAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_TMInvtrOvTemAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_TMOvCrntAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_TMOvSpdAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_TMStrOvTemAlrm), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_UsgMd), 4, true, true)
+	_bitBuf.Write(int64(_instance.F_UsgMdV), 1, true, true)
+	_bitBuf.Finish()
+}
+
+type Evt_0011 struct {
+	F_evtId  uint16 `json:"evtId"`
+	F_VehMd  uint8  `json:"VehMd"`
+	F_VehMdV uint8  `json:"VehMdV"`
+}
+
+func To_Evt_0011(_byteBuf *parse.ByteBuf) *Evt_0011 {
+	_instance := Evt_0011{}
+	_instance.F_evtId = _byteBuf.Read_uint16()
+	_bitBuf := parse.ToBitBuf_reader(_byteBuf)
+	_instance.F_VehMd = uint8(_bitBuf.Read(4, true, true))
+	_instance.F_VehMdV = uint8(_bitBuf.Read(1, true, true))
+	_bitBuf.Finish()
+	_byteBuf.Skip(5)
+	return &_instance
+}
+
+func (__instance *Evt_0011) Write(_byteBuf *parse.ByteBuf) {
+	_instance := *__instance
+	_byteBuf.Write_uint16(_instance.F_evtId)
+	_bitBuf := parse.ToBitBuf_writer(_byteBuf)
+	_bitBuf.Write(int64(_instance.F_VehMd), 4, true, true)
+	_bitBuf.Write(int64(_instance.F_VehMdV), 1, true, true)
+	_bitBuf.Finish()
+	_byteBuf.Write_zero(5)
+}
+
 type Evt_0800 struct {
 	F_evtId         uint16  `json:"evtId"`
 	F_SysPwrMd      uint8   `json:"SysPwrMd"`
@@ -673,6 +755,8 @@ type Evt_D006 struct {
 	F_EnSpd                  float32 `json:"EnSpd"`
 	F_EnSpdSts               uint8   `json:"EnSpdSts"`
 	F_FuelCsump              uint16  `json:"FuelCsump"`
+	F_EnRunA                 uint8   `json:"EnRunA"`
+	F_AvgFuelCsumpV          uint8   `json:"AvgFuelCsumpV"`
 }
 
 func To_Evt_D006(_byteBuf *parse.ByteBuf) *Evt_D006 {
@@ -767,6 +851,8 @@ func To_Evt_D006(_byteBuf *parse.ByteBuf) *Evt_D006 {
 	_instance.F_EnSpd = float32(_bitBuf.Read(16, true, true)) * 0.25
 	_instance.F_EnSpdSts = uint8(_bitBuf.Read(2, true, true))
 	_instance.F_FuelCsump = uint16(_bitBuf.Read(12, true, true)) * 16
+	_instance.F_EnRunA = uint8(_bitBuf.Read(1, true, true))
+	_instance.F_AvgFuelCsumpV = uint8(_bitBuf.Read(1, true, true))
 	_bitBuf.Finish()
 	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
 	if skip > 0 {
@@ -868,6 +954,8 @@ func (__instance *Evt_D006) Write(_byteBuf *parse.ByteBuf) {
 	_bitBuf.Write(int64(util.Round(_instance.F_EnSpd/0.25)), 16, true, true)
 	_bitBuf.Write(int64(_instance.F_EnSpdSts), 2, true, true)
 	_bitBuf.Write(int64(_instance.F_FuelCsump/16), 12, true, true)
+	_bitBuf.Write(int64(_instance.F_EnRunA), 1, true, true)
+	_bitBuf.Write(int64(_instance.F_AvgFuelCsumpV), 1, true, true)
 	_bitBuf.Finish()
 	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
 	if skip > 0 {
@@ -2176,6 +2264,40 @@ func (__instance *Evt_D01F) Write(_byteBuf *parse.ByteBuf) {
 	}
 }
 
+type Evt_D020 struct {
+	F_evtId             uint16 `json:"evtId"`
+	F_evtLen            uint16 `json:"evtLen"`
+	F_DTCinfomationRWSL uint64 `json:"DTCinfomationRWSL"`
+	F_DTCInfomationESS  uint64 `json:"DTCInfomationESS"`
+}
+
+func To_Evt_D020(_byteBuf *parse.ByteBuf) *Evt_D020 {
+	_instance := Evt_D020{}
+	_instance.F_evtId = _byteBuf.Read_uint16()
+	_instance.F_evtLen = _byteBuf.Read_uint16()
+	index := _byteBuf.ReaderIndex()
+	_instance.F_DTCinfomationRWSL = _byteBuf.Read_uint56()
+	_instance.F_DTCInfomationESS = _byteBuf.Read_uint56()
+	skip := int(_instance.F_evtLen) - _byteBuf.ReaderIndex() + index
+	if skip > 0 {
+		_byteBuf.Skip(skip)
+	}
+	return &_instance
+}
+
+func (__instance *Evt_D020) Write(_byteBuf *parse.ByteBuf) {
+	_instance := *__instance
+	_byteBuf.Write_uint16(_instance.F_evtId)
+	_byteBuf.Write_uint16(_instance.F_evtLen)
+	index := _byteBuf.WriterIndex()
+	_byteBuf.Write_uint56(_instance.F_DTCinfomationRWSL)
+	_byteBuf.Write_uint56(_instance.F_DTCInfomationESS)
+	skip := int(_instance.F_evtLen) - _byteBuf.WriterIndex() + index
+	if skip > 0 {
+		_byteBuf.Write_zero(skip)
+	}
+}
+
 type Evt_FFFF struct {
 	F_evtId uint16 `json:"evtId"`
 	F_CRC32 uint64 `json:"CRC32"`
@@ -2217,6 +2339,8 @@ type Packet struct {
 	F_evt_000D        *Evt_000D         `json:"evt_000D,omitempty"`
 	F_evt_000E        *Evt_000E         `json:"evt_000E,omitempty"`
 	F_evt_000F        *Evt_000F         `json:"evt_000F,omitempty"`
+	F_evt_0010        *Evt_0010         `json:"evt_0010,omitempty"`
+	F_evt_0011        *Evt_0011         `json:"evt_0011,omitempty"`
 	F_evt_0800        *Evt_0800         `json:"evt_0800,omitempty"`
 	F_evt_0801        *Evt_0801         `json:"evt_0801,omitempty"`
 	F_evt_0802        *Evt_0802         `json:"evt_0802,omitempty"`
@@ -2245,6 +2369,7 @@ type Packet struct {
 	F_evt_D01C        *Evt_D01C         `json:"evt_D01C,omitempty"`
 	F_evt_D01D        *Evt_D01D         `json:"evt_D01D,omitempty"`
 	F_evt_D01F        *Evt_D01F         `json:"evt_D01F,omitempty"`
+	F_evt_D020        *Evt_D020         `json:"evt_D020,omitempty"`
 	F_evt_2_6_unknown []Evt_2_6_unknown `json:"evt_2_6_unknown,omitempty"`
 	F_evt_4_x_unknown []Evt_4_x_unknown `json:"evt_4_x_unknown,omitempty"`
 	F_evt_FFFF        *Evt_FFFF         `json:"evt_FFFF,omitempty"`
@@ -2287,6 +2412,10 @@ A:
 			_instance.F_evt_000E = To_Evt_000E(_byteBuf)
 		case 0x000F:
 			_instance.F_evt_000F = To_Evt_000F(_byteBuf)
+		case 0x0010:
+			_instance.F_evt_0010 = To_Evt_0010(_byteBuf)
+		case 0x0011:
+			_instance.F_evt_0011 = To_Evt_0011(_byteBuf)
 		case 0x0800:
 			_instance.F_evt_0800 = To_Evt_0800(_byteBuf)
 		case 0x0801:
@@ -2343,6 +2472,8 @@ A:
 			_instance.F_evt_D01D = To_Evt_D01D(_byteBuf)
 		case 0xD01F:
 			_instance.F_evt_D01F = To_Evt_D01F(_byteBuf)
+		case 0xD020:
+			_instance.F_evt_D020 = To_Evt_D020(_byteBuf)
 		case 0xFFFF:
 			_instance.F_evt_FFFF = To_Evt_FFFF(_byteBuf)
 		default:
@@ -2404,6 +2535,12 @@ func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 	}
 	if _instance.F_evt_000F != nil {
 		_instance.F_evt_000F.Write(_byteBuf)
+	}
+	if _instance.F_evt_0010 != nil {
+		_instance.F_evt_0010.Write(_byteBuf)
+	}
+	if _instance.F_evt_0011 != nil {
+		_instance.F_evt_0011.Write(_byteBuf)
 	}
 	if _instance.F_evt_0800 != nil {
 		_instance.F_evt_0800.Write(_byteBuf)
@@ -2488,6 +2625,9 @@ func (__instance *Packet) Write(_byteBuf *parse.ByteBuf) {
 	}
 	if _instance.F_evt_D01F != nil {
 		_instance.F_evt_D01F.Write(_byteBuf)
+	}
+	if _instance.F_evt_D020 != nil {
+		_instance.F_evt_D020.Write(_byteBuf)
 	}
 	if _instance.F_evt_2_6_unknown != nil {
 		for i, _ := range _instance.F_evt_2_6_unknown {
