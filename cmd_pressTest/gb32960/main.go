@@ -156,6 +156,7 @@ A:
 			select {
 			case <-ctx.Done():
 				break A
+			default:
 			}
 		}
 		doBeforeSend(packet, sendTs)
