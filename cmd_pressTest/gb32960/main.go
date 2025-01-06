@@ -6,13 +6,14 @@ import (
 	"bcd-util/util"
 	"context"
 	"encoding/hex"
-	"github.com/spf13/cobra"
 	"net"
 	"os"
 	"strconv"
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/spf13/cobra"
 )
 
 var sample string
@@ -172,5 +173,5 @@ A:
 
 func doBeforeSend(packet *gb32960.Packet, ts int64) {
 	vehicleRunData := packet.F_data.(*gb32960.VehicleRunData)
-	vehicleRunData.F_collectTime = time.UnixMilli(ts)
+	vehicleRunData.F_collectTime = ts
 }

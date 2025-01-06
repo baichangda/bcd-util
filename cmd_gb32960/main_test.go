@@ -33,7 +33,7 @@ func Test1(t *testing.T) {
 
 	//先平台登入
 	bs := gb32960.ToPacketBytes(0x05, 0xFE, "TEST0000000000000", &gb32960.PlatformLoginData{
-		F_collectTime: time.Now(),
+		F_collectTime: time.Now().UnixMilli(),
 		F_sn:          1,
 		F_username:    "xxx",
 		F_password:    "xxx",
@@ -49,7 +49,7 @@ func Test1(t *testing.T) {
 
 	//车辆登入
 	bs = gb32960.ToPacketBytes(0x01, 0xFE, "TEST0000000000000", &gb32960.VehicleLoginData{
-		F_collectTime:   time.Now(),
+		F_collectTime:   time.Now().UnixMilli(),
 		F_sn:            1,
 		F_iccid:         "00000000000000000000",
 		F_subSystemNum:  0,
