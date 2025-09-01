@@ -257,16 +257,12 @@ func (e *WsClient) send(msg *OutMsg) {
 }
 
 type InMsg struct {
-	/**
-	1、连接kafka开始消费
-	*/
 	Flag int    `json:"flag"`
 	Data string `json:"data"`
 }
 
 type OutMsg struct {
 	/**
-	1、连接kafka开始消费
 	101、接收到kafka数据
 	102、kafka断开通知
 	*/
